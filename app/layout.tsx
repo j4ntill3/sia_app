@@ -1,6 +1,6 @@
 import "./globals.css";
 import Navbar from "../../sia_app/app/components/Navbar";
-import Footer from "../..//sia_app/app/components/Footer";
+import Footer from "../../sia_app/app/components/Footer";
 
 export default function RootLayout({
   children,
