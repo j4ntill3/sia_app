@@ -1,3 +1,7 @@
+import LoginForm from "./components/LoginForm";
+
+const sesion: boolean = false;
+
 export default function Home() {
-  return <></>;
+  return <>{!sesion && <LoginForm />}</>;
 }
