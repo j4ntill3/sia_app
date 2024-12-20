@@ -9,6 +9,50 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+
+model Inmueble {
+  id               Int     @id @default(autoincrement())
+  title            String  @map("title")
+  id_rubro         Int     @map("id_rubro")
+  localidad        String  @map("localidad")
+  direccion        String  @map("direccion")
+  barrio           String  @map("barrio")
+  num_habitaciones Int     @map("num_habitaciones")
+  num_baños        Int     @map("num_baños")
+  superficie       Float   @map("superficie")
+  garaje           Boolean @map("garaje")
+  estado           String  @map("estado")
+}
+
+model Persona {
+  id         Int    @id @default(autoincrement())
+  apellidos  String @map("apellidos")
+  nombres    String @map("nombres")
+  dni        String @unique @map("dni")
+  cuil       String @map("cuil")
+  correo     String @map("correo")
+  telefono   String @map("telefono")
+  domicilio  String @map("domicilio")
+  Usuario    Usuario[]
+}
+
+model RolUsuario {
+  id        Int      @id @default(autoincrement())
+  tipo_rol  String   @map("tipo_rol")
+  Usuario   Usuario[]
+}
+
+model Usuario {
+  id          Int    @id @default(autoincrement())
+  id_persona  Int    @map("id_persona")
+  id_rol      Int    @map("id_rol")
+  clave       String @map("clave")
+
+  Persona     Persona    @relation(fields: [id_persona], references: [id])
+  RolUsuario  RolUsuario @relation(fields: [id_rol], references: [id])
+}
+
