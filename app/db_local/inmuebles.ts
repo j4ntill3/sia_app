@@ -1,4 +1,4 @@
-import Inmueble from "../types/inmueble";
+import Inmueble from "../../types/inmueble";
 
 const inmuebles: Inmueble[] = [
   {
