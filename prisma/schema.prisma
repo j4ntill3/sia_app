@@ -1,14 +1,110 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model inmueble {
+  id               Int              @id @default(autoincrement())
+  title            String
+  id_rubro         Int
+  localidad        String
+  direccion        String
+  barrio           String
+  num_habitaciones Int
+  num_ba_os        Int              @map("num_baños")
+  superficie       Float
+  garaje           Boolean
+  eliminado        Boolean
+  id_estado        Int?
+  inmueble_estado  inmueble_estado? @relation("EstadoInmueble", fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id_estado], map: "fk_inmueble_estado")
+}
+
+model persona {
+  id               Int                @id @default(autoincrement())
+  telefono         String?
+  apellido         String
+  direccion        String?
+  email            String             @unique(map: "Persona_email_key")
+  fechaCreacion    DateTime           @default(now())
+  nombre           String
+  DNI              Int?               @unique(map: "DNI")
+  eliminado        Boolean
+  persona_empleado persona_empleado[]
+  usuario          usuario[]
+}
+
+model sesion {
+  id         Int      @id @default(autoincrement())
+  id_usuario Int
+  token      String
+  creado_en  DateTime @default(now())
+  eliminado  Boolean
+  usuario    usuario  @relation(fields: [id_usuario], references: [id], map: "Sesion_id_usuario_fkey")
+
+  @@index([id_usuario], map: "Sesion_id_usuario_fkey")
+}
+
+model usuario {
+  id         Int         @id @default(autoincrement())
+  id_rol     Int
+  clave      String
+  id_persona Int
+  eliminado  Boolean
+  sesion     sesion[]
+  persona    persona     @relation(fields: [id_persona], references: [id], map: "Usuario_id_persona_fkey")
+  rolusuario rol_usuario @relation(fields: [id_rol], references: [id], map: "Usuario_id_rol_fkey")
+
+  @@index([id_persona], map: "Usuario_id_persona_fkey")
+  @@index([id_rol], map: "Usuario_id_rol_fkey")
+}
+
+model empleado {
+  id               Int                @id @default(autoincrement())
+  CUIT             String             @unique(map: "CUIT") @db.VarChar(20)
+  Fecha_Alta       DateTime           @db.Date
+  Fecha_Baja       DateTime?          @db.Date
+  tipoId           Int
+  eliminado        Boolean
+  empleado_tipo    empleado_tipo      @relation(fields: [tipoId], references: [id], map: "Empleado_tipoId_fkey")
+  persona_empleado persona_empleado[]
+
+  @@index([tipoId], map: "Empleado_tipoId_fkey")
+}
+
+model empleado_tipo {
+  id       Int        @id @default(autoincrement())
+  tipo     String     @unique(map: "EmpleadoTipo_tipo_key")
+  empleado empleado[] 
+}
+
+model persona_empleado {
+  id             Int      @id @default(autoincrement())
+  idpersona      Int
+  idempleado     Int
+  fecha_creacion DateTime @default(now()) @db.DateTime(0)
+  eliminado      Boolean  @default(false)
+  empleado       empleado @relation(fields: [idempleado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_idempleado")
+  persona        persona  @relation(fields: [idpersona], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_idpersona")
+
+  @@index([idempleado], map: "fk_idempleado")
+  @@index([idpersona], map: "fk_idpersona")
+}
+
+model rol_usuario {
+  id        Int       @id @default(autoincrement())
+  tipo_rol  String
+  eliminado Boolean
+  usuario   usuario[] 
+}
+
+model inmueble_estado {
+  id       Int        @id @default(autoincrement())
+  estado   String
+  inmueble inmueble[] @relation("EstadoInmueble")
 }

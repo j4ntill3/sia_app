@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 const HamburguerMenu = () => {
@@ -33,7 +31,7 @@ const HamburguerMenu = () => {
         </svg>
       </button>
 
-      {/* Menú desplegable */}
+      {/* Menú desplegable 
       <div
         className={`${
           isMenuOpen ? "block" : "hidden"
@@ -46,23 +44,9 @@ const HamburguerMenu = () => {
           >
             Home
           </a>
-          <a
-            href="/about"
-            className="text-white py-2 px-4 hover:bg-gray-700 border-b border-gray-700"
-          >
-            About
-          </a>
-          <a
-            href="/services"
-            className="text-white py-2 px-4 hover:bg-gray-700 border-b border-gray-700"
-          >
-            Services
-          </a>
-          <a href="/contact" className="text-white py-2 px-4 hover:bg-gray-700">
-            Contact
-          </a>
         </nav>
       </div>
+      */}
     </div>
   );
 };

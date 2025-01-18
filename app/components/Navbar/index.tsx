@@ -1,3 +1,5 @@
+"use client";
+
 import HamburguerMenu from "./HamburguerMenu";
 
 const Navbar = () => {
@@ -9,21 +11,13 @@ const Navbar = () => {
           <a href="/">SIA</a>
         </div>
 
-        {/* Links list for xl screen */}
+        {/* Links list for xl screen 
         <div className="hidden md:flex space-x-4 ">
           <a href="/" className="text-white hover:text-gray-400">
             Home
           </a>
-          <a href="/about" className="text-white hover:text-gray-400">
-            About
-          </a>
-          <a href="/services" className="text-white hover:text-gray-400">
-            Services
-          </a>
-          <a href="/contact" className="text-white hover:text-gray-400">
-            Contact
-          </a>
         </div>
+        */}
       </div>
 
       {/* Hambuguer menu for m screen*/}
