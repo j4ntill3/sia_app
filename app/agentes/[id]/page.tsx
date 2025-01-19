@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // Cambiar esto si usas el sistema de enrutamiento de Next.js
 
 const AgenteDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   const [agente, setAgente] = useState<any>(null);
@@ -9,8 +8,8 @@ const AgenteDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
   useEffect(() => {
     const getParams = async () => {
-      const resolvedParams = await params; // Desenrolla la promesa
-      setId(resolvedParams.id); // Asigna el id
+      const resolvedParams = await params;
+      setId(resolvedParams.id);
     };
 
     getParams();
@@ -28,33 +27,57 @@ const AgenteDetail = ({ params }: { params: Promise<{ id: string }> }) => {
         setAgente(data);
       } catch (error) {
         console.error(error);
-        setAgente(null);
       }
     };
 
     fetchAgente();
   }, [id]);
 
-  if (!agente) return <p>No se encontró el agente.</p>;
+  if (!agente) return null;
 
   const { persona, empleado } = agente;
 
   return (
-    <div>
-      <h2>Detalles del Agente</h2>
-      <p>
-        Nombre: {persona.nombre} {persona.apellido}
-      </p>
-      <p>CUIT: {empleado.CUIT}</p>
-      <p>Dirección: {persona.direccion}</p>
-      <p>Email: {persona.email}</p>
-      <p>Teléfono: {persona.telefono}</p>
-      <p>Fecha de Alta: {new Date(empleado.fecha_alta).toLocaleDateString()}</p>
-      {empleado.fecha_baja && (
-        <p>
-          Fecha de Baja: {new Date(empleado.fecha_baja).toLocaleDateString()}
-        </p>
-      )}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="w-full max-w-3xl bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Detalles del Agente
+        </h2>
+        <div className="space-y-4">
+          <p className="text-gray-600">
+            <span className="font-semibold text-gray-800">Nombre:</span>{" "}
+            {persona.nombre} {persona.apellido}
+          </p>
+          <p className="text-gray-600">
+            <span className="font-semibold text-gray-800">CUIT:</span>{" "}
+            {empleado.CUIT}
+          </p>
+          <p className="text-gray-600">
+            <span className="font-semibold text-gray-800">Dirección:</span>{" "}
+            {persona.direccion}
+          </p>
+          <p className="text-gray-600">
+            <span className="font-semibold text-gray-800">Email:</span>{" "}
+            {persona.email}
+          </p>
+          <p className="text-gray-600">
+            <span className="font-semibold text-gray-800">Teléfono:</span>{" "}
+            {persona.telefono}
+          </p>
+          <p className="text-gray-600">
+            <span className="font-semibold text-gray-800">Fecha de Alta:</span>{" "}
+            {new Date(empleado.fecha_alta).toLocaleDateString()}
+          </p>
+          {empleado.fecha_baja && (
+            <p className="text-gray-600">
+              <span className="font-semibold text-gray-800">
+                Fecha de Baja:
+              </span>{" "}
+              {new Date(empleado.fecha_baja).toLocaleDateString()}
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

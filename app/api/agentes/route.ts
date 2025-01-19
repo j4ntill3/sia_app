@@ -5,22 +5,20 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    // Obtener todos los agentes (tipoId = 1) y sus datos asociados de la persona
     const agentes = await prisma.empleado.findMany({
       where: {
         tipoId: 1,
-        eliminado: false, // Solo agentes
+        eliminado: false,
       },
       include: {
         persona_empleado: {
           include: {
-            persona: true, // Incluir los datos de la persona asociada
+            persona: true,
           },
         },
       },
     });
 
-    // Formatear la respuesta sin el tipo Agente
     const agentesConPersona = agentes.map((empleado) => {
       const persona = empleado.persona_empleado[0]?.persona;
 

@@ -7,7 +7,7 @@ interface AgenteItemProps {
     empleado: Empleado;
     persona: Persona;
   };
-  onView: (id: number) => void; // Función para manejar el evento al hacer clic en "Ver"
+  onView: (id: number) => void;
 }
 
 const AgenteItem: React.FC<AgenteItemProps> = ({ agente, onView }) => {

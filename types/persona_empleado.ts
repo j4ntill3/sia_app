@@ -1,4 +1,3 @@
-// persona_empleado.ts
 type persona_empleado = {
   id: number;
   idpersona: number;

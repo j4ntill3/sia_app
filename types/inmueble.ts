@@ -9,7 +9,7 @@ type Inmueble = {
   numBaños: number;
   superficie: number;
   garaje: boolean;
-  estado: string;
+  id_estado: number;
   eliminado: boolean;
 };
 
