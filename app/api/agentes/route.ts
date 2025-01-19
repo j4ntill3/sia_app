@@ -8,7 +8,8 @@ export async function GET(request: NextRequest) {
     // Obtener todos los agentes (tipoId = 1) y sus datos asociados de la persona
     const agentes = await prisma.empleado.findMany({
       where: {
-        tipoId: 1, // Solo agentes
+        tipoId: 1,
+        eliminado: false, // Solo agentes
       },
       include: {
         persona_empleado: {
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
           tipo: empleado.tipoId === 1 ? "agente" : "administrador",
           eliminado: empleado.eliminado,
         },
-        persona: persona || null, // Si no hay persona, asignamos null
+        persona: persona,
       };
     });
 
