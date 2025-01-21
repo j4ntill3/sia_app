@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
-import type Inmueble from "@/types/inmueble"; // Asegúrate de que la ruta sea correcta
+import type Inmueble from "@/types/inmueble";
 
 const prisma = new PrismaClient();
 
@@ -8,25 +7,29 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
+  const { id } = await params; // Asegurándonos de esperar a los parámetros
 
   try {
-    // Buscar el inmueble por ID e incluir el estado relacionado
     const inmuebleData = await prisma.inmueble.findUnique({
       where: { id: Number(id) },
       include: {
-        inmueble_estado: true, // Incluyendo la relación con el estado
+        inmueble_estado: true,
+        inmueble_imagen: true,
       },
     });
 
     if (!inmuebleData) {
-      return NextResponse.json(
-        { error: "Inmueble no encontrado" },
-        { status: 404 }
-      );
+      return new Response(JSON.stringify({ error: "Inmueble no encontrado" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    // Mapear los datos obtenidos al tipo Inmueble
+    const rutaImagen =
+      inmuebleData.inmueble_imagen?.[0]?.ruta_imagen ||
+      "/img/image-icon-600nw-211642900.webp";
+
+    // Estructurando el objeto conforme al tipo 'Inmueble'
     const inmueble: Inmueble = {
       id: inmuebleData.id,
       title: inmuebleData.title,
@@ -35,19 +38,23 @@ export async function GET(
       direccion: inmuebleData.direccion,
       barrio: inmuebleData.barrio,
       numHabitaciones: inmuebleData.num_habitaciones,
-      numBaños: inmuebleData.num_ba_os,
+      numBaños: inmuebleData.num_baños,
       superficie: inmuebleData.superficie,
       garaje: inmuebleData.garaje,
-      id_estado: inmuebleData.id_estado!, // Como siempre existe, el operador ! es seguro
+      id_estado: inmuebleData.id_estado,
       eliminado: inmuebleData.eliminado,
+      ruta_imagen: rutaImagen,
     };
 
-    return NextResponse.json(inmueble);
+    return new Response(JSON.stringify(inmueble), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.error("Error al obtener el inmueble:", error);
-    return NextResponse.json(
-      { error: "Error al obtener el inmueble" },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ error: "Error al obtener el inmueble" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

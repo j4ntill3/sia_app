@@ -4,15 +4,21 @@ import { useEffect, useState } from "react";
 
 const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   const [inmueble, setInmueble] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
   const [id, setId] = useState<string | null>(null);
 
   useEffect(() => {
-    const getParams = async () => {
-      const resolvedParams = await params;
-      setId(resolvedParams.id);
+    const resolveParams = async () => {
+      try {
+        const resolvedParams = await params;
+        setId(resolvedParams.id);
+      } catch (err) {
+        console.error("Error al resolver los parámetros:", err);
+        setError("No se pudieron obtener los parámetros necesarios.");
+      }
     };
 
-    getParams();
+    resolveParams();
   }, [params]);
 
   useEffect(() => {
@@ -25,15 +31,33 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
         const data = await response.json();
         setInmueble(data);
-      } catch (error) {
-        console.error(error);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message || "Ocurrió un error al cargar los detalles.");
       }
     };
 
     fetchInmueble();
   }, [id]);
 
-  if (!inmueble) return null;
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!inmueble) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-gray-600">Cargando detalles del inmueble...</p>
+      </div>
+    );
+  }
 
   const {
     title,
@@ -46,7 +70,8 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
     superficie,
     garaje,
     eliminado,
-    inmueble_estado,
+    id_estado,
+    ruta_imagen,
   } = inmueble;
 
   return (
@@ -55,6 +80,11 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
           Detalles del Inmueble
         </h2>
+        <img
+          src={ruta_imagen}
+          alt={`Imagen del inmueble: ${title}`}
+          className="w-full h-64 object-cover rounded-lg mb-4"
+        />
         <div className="space-y-4">
           <p className="text-gray-600">
             <span className="font-semibold text-gray-800">Título:</span> {title}
@@ -101,7 +131,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
           </p>
           <p className="text-gray-600">
             <span className="font-semibold text-gray-800">Estado:</span>{" "}
-            {inmueble_estado?.estado}
+            {id_estado}
           </p>
         </div>
       </div>

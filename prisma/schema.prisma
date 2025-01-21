@@ -8,22 +8,26 @@ datasource db {
 }
 
 model inmueble {
-  id               Int              @id @default(autoincrement())
+  id               Int               @id @default(autoincrement())
   title            String
   id_rubro         Int
   localidad        String
   direccion        String
   barrio           String
   num_habitaciones Int
-  num_ba_os        Int              @map("num_baños")
+  num_baños       Int               @map("num_baños")
   superficie       Float
   garaje           Boolean
-  eliminado        Boolean
-  id_estado        Int?
-  inmueble_estado  inmueble_estado? @relation("EstadoInmueble", fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  eliminado        Boolean          @default(false)
+  id_estado        Int
+  inmueble_rubro   inmueble_rubro    @relation(fields: [id_rubro], references: [id], onDelete: Cascade, map: "fk_inmueble_rubro")
+  inmueble_estado  inmueble_estado   @relation(fields: [id_estado], references: [id], onDelete: Cascade, map: "fk_inmueble_estado")
+  inmueble_imagen  inmueble_imagen[]
 
   @@index([id_estado], map: "fk_inmueble_estado")
+  @@index([id_rubro], map: "fk_inmueble_rubro")
 }
+
 
 model persona {
   id               Int                @id @default(autoincrement())
@@ -80,7 +84,7 @@ model empleado {
 model empleado_tipo {
   id       Int        @id @default(autoincrement())
   tipo     String     @unique(map: "EmpleadoTipo_tipo_key")
-  empleado empleado[] 
+  empleado empleado[]
 }
 
 model persona_empleado {
@@ -100,11 +104,27 @@ model rol_usuario {
   id        Int       @id @default(autoincrement())
   tipo_rol  String
   eliminado Boolean
-  usuario   usuario[] 
+  usuario   usuario[]
 }
 
 model inmueble_estado {
   id       Int        @id @default(autoincrement())
-  estado   String
-  inmueble inmueble[] @relation("EstadoInmueble")
+  estado   String     @db.VarChar(255)
+  inmueble inmueble[] 
+}
+
+model inmueble_rubro {
+  id       Int        @id @default(autoincrement())
+  rubro    String     @db.VarChar(255)
+  inmueble inmueble[]
+}
+
+model inmueble_imagen {
+  id          Int      @id @default(autoincrement())
+  id_inmueble Int
+  ruta_imagen String?  @db.VarChar(255)
+  eliminado   Boolean? @default(false)
+  inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_inmueble_imagen_inmueble")
+
+  @@index([id_inmueble], map: "fk_inmueble_imagen_inmueble")
 }

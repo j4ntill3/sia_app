@@ -4,13 +4,14 @@ type Inmueble = {
   idRubro: number;
   localidad: string;
   direccion: string;
-  barrio: string;
-  numHabitaciones: number;
-  numBaños: number;
-  superficie: number;
-  garaje: boolean;
-  id_estado: number;
+  barrio?: string; // Se mantiene opcional si puede ser nulo
+  numHabitaciones?: number; // Se mantiene opcional si puede ser nulo
+  numBaños?: number; // Se mantiene opcional si puede ser nulo
+  superficie?: number; // Se mantiene opcional si puede ser nulo
+  garaje?: boolean; // Se mantiene opcional si puede ser nulo
   eliminado: boolean;
+  id_estado: number; // Sigue siendo obligatorio
+  ruta_imagen: string;
 };
 
 export default Inmueble;
