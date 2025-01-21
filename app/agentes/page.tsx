@@ -53,6 +53,7 @@ const Agentes = () => {
                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
                   Estado
                 </th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300"></th>
               </tr>
             </thead>
             <tbody>

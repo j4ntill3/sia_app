@@ -8,6 +8,13 @@ interface InmuebleCardProps {
 const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble }) => {
   return (
     <div className="w-full max-w-sm p-6 bg-white shadow-md flex flex-col">
+      {/* Mostrar la imagen del inmueble o la genérica */}
+
+      <img
+        src={inmueble.ruta_imagen} // Asegúrate de que esta propiedad es imagenUrl
+        alt={inmueble.title}
+        className="w-full h-48 object-cover mb-4 rounded"
+      />
       <h3 className="text-xl font-semibold text-gray-800 mb-2">
         {inmueble.title}
       </h3>

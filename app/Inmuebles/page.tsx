@@ -19,7 +19,6 @@ const Inmuebles = () => {
 
         const data = await response.json();
 
-        // Verifica que los datos sean un arreglo de inmuebles
         if (Array.isArray(data)) {
           setInmuebles(data);
         } else {

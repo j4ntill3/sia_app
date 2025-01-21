@@ -1,7 +1,7 @@
 type Inmueble = {
   id: number;
   title: string;
-  idRubro: number;
+  idRubro: string | number; // Ahora es el nombre del rubro
   localidad: string;
   direccion: string;
   barrio: string;
@@ -9,8 +9,9 @@ type Inmueble = {
   numBaños: number;
   superficie: number;
   garaje: boolean;
-  estado: string;
   eliminado: boolean;
+  estado: string | number; // Ahora es el nombre del estado
+  ruta_imagen: string;
 };
 
 export default Inmueble;

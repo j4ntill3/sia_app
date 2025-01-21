@@ -7,9 +7,10 @@ interface AgenteItemProps {
     empleado: Empleado;
     persona: Persona;
   };
+  onView: (id: number) => void;
 }
 
-const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
+const AgenteItem: React.FC<AgenteItemProps> = ({ agente, onView }) => {
   const { empleado, persona } = agente;
 
   return (
@@ -37,6 +38,14 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
         >
           {empleado.eliminado ? "Eliminado" : "Activo"}
         </span>
+      </td>
+      <td className="px-4 py-2 text-center">
+        <button
+          onClick={() => onView(empleado.id)}
+          className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+        >
+          Ver
+        </button>
       </td>
     </tr>
   );
