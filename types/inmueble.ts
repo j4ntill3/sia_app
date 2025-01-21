@@ -1,16 +1,16 @@
 type Inmueble = {
   id: number;
   title: string;
-  idRubro: number;
+  idRubro: string | number; // Ahora es el nombre del rubro
   localidad: string;
   direccion: string;
-  barrio?: string; // Se mantiene opcional si puede ser nulo
-  numHabitaciones?: number; // Se mantiene opcional si puede ser nulo
-  numBaños?: number; // Se mantiene opcional si puede ser nulo
-  superficie?: number; // Se mantiene opcional si puede ser nulo
-  garaje?: boolean; // Se mantiene opcional si puede ser nulo
+  barrio: string;
+  numHabitaciones: number;
+  numBaños: number;
+  superficie: number;
+  garaje: boolean;
   eliminado: boolean;
-  id_estado: number; // Sigue siendo obligatorio
+  estado: string | number; // Ahora es el nombre del estado
   ruta_imagen: string;
 };
 

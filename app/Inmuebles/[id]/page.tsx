@@ -70,7 +70,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
     superficie,
     garaje,
     eliminado,
-    id_estado,
+    estado,
     ruta_imagen,
   } = inmueble;
 
@@ -90,7 +90,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
             <span className="font-semibold text-gray-800">Título:</span> {title}
           </p>
           <p className="text-gray-600">
-            <span className="font-semibold text-gray-800">Rubro ID:</span>{" "}
+            <span className="font-semibold text-gray-800">Rubro:</span>{" "}
             {idRubro}
           </p>
           <p className="text-gray-600">
@@ -131,7 +131,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
           </p>
           <p className="text-gray-600">
             <span className="font-semibold text-gray-800">Estado:</span>{" "}
-            {id_estado}
+            {estado}
           </p>
         </div>
       </div>
