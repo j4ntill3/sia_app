@@ -1,7 +1,7 @@
-type inmueble_imagen = {
+export type InmuebleImagen = {
   id: number;
   id_inmueble: number;
   ruta_imagen: string;
 };
 
-export default inmueble_imagen;
+export default InmuebleImagen;
