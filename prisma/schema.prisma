@@ -18,16 +18,15 @@ model inmueble {
   num_baños       Int               @map("num_baños")
   superficie       Float
   garaje           Boolean
-  eliminado        Boolean          @default(false)
+  eliminado        Boolean?          @default(false)
   id_estado        Int
   inmueble_rubro   inmueble_rubro    @relation(fields: [id_rubro], references: [id], onDelete: Cascade, map: "fk_inmueble_rubro")
-  inmueble_estado  inmueble_estado   @relation(fields: [id_estado], references: [id], onDelete: Cascade, map: "fk_inmueble_estado")
+  inmueble_estado  inmueble_estado   @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inmueble_estado")
   inmueble_imagen  inmueble_imagen[]
 
   @@index([id_estado], map: "fk_inmueble_estado")
   @@index([id_rubro], map: "fk_inmueble_rubro")
 }
-
 
 model persona {
   id               Int                @id @default(autoincrement())
@@ -110,7 +109,7 @@ model rol_usuario {
 model inmueble_estado {
   id       Int        @id @default(autoincrement())
   estado   String     @db.VarChar(255)
-  inmueble inmueble[] 
+  inmueble inmueble[]
 }
 
 model inmueble_rubro {
@@ -127,4 +126,27 @@ model inmueble_imagen {
   inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_inmueble_imagen_inmueble")
 
   @@index([id_inmueble], map: "fk_inmueble_imagen_inmueble")
+}
+
+model oauth_access_tokens {
+  id           Int       @id @default(autoincrement())
+  access_token String    @db.VarChar(255)
+  user_id      Int
+  expires_at   DateTime  @db.DateTime(0)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model oauth_authorization_codes {
+  authorization_code String   @id @db.VarChar(255)
+  redirect_uri       String   @db.VarChar(2048)
+  user_id            Int
+  expires_at         DateTime @db.DateTime(0)
+}
+
+model oauth_refresh_tokens {
+  id            Int       @id @default(autoincrement())
+  refresh_token String    @unique(map: "unique_refresh_token") @db.VarChar(255)
+  user_id       Int
+  expires_at    DateTime  @db.DateTime(0)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
 }

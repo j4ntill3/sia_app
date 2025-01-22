@@ -10,14 +10,17 @@ export async function GET(
   const { id } = await params; // Asegurándonos de esperar a los parámetros
 
   try {
-    const inmuebleData = await prisma.inmueble.findUnique({
-      where: { id: Number(id) },
+    const inmuebleData = await prisma.inmueble.findFirst({
+      where: {
+        id: Number(id),
+        eliminado: false, // Solo devolver inmuebles que no estén eliminados
+      },
       include: {
         inmueble_estado: {
-          select: { estado: true }, // Incluye solo el nombre del estado
+          select: { estado: true },
         },
         inmueble_rubro: {
-          select: { rubro: true }, // Incluye solo el nombre del rubro
+          select: { rubro: true },
         },
         inmueble_imagen: true,
       },
@@ -29,10 +32,6 @@ export async function GET(
         headers: { "Content-Type": "application/json" },
       });
     }
-
-    const rutaImagen =
-      inmuebleData.inmueble_imagen?.[0]?.ruta_imagen ||
-      "/img/image-icon-600nw-211642900.webp";
 
     // Estructurando el objeto conforme al tipo 'Inmueble'
     const inmueble: Inmueble = {
