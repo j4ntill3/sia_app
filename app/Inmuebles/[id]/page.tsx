@@ -6,6 +6,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   const [inmueble, setInmueble] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [id, setId] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false); // Estado para el modal de confirmación
 
   useEffect(() => {
     const resolveParams = async () => {
@@ -32,13 +33,32 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
         const data = await response.json();
         setInmueble(data);
       } catch (err: any) {
-        console.error(err);
         setError(err.message || "Ocurrió un error al cargar los detalles.");
       }
     };
 
     fetchInmueble();
   }, [id]);
+
+  const handleDelete = async () => {
+    if (!id) return;
+
+    try {
+      const response = await fetch(`/api/inmuebles/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Error al eliminar el inmueble");
+
+      const data = await response.json();
+      alert("Inmueble eliminado exitosamente.");
+      setInmueble(null); // Limpia el estado tras la eliminación
+      setShowConfirm(false); // Cierra el modal
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Ocurrió un error al eliminar el inmueble.");
+    }
+  };
 
   if (error) {
     return (
@@ -126,14 +146,40 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
             {garaje ? "Sí" : "No"}
           </p>
           <p className="text-gray-600">
-            <span className="font-semibold text-gray-800">Eliminado:</span>{" "}
-            {eliminado ? "Sí" : "No"}
-          </p>
-          <p className="text-gray-600">
             <span className="font-semibold text-gray-800">Estado:</span>{" "}
             {estado}
           </p>
         </div>
+        <button
+          onClick={() => setShowConfirm(true)}
+          className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+        >
+          Eliminar
+        </button>
+
+        {showConfirm && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <p className="text-gray-800 font-semibold mb-4">
+                ¿Estás seguro que deseas realizar esta acción?
+              </p>
+              <div className="flex space-x-4">
+                <button
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                >
+                  Eliminar
+                </button>
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
