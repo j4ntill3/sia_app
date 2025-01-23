@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { InmuebleRubro } from "@/types/inmueble_rubro";
 import { InmuebleEstado } from "@/types/inmueble_estado";
+import { getSession } from "@/actions/auth-actions";
 
 type FormData = {
   title: string;
