@@ -54,14 +54,18 @@ model sesion {
 }
 
 model usuario {
-  id         Int         @id @default(autoincrement())
-  id_rol     Int
-  clave      String
-  id_persona Int
-  eliminado  Boolean
-  sesion     sesion[]
-  persona    persona     @relation(fields: [id_persona], references: [id], map: "Usuario_id_persona_fkey")
-  rolusuario rol_usuario @relation(fields: [id_rol], references: [id], map: "Usuario_id_rol_fkey")
+  id            Int         @id @default(autoincrement())
+  id_rol        Int
+  clave         String
+  id_persona    Int
+  eliminado     Boolean
+  emailVerified DateTime?   @db.DateTime(0)
+  createdAt     DateTime?   @default(now()) @db.DateTime(0)
+  updatedAt     DateTime?   @default(now()) @db.DateTime(0)
+  account       account?
+  sesion        sesion[]
+  persona       persona     @relation(fields: [id_persona], references: [id], map: "Usuario_id_persona_fkey")
+  rolusuario    rol_usuario @relation(fields: [id_rol], references: [id], map: "Usuario_id_rol_fkey")
 
   @@index([id_persona], map: "Usuario_id_persona_fkey")
   @@index([id_rol], map: "Usuario_id_rol_fkey")
@@ -150,4 +154,32 @@ model oauth_refresh_tokens {
   created_at    DateTime? @default(now()) @db.Timestamp(0)
 }
 
+model account {
+  id                       String    @id @default(dbgenerated("(uuid())")) @db.VarChar(36)
+  userId                   Int       @unique(map: "userId")
+  type                     String    @db.VarChar(255)
+  provider                 String    @db.VarChar(255)
+  providerAccountId        String    @db.VarChar(255)
+  refresh_token            String?   @db.Text
+  access_token             String?   @db.Text
+  expires_at               Int?
+  token_type               String?   @db.VarChar(255)
+  scope                    String?   @db.VarChar(255)
+  id_token                 String?   @db.Text
+  session_state            String?   @db.VarChar(255)
+  refresh_token_expires_in Int?
+  createdAt                DateTime? @default(now()) @db.DateTime(0)
+  updatedAt                DateTime? @default(now()) @db.DateTime(0)
+  usuario                  usuario   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "account_ibfk_1")
 
+  @@unique([provider, providerAccountId], map: "provider")
+  @@index([userId], map: "userId_2")
+}
+
+model verificationtoken {
+  identifier String   @db.VarChar(255)
+  token      String   @db.VarChar(255)
+  expires    DateTime @db.DateTime(0)
+
+  @@unique([identifier, token], map: "identifier")
+}
