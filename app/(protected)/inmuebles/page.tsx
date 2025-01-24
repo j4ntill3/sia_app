@@ -1,41 +1,69 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "@/actions/auth-actions";
+import { getSession } from "@/actions/auth-actions"; // Lógica de autenticación
 import InmuebleCard from "@/app/components/InmuebleCard";
 import type Inmueble from "@/types/inmueble";
 
 const Inmuebles = () => {
-  const [session, setSession] = useState<any>(null);
-  const [inmuebles, setInmuebles] = useState<Inmueble[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para manejar la carga
+  const [session, setSession] = useState<any>(null); // Sesión actual
+  const [inmuebles, setInmuebles] = useState<Inmueble[]>([]); // Lista de inmuebles
+  const [error, setError] = useState<string | null>(null); // Estado de errores
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+
+  // Función para autenticar al usuario
+  const authenticateUser = async () => {
+    try {
+      const sessionData = await getSession();
+
+      if (!sessionData) {
+        setError("No autenticado. Por favor inicia sesión.");
+        return null;
+      }
+
+      if (
+        sessionData.user.role !== "administrador" &&
+        sessionData.user.role !== "agente"
+      ) {
+        setError("No autorizado para acceder a esta página.");
+        return null;
+      }
+
+      setSession(sessionData);
+      return sessionData;
+    } catch (err) {
+      setError("Error al autenticar al usuario.");
+      return null;
+    }
+  };
+
+  // Función para obtener los inmuebles
+  const fetchInmuebles = async () => {
+    try {
+      const response = await fetch("/api/inmuebles");
+      if (!response.ok) {
+        throw new Error("Error al obtener los inmuebles.");
+      }
+
+      const inmueblesData = await response.json();
+      setInmuebles(inmueblesData);
+    } catch (err) {
+      setError("Error al obtener los inmuebles.");
+    }
+  };
 
   useEffect(() => {
-    const fetchSessionAndInmuebles = async () => {
-      try {
-        const sessionData = await getSession();
+    const init = async () => {
+      const userSession = await authenticateUser();
 
-        if (!sessionData) {
-          setError("No autenticado. Por favor inicia sesión.");
-          return;
-        }
-
-        setSession(sessionData);
-
-        const response = await fetch("/api/inmuebles");
-        if (!response.ok) throw new Error("Error al obtener los inmuebles");
-
-        const data = await response.json();
-        setInmuebles(data);
-      } catch (err) {
-        setError("Error al obtener inmuebles o sesión.");
-      } finally {
-        setIsLoading(false); // Finaliza la carga
+      if (userSession) {
+        await fetchInmuebles();
       }
+
+      setIsLoading(false); // Finaliza la carga al completar
     };
 
-    fetchSessionAndInmuebles();
+    init();
   }, []);
 
   // Mostrar un mensaje de carga mientras se resuelve la sesión y los datos
@@ -67,6 +95,7 @@ const Inmuebles = () => {
     );
   }
 
+  // Renderizar los inmuebles
   return (
     <div className="flex flex-wrap justify-center gap-6 bg-gray-100 p-4">
       {inmuebles.length === 0 ? (

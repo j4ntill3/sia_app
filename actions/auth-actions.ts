@@ -42,3 +42,17 @@ export async function getSession() {
   const session = await auth();
   return session;
 }
+
+export async function verifyAuth(requiredRole?: string) {
+  const session = await auth();
+
+  if (!session) {
+    return { status: "not_authenticated", session: null };
+  }
+
+  if (requiredRole && session.user?.role !== requiredRole) {
+    return { status: "not_authorized", session };
+  }
+
+  return { status: "authenticated", session };
+}

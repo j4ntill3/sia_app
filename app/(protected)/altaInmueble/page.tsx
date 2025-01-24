@@ -34,6 +34,9 @@ export default function CrearInmueble() {
 
   const [rubros, setRubros] = useState<InmuebleRubro[]>([]);
   const [estados, setEstados] = useState<InmuebleEstado[]>([]);
+  const [session, setSession] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // Agregado para mostrar el estado de carga
 
   useEffect(() => {
     const fetchRubros = async () => {
@@ -52,6 +55,35 @@ export default function CrearInmueble() {
     fetchEstados();
   }, []);
 
+  // Función de autenticación
+  const authenticateUser = async () => {
+    try {
+      const sessionData = await getSession();
+
+      if (!sessionData) {
+        setError("No autenticado. Por favor inicia sesión.");
+        setLoading(false); // Finalizamos el estado de carga
+        return;
+      }
+
+      if (sessionData.user.role !== "administrador") {
+        setError("No autorizado para acceder a esta página.");
+        setLoading(false); // Finalizamos el estado de carga
+        return;
+      }
+
+      setSession(sessionData);
+      setLoading(false); // Finalizamos el estado de carga
+    } catch (err) {
+      setError("Error al autenticar al usuario.");
+      setLoading(false); // Finalizamos el estado de carga
+    }
+  };
+
+  useEffect(() => {
+    authenticateUser();
+  }, []);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -66,22 +98,19 @@ export default function CrearInmueble() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Asegurarse de convertir los valores de los campos numéricos
     const inmuebleData = {
       ...formData,
-      id_rubro: Number(formData.id_rubro), // Convertir a número
-      id_estado: Number(formData.id_estado), // Convertir a número
-      num_habitaciones: Number(formData.num_habitaciones), // Convertir a número
-      num_baños: Number(formData.num_baños), // Convertir a número
-      superficie: Number(formData.superficie), // Convertir a número
-      ruta_imagen: "/img/imagen_generica.webp", // Usar imagen genérica
-      eliminado: false, // Campo eliminado agregado como 'false'
+      id_rubro: Number(formData.id_rubro),
+      id_estado: Number(formData.id_estado),
+      num_habitaciones: Number(formData.num_habitaciones),
+      num_baños: Number(formData.num_baños),
+      superficie: Number(formData.superficie),
+      ruta_imagen: "/img/imagen_generica.webp",
+      eliminado: false,
     };
 
-    // Mostrar los datos del formulario por consola para verificar
     console.log("Datos del formulario a enviar:", inmuebleData);
 
-    // Enviar la información del inmueble con los nuevos datos
     try {
       const response = await fetch("/api/inmuebles", {
         method: "POST",
@@ -104,8 +133,32 @@ export default function CrearInmueble() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-gray-600">Cargando...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-gray-600">{error}</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-gray-600">No autenticado o no autorizado.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center bg-gray-100">
       <div className="w-full max-w-lg p-8 bg-white shadow-md rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
           Crear Inmueble
