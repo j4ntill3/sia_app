@@ -20,7 +20,7 @@ export default {
           );
         }
 
-        // Buscar el usuario en la base de datos
+        // Buscar el usuario en la base de datos con su rol
         const user = await prisma.usuario.findFirst({
           where: {
             eliminado: false, // Verificar que el usuario no esté eliminado
@@ -34,6 +34,11 @@ export default {
             persona: {
               select: {
                 email: true, // Obtener el email de la persona
+              },
+            },
+            rolusuario: {
+              select: {
+                tipo_rol: true, // Obtener el tipo de rol
               },
             },
           },
@@ -51,17 +56,17 @@ export default {
           throw new Error("Credenciales inválidas");
         }
 
-        // Si todo es correcto, devolver el usuario
+        // Si todo es correcto, devolver el usuario con su rol
         return {
-          id: user.persona.email, // Devuelve el email del usuario
-          email: user.persona.email,
+          id: user.persona.email, // ID único del usuario basado en el email
+          email: user.persona.email, // Email del usuario
+          role: user.rolusuario.tipo_rol, // Rol del usuario
         };
       },
     }),
   ],
   pages: {
-    // Redirigir a la página de inicio (home) después de un login exitoso
     signIn: "/", // Página a la que redirige si el usuario no está autenticado
-    error: "/error", // Página en caso de error, si se desea redirigir a una página de error personalizada
+    error: "/error", // Página en caso de error
   },
 } satisfies NextAuthConfig;
