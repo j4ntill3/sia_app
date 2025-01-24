@@ -7,6 +7,10 @@ export default async function pruebaAuth() {
     return <div>Not authenticated</div>;
   }
 
+  if (session?.user?.role !== "administrador") {
+    return <div>Not autorized</div>;
+  }
+
   return (
     <div className="container">
       <pre>{JSON.stringify(session, null, 2)}</pre>

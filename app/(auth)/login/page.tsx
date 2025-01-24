@@ -1,17 +1,55 @@
 "use client";
 
 import { useState } from "react";
-import { loginAction } from "@/actions/auth-actions";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Datos ingresados:", { email, password });
 
-    await loginAction(email, password);
+    if (!email) {
+      setErrorMessage("Por favor ingresa tu email.");
+      setSuccessMessage("");
+      return;
+    }
+
+    if (!password) {
+      setErrorMessage("Por favor ingresa tu contraseña.");
+      setSuccessMessage("");
+      return;
+    }
+
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    try {
+      const result = await signIn("credentials", {
+        email: email,
+        password: password,
+        redirect: false, // Desactivar redirección automática
+        callbackUrl: "/home", // Redirigir al home si el login es exitoso
+      });
+
+      if (result?.error) {
+        setErrorMessage(result.error);
+        setSuccessMessage("");
+      } else if (result?.status === 200) {
+        setSuccessMessage("¡Login exitoso!");
+        console.log("Login exitoso con:", { email, password });
+
+        // Redirigir manualmente en caso de que callbackUrl no funcione
+        window.location.href = "/"; // Fuerza la redirección
+      }
+    } catch (error: any) {
+      setErrorMessage(error?.message || "Error en el inicio de sesión.");
+      setSuccessMessage("");
+      console.log("Error en el login:", error);
+    }
   };
 
   return (
@@ -53,6 +91,14 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
+          {errorMessage && (
+            <div className="mb-4 text-red-500 text-sm">{errorMessage}</div>
+          )}
+          {successMessage && (
+            <div className="mb-4 text-green-500 text-sm">{successMessage}</div>
+          )}
+
           <button
             type="submit"
             className="w-full bg-gray-800 text-white py-2 px-4"
