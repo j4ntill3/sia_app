@@ -2,63 +2,84 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getSession } from "@/actions/auth-actions";
+import { getSession } from "@/actions/auth-actions"; // Función de autenticación
 
 const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
-  const [session, setSession] = useState<any>(null);
-  const [inmueble, setInmueble] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [id, setId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Nuevo estado de carga
+  const [session, setSession] = useState<any>(null); // Estado de sesión
+  const [inmueble, setInmueble] = useState<any>(null); // Estado del inmueble
+  const [error, setError] = useState<string | null>(null); // Estado de error
+  const [id, setId] = useState<string | null>(null); // ID del inmueble
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga
   const router = useRouter();
 
-  // Validación de sesión y carga de parámetros
+  // Función para autenticar al usuario
+  const authenticateUser = async () => {
+    try {
+      const sessionData = await getSession();
+
+      if (!sessionData) {
+        setError("No autenticado. Por favor inicia sesión.");
+        return null;
+      }
+
+      if (
+        sessionData.user.role !== "administrador" &&
+        sessionData.user.role !== "agente"
+      ) {
+        setError("No autorizado para acceder a esta página.");
+        return null;
+      }
+
+      setSession(sessionData);
+      return sessionData;
+    } catch (err) {
+      setError("Error al autenticar al usuario.");
+      return null;
+    }
+  };
+
+  // Función para obtener los detalles del inmueble
+  const fetchInmueble = async (id: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/inmuebles/${id}`);
+      if (!response.ok) throw new Error("Error al obtener el inmueble");
+
+      const data = await response.json();
+      setInmueble(data);
+    } catch {
+      setError("Ocurrió un error al cargar los detalles.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Resolución de parámetros y autenticación
   useEffect(() => {
     const resolveSessionAndParams = async () => {
       try {
-        const sessionData = await getSession();
-
-        if (!sessionData) {
-          setError("No autenticado. Por favor inicia sesión.");
-          return;
-        }
-
-        setSession(sessionData);
+        const sessionData = await authenticateUser();
+        if (!sessionData) return;
 
         const resolvedParams = await params;
-        setId(resolvedParams.id);
+        const inmuebleId = resolvedParams.id;
+        setId(inmuebleId);
+
+        // Solo se obtiene el inmueble si se obtuvo correctamente el ID
+        if (inmuebleId) {
+          await fetchInmueble(inmuebleId);
+        }
       } catch {
         setError("No se pudieron obtener los datos necesarios.");
       } finally {
-        setIsLoading(false); // Finalizar la carga
+        setIsLoading(false); // Finaliza la carga
       }
     };
 
     resolveSessionAndParams();
   }, [params]);
 
-  // Carga de detalles del inmueble
-  useEffect(() => {
-    if (!id) return;
-
-    const fetchInmueble = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`/api/inmuebles/${id}`);
-        if (!response.ok) throw new Error("Error al obtener el inmueble");
-
-        const data = await response.json();
-        setInmueble(data);
-      } catch {
-        setError("Ocurrió un error al cargar los detalles.");
-      } finally {
-        setIsLoading(false); // Finalizar la carga
-      }
-    };
-
-    fetchInmueble();
-  }, [id]);
-
+  // Función de eliminación de inmueble
   const handleDelete = async () => {
     if (!id) return;
 
@@ -79,7 +100,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
       }
 
       alert("Inmueble eliminado exitosamente.");
-      router.push("/inmuebles"); // Redirigir a la página /inmuebles
+      router.push("/inmuebles"); // Redirige a la página de inmuebles
     } catch (err: any) {
       console.error(err);
       alert(err.message || "Ocurrió un error al eliminar el inmueble.");
@@ -126,6 +147,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
     );
   }
 
+  // Desestructuración de los datos del inmueble
   const {
     title,
     idRubro,

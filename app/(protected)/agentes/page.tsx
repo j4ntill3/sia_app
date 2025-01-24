@@ -1,30 +1,97 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { getSession } from "@/actions/auth-actions"; // Lógica de autenticación
 import AgenteItem from "@/app/components/AgenteItem";
 
 const Agentes = () => {
-  const [agentes, setAgentes] = useState<any[]>([]);
+  const [session, setSession] = useState<any>(null); // Sesión actual
+  const [agentes, setAgentes] = useState<any[]>([]); // Lista de agentes
+  const [error, setError] = useState<string | null>(null); // Estado de errores
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+
+  // Función para autenticar al usuario
+  const authenticateUser = async () => {
+    try {
+      const sessionData = await getSession();
+
+      if (!sessionData) {
+        setError("No autenticado. Por favor inicia sesión.");
+        return null;
+      }
+
+      if (sessionData.user.role !== "administrador") {
+        setError("No autorizado para acceder a esta página.");
+        return null;
+      }
+
+      setSession(sessionData);
+      return sessionData;
+    } catch (err) {
+      setError("Error al autenticar al usuario.");
+      return null;
+    }
+  };
+
+  // Función para obtener los agentes
+  const fetchAgentes = async () => {
+    try {
+      const response = await fetch("/api/agentes");
+      if (!response.ok) {
+        throw new Error("Error al obtener los agentes.");
+      }
+
+      const agentesData = await response.json();
+      setAgentes(agentesData);
+    } catch (err) {
+      setError("Error al obtener los agentes.");
+    }
+  };
 
   useEffect(() => {
-    const fetchAgentes = async () => {
-      try {
-        const response = await fetch("/api/agentes");
+    const init = async () => {
+      const userSession = await authenticateUser();
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setAgentes(data);
-      } catch (error) {
-        console.error("Error fetching agentes:", error);
+      if (userSession) {
+        await fetchAgentes();
       }
+
+      setIsLoading(false); // Finaliza la carga al completar
     };
 
-    fetchAgentes();
+    init();
   }, []);
 
+  // Mostrar un mensaje de carga mientras se resuelve la sesión y los datos
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-gray-600">Cargando...</p>
+      </div>
+    );
+  }
+
+  // Mostrar errores si ocurren
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-gray-600">{error}</p>
+      </div>
+    );
+  }
+
+  // Mostrar mensaje si no hay sesión
+  if (!session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-gray-600">
+          No autenticado. Por favor inicia sesión.
+        </p>
+      </div>
+    );
+  }
+
+  // Renderizar la tabla de agentes
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
       <div className="w-full max-w-4xl bg-white p-6 shadow-lg rounded-lg">

@@ -1,14 +1,14 @@
-import { auth } from "@/auth";
+import { verifyAuth } from "@/actions/auth-actions";
 
-export default async function pruebaAuth() {
-  const session = await auth();
+export default async function PruebaAuth() {
+  const { status, session } = await verifyAuth("administrador");
 
-  if (!session) {
-    return <div>Not authenticated</div>;
+  if (status === "not_authenticated") {
+    return <div>No autenticado</div>;
   }
 
-  if (session?.user?.role !== "administrador") {
-    return <div>Not autorized</div>;
+  if (status === "not_authorized") {
+    return <div>No autorizado</div>;
   }
 
   return (

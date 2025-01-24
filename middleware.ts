@@ -11,7 +11,7 @@ export default middleware((req) => {
   const isLoggedIn = !!auth?.user;
 
   if (!publicRoutes.includes(nextUrl.pathname) && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/login", nextUrl));
+    //return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
   return NextResponse.next();
