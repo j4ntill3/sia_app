@@ -36,7 +36,7 @@ export default function CrearInmueble() {
   const [estados, setEstados] = useState<InmuebleEstado[]>([]);
   const [session, setSession] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // Agregado para mostrar el estado de carga
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchRubros = async () => {
