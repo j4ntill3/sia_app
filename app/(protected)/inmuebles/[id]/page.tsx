@@ -250,6 +250,17 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
                   </option>
                 ))}
               </select>
+            ) : editField === "garaje" ? (
+              // Estado como select
+              <select
+                value={newValue}
+                onChange={(e) => setNewValue(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded mb-4"
+              >
+                <option value="">Seleccionar garaje</option>
+                <option value="true">Si</option>
+                <option value="false">No</option>
+              </select>
             ) : (
               // Otros campos como input (numérico o texto según corresponda)
               <input
