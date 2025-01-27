@@ -1,13 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation"; // Importa useRouter desde next/navigation en lugar de next/router
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  const router = useRouter(); // Asegúrate de que esto se importa desde 'next/navigation'
+
+  useEffect(() => {
+    setIsMounted(true); // Establece el estado como 'true' una vez que el componente esté montado
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,13 +35,14 @@ export default function Login() {
 
     setErrorMessage("");
     setSuccessMessage("");
+    setLoading(true);
 
     try {
       const result = await signIn("credentials", {
         email: email,
         password: password,
         redirect: false, // Desactivar redirección automática
-        callbackUrl: "/home", // Redirigir al home si el login es exitoso
+        callbackUrl: "/", // Redirigir al home si el login es exitoso
       });
 
       if (result?.error) {
@@ -42,15 +52,23 @@ export default function Login() {
         setSuccessMessage("¡Login exitoso!");
         console.log("Login exitoso con:", { email, password });
 
-        // Redirigir manualmente en caso de que callbackUrl no funcione
-        window.location.href = "/"; // Fuerza la redirección
+        // Redirige con el router si la página está montada
+        if (isMounted) {
+          router.push("/");
+        }
       }
     } catch (error: any) {
       setErrorMessage(error?.message || "Error en el inicio de sesión.");
       setSuccessMessage("");
       console.log("Error en el login:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (!isMounted) {
+    return null; // No renderiza nada hasta que esté montado
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
@@ -102,8 +120,9 @@ export default function Login() {
           <button
             type="submit"
             className="w-full bg-gray-800 text-white py-2 px-4"
+            disabled={loading}
           >
-            Ingresar
+            {loading ? "Cargando..." : "Ingresar"}
           </button>
         </form>
       </div>

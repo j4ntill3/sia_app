@@ -22,6 +22,7 @@ model inmueble {
   id_estado        Int
   inmueble_rubro   inmueble_rubro    @relation(fields: [id_rubro], references: [id], onDelete: Cascade, map: "fk_inmueble_rubro")
   inmueble_estado  inmueble_estado   @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inmueble_estado")
+  inmueble_agente  inmueble_agente[]
   inmueble_imagen  inmueble_imagen[]
 
   @@index([id_estado], map: "fk_inmueble_estado")
@@ -79,6 +80,7 @@ model empleado {
   tipoId           Int
   eliminado        Boolean
   empleado_tipo    empleado_tipo      @relation(fields: [tipoId], references: [id], map: "Empleado_tipoId_fkey")
+  inmueble_agente  inmueble_agente[]
   persona_empleado persona_empleado[]
 
   @@index([tipoId], map: "Empleado_tipoId_fkey")
@@ -182,4 +184,16 @@ model verificationtoken {
   expires    DateTime @db.DateTime(0)
 
   @@unique([identifier, token], map: "identifier")
+}
+
+model inmueble_agente {
+  id          BigInt   @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  id_inmueble Int
+  id_agente   Int
+  eliminado   Boolean? @default(false)
+  inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inmueble_agente_ibfk_1")
+  empleado    empleado @relation(fields: [id_agente], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inmueble_agente_ibfk_2")
+
+  @@index([id_agente], map: "id_agente")
+  @@index([id_inmueble], map: "id_inmueble")
 }

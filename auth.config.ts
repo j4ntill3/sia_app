@@ -9,7 +9,6 @@ export default {
   providers: [
     Credentials({
       authorize: async (credentials) => {
-        // Verificar que las credenciales sean de tipo string
         if (
           !credentials ||
           typeof credentials.email !== "string" ||
@@ -20,53 +19,72 @@ export default {
           );
         }
 
-        // Buscar el usuario en la base de datos con su rol
         const user = await prisma.usuario.findFirst({
           where: {
-            eliminado: false, // Verificar que el usuario no esté eliminado
+            eliminado: false,
             persona: {
-              email: credentials.email, // Verificar el email
-              eliminado: false, // Verificar que la persona asociada no esté eliminada
+              email: credentials.email,
+              eliminado: false,
             },
           },
           select: {
-            clave: true, // Obtener la clave (contraseña)
+            clave: true,
             persona: {
               select: {
-                email: true, // Obtener el email de la persona
+                id: true,
+                email: true,
+                persona_empleado: {
+                  where: { eliminado: false },
+                  select: {
+                    idempleado: true, // Seleccionar el ID del empleado
+                  },
+                },
               },
             },
             rolusuario: {
               select: {
-                tipo_rol: true, // Obtener el tipo de rol
+                tipo_rol: true, // Seleccionar el tipo de rol
               },
             },
           },
         });
 
-        // Si no se encuentra el usuario, lanzar un error
         if (!user) {
           throw new Error("Credenciales inválidas");
         }
 
-        // Verifica si la contraseña proporcionada coincide con la almacenada en la base de datos
+        // Validar la contraseña
         const isValid = await bcrypt.compare(credentials.password, user.clave);
 
         if (!isValid) {
           throw new Error("Credenciales inválidas");
         }
 
-        // Si todo es correcto, devolver el usuario con su rol
+        // Extraer el empleadoId correctamente
+        const empleadoId =
+          user.persona.persona_empleado.length > 0
+            ? user.persona.persona_empleado[0].idempleado
+            : null;
+
+        console.log({
+          id: user.persona.id.toString(),
+          email: user.persona.email,
+          role: user.rolusuario.tipo_rol,
+          empleadoId,
+        });
+
+        // Retornar los datos de la sesión
         return {
-          id: user.persona.email, // ID único del usuario basado en el email
-          email: user.persona.email, // Email del usuario
-          role: user.rolusuario.tipo_rol, // Rol del usuario
+          id: user.persona.id.toString(),
+          email: user.persona.email,
+          role: user.rolusuario.tipo_rol,
+          empleadoId, // Incluir el empleadoId
         };
       },
     }),
   ],
   pages: {
-    signIn: "/", // Página a la que redirige si el usuario no está autenticado
-    error: "/error", // Página en caso de error
+    signIn: "/",
+    error: "/error",
   },
 } satisfies NextAuthConfig;

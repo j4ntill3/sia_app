@@ -34,31 +34,32 @@ export default function CrearAgente() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const authenticateUser = async () => {
-      try {
-        const sessionData = await getSession();
+  // Función de autenticación
+  const authenticateUser = async () => {
+    try {
+      const sessionData = await getSession();
 
-        if (!sessionData) {
-          setError("No autenticado. Por favor inicia sesión.");
-          setLoading(false);
-          return;
-        }
-
-        if (sessionData.user.role !== "administrador") {
-          setError("No autorizado para acceder a esta página.");
-          setLoading(false);
-          return;
-        }
-
-        setSession(sessionData);
-        setLoading(false);
-      } catch (err) {
-        setError("Error al autenticar al usuario.");
-        setLoading(false);
+      if (!sessionData) {
+        setError("No autenticado. Por favor inicia sesión.");
+        setLoading(false); // Finalizamos el estado de carga
+        return;
       }
-    };
 
+      if (sessionData.user.role !== "administrador") {
+        setError("No autorizado para acceder a esta página.");
+        setLoading(false); // Finalizamos el estado de carga
+        return;
+      }
+
+      setSession(sessionData);
+      setLoading(false); // Finalizamos el estado de carga
+    } catch (err) {
+      setError("Error al autenticar al usuario.");
+      setLoading(false); // Finalizamos el estado de carga
+    }
+  };
+
+  useEffect(() => {
     authenticateUser();
   }, []);
 
