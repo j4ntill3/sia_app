@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Persona from "@/types/persona";
 import Empleado from "@/types/empleado";
@@ -41,7 +43,7 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente, onView }) => {
       </td>
       <td className="px-4 py-2 text-center">
         <button
-          onClick={() => onView(empleado.id)}
+          onClick={() => onView(empleado.id)} // Llama a la función onView con el id del agente
           className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
         >
           Ver

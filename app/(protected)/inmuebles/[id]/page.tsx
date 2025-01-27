@@ -12,6 +12,8 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   const [error, setError] = useState<string | null>(null);
   const [id, setId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false); // imagen
+  const [imageFile, setImageFile] = useState<File | null>(null); // imagen
   const [editMode, setEditMode] = useState<boolean>(false); // Para saber si estamos en el modal de edición
   const [editField, setEditField] = useState<string>(""); // El campo que estamos editando
   const [newValue, setNewValue] = useState<string>("");
@@ -75,6 +77,76 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
     resolveSessionAndParams();
   }, [params]);
+
+  const handleDelete = async () => {
+    if (!id) return;
+
+    const confirmDelete = window.confirm(
+      "¿Estás seguro que deseas eliminar este inmueble?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`/api/inmuebles/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const { error } = await response.json();
+        throw new Error(error || "Error desconocido al eliminar el inmueble");
+      }
+
+      alert("Inmueble eliminado exitosamente.");
+      router.push("/inmuebles");
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Ocurrió un error al eliminar el inmueble.");
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  const handleSaveImage = async () => {
+    if (!imageFile || !id) return;
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Image = reader.result as string;
+
+      try {
+        const response = await fetch("/api/uploadImage", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            file: base64Image,
+            fileName: imageFile.name,
+            id_inmueble: id, // Pasamos el ID del inmueble
+          }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          setInmueble((prevState: any) => ({
+            ...prevState,
+            ruta_imagen: data.inmuebleImagen.ruta_imagen,
+          }));
+          setIsModalOpen(false);
+        } else {
+          setError("Error al guardar la imagen.");
+        }
+      } catch (error) {
+        setError("Error al conectar con el servidor.");
+      }
+    };
+    reader.readAsDataURL(imageFile);
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -205,16 +277,78 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
               <p>
                 <span className="font-semibold">{label}:</span> {value}
               </p>
-              <button
-                className="text-blue-600 hover:underline"
-                onClick={() => handleEdit(label.toLowerCase(), value)}
-              >
-                Editar
-              </button>
+              {session.user.role === "administrador" ? (
+                <button
+                  className="text-blue-600 hover:underline"
+                  onClick={() => handleEdit(label.toLowerCase(), value)}
+                >
+                  Editar
+                </button>
+              ) : null}
             </div>
           ))}
         </div>
+        {session.user.role === "administrador" ? (
+          <button
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-500"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Cambiar Imagen
+          </button>
+        ) : null}
+        {session.user.role === "administrador" ? (
+          <button
+            onClick={handleDelete}
+            className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md"
+          >
+            Eliminar
+          </button>
+        ) : null}
       </div>
+
+      {/* modal de cambio de imagen */}
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              Cambiar Imagen
+            </h3>
+            <form>
+              <div className="mb-4">
+                <label
+                  htmlFor="image"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Selecciona una imagen
+                </label>
+                <input
+                  type="file"
+                  id="image"
+                  className="mt-2 block w-full text-sm text-gray-700 border border-gray-300 rounded-lg"
+                  onChange={handleFileChange}
+                />
+              </div>
+              <div className="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow hover:bg-gray-400"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-500"
+                  onClick={handleSaveImage}
+                >
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Modal de edición */}
       {editMode && (
@@ -282,6 +416,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
               >
                 Cancelar
               </button>
+
               <button
                 onClick={handleSave}
                 className="bg-blue-600 text-white px-4 py-2 rounded"
