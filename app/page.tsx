@@ -118,14 +118,14 @@ export default function Home() {
           </Link>
         ) : null}
         {session.user.role === "agente" ? (
-          <Link href="/misClientes">
+          <Link href="/misConsultasClientes">
             <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
               Mis Clientes y Consultas
             </div>
           </Link>
         ) : null}
         {session.user.role === "agente" ? (
-          <Link href="/registrarClienteConsulta">
+          <Link href="/registrarConsultaCliente">
             <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
               Registrar Cliente y Consulta
             </div>

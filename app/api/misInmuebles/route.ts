@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     // Obtener la sesión utilizando tu función personalizada
     const session = await getSession();
     const agenteId = session?.user.id; // Esto depende de cómo almacenes el ID en el token
+    console.log("Datos de la sesión:", session);
 
     if (!agenteId) {
       return new Response(

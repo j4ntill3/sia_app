@@ -21,10 +21,7 @@ const misInmuebles = () => {
         return null;
       }
 
-      if (
-        sessionData.user.role !== "administrador" &&
-        sessionData.user.role !== "agente"
-      ) {
+      if (sessionData.user.role !== "agente") {
         setError("No autorizado para acceder a esta página.");
         return null;
       }

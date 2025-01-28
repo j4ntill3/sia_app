@@ -12,11 +12,11 @@ export default function RootLayout({
     <>
       <html lang="en">
         <body className="flex flex-col min-h-screen bg-gray-100">
-          <SessionProvider>
-            <Navbar />
-            {children}
-            <Footer />
-          </SessionProvider>
+          {/*<SessionProvider>*/}
+          <Navbar />
+          {children}
+          <Footer />
+          {/*</SessionProvider>*/}
         </body>
       </html>
     </>
