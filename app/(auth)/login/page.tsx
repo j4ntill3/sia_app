@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation"; // Importa useRouter desde next/navigation en lugar de next/router
@@ -72,38 +71,40 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="w-full max-w-sm p-8 bg-white shadow-md">
-        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
-          Acceso
+      <div className="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
+        {/* Cambio de rounded-lg a rounded-2xl */}
+        {/* Aplicamos el estilo para el título */}
+        <h2 className="text-3xl font-bold text-center mb-6 text-[#083C2C]">
+          Bienvenido a SIA
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]" // Cambié el color del label
             >
               Email
             </label>
             <input
               type="email"
               id="email"
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]" // Cambié el color del borde cuando el input se selecciona
               placeholder="Ingresa tu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-10">
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-800"
+              className="block font-sans text-sm font-medium text-[#083C2C]" // Cambié el color del label
             >
               Contraseña
             </label>
             <input
               type="password"
               id="password"
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]" // Cambié el color del borde cuando el input se selecciona
               placeholder="Ingresa tu contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -119,10 +120,10 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full bg-gray-800 text-white py-2 px-4"
+            className="w-full font-sans bg-[#6FC6D1] text-white py-2 px-4 rounded-full text-xs"
             disabled={loading}
           >
-            {loading ? "Cargando..." : "Ingresar"}
+            {loading ? "Cargando..." : "INGRESAR"}
           </button>
         </form>
       </div>

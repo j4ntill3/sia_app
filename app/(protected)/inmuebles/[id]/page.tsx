@@ -12,13 +12,15 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   const [error, setError] = useState<string | null>(null);
   const [id, setId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false); // imagen
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false); // Cambiar Imagen Modal
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null); // imagen
   const [editMode, setEditMode] = useState<boolean>(false); // Para saber si estamos en el modal de edición
   const [editField, setEditField] = useState<string>(""); // El campo que estamos editando
   const [newValue, setNewValue] = useState<string>("");
   const [rubros, setRubros] = useState<InmuebleRubro[]>([]);
-  const [estados, setEstados] = useState<InmuebleEstado[]>([]); // El nuevo valor para el campo
+  const [estados, setEstados] = useState<InmuebleEstado[]>([]);
+  const [agentId, setAgentId] = useState<number | null>(null); // El nuevo valor para el campo
 
   const router = useRouter();
 
@@ -77,6 +79,43 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
     resolveSessionAndParams();
   }, [params]);
+
+  const handleAssignAgent = async () => {
+    if (agentId && id) {
+      // Realizar la solicitud PUT a la API para asignar el agente
+      try {
+        const response = await fetch(`/api/asignacionAgente/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            agentId: agentId,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Error al asignar el agente.");
+        }
+
+        const data = await response.json();
+        console.log(data.message); // Mostrar mensaje de éxito
+
+        // Mostrar una alerta con el mensaje de éxito
+        alert("Agente asignado al inmueble con éxito");
+
+        setIsAgentModalOpen(false); // Cerrar el modal
+      } catch (error) {
+        console.error("Error al asignar el agente:", error);
+        setError("Ocurrió un error al asignar el agente.");
+      }
+    }
+  };
+
+  const closeModal = () => {
+    setIsImageModalOpen(false);
+    setIsAgentModalOpen(false); // Asegúrate de cerrar ambos modales
+  };
 
   const handleDelete = async () => {
     if (!id) return;
@@ -137,7 +176,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
             ...prevState,
             ruta_imagen: data.inmuebleImagen.ruta_imagen,
           }));
-          setIsModalOpen(false);
+          setIsImageModalOpen(false);
         } else {
           setError("Error al guardar la imagen.");
         }
@@ -251,64 +290,104 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-3xl bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          Detalles del Inmueble
-        </h2>
-        <img
-          src={ruta_imagen}
-          alt={`Imagen del inmueble: ${title}`}
-          className="w-full h-64 object-cover rounded-lg mb-4"
-        />
-        <div className="space-y-4">
-          {[
-            { label: "Título", value: title },
-            { label: "Rubro", value: id_rubro },
-            { label: "Localidad", value: localidad },
-            { label: "Dirección", value: direccion },
-            { label: "Barrio", value: barrio },
-            { label: "Habitaciones", value: num_habitaciones },
-            { label: "Baños", value: num_baños },
-            { label: "Superficie", value: `${superficie} m²` },
-            { label: "Garaje", value: garaje ? "Sí" : "No" },
-            { label: "Estado", value: estado },
-          ].map(({ label, value }) => (
-            <div key={label} className="flex justify-between items-center">
-              <p>
-                <span className="font-semibold">{label}:</span> {value}
-              </p>
-              {session.user.role === "administrador" ? (
-                <button
-                  className="text-blue-600 hover:underline"
-                  onClick={() => handleEdit(label.toLowerCase(), value)}
-                >
-                  Editar
-                </button>
-              ) : null}
+      <div className="min-h-screen flex items-start justify-center bg-gray-100 p-4">
+        <div className="w-full max-w-3xl bg-white shadow-md rounded-lg p-6">
+          <div className="space-y-4">
+            {[{ label: "Título", value: title }].map(({ label, value }) => (
+              <div key={label} className="flex justify-between items-center">
+                <p className=" text-[#083C2C] font-semibold">
+                  <span className="font-semibold"></span> {value}
+                </p>
+                {session.user.role === "administrador" && (
+                  <button
+                    className="p-0 m-0"
+                    onClick={() => handleEdit(label.toLowerCase(), value)}
+                  >
+                    <img
+                      src="/EDITAR-01.svg"
+                      alt="Editar"
+                      className="w-5 h-5" // Tamaño más pequeño
+                    />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          <img
+            src={ruta_imagen}
+            alt={`Imagen del inmueble: ${title}`}
+            className="w-full h-64 object-cover rounded-lg mt-4"
+          />
+          <div className="flex items-center mb-4 justify-end">
+            {session.user.role === "administrador" && (
+              <button
+                onClick={() => setIsImageModalOpen(true)}
+                className="p-0 m-0" // Esto elimina los márgenes y el padding
+              >
+                <img
+                  src="/CARGAR-DOCUMENTO-01.svg"
+                  alt="Cambiar Imagen"
+                  className="w-6 h-6" // Ajusta el tamaño según lo necesites
+                />
+              </button>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            {[
+              { label: "Rubro", value: id_rubro },
+              { label: "Localidad", value: localidad },
+              { label: "Dirección", value: direccion },
+              { label: "Barrio", value: barrio },
+              { label: "Habitaciones", value: num_habitaciones },
+              { label: "Baños", value: num_baños },
+              { label: "Superficie", value: `${superficie} m²` },
+              { label: "Garaje", value: garaje ? "Sí" : "No" },
+              { label: "Estado", value: estado },
+            ].map(({ label, value }) => (
+              <div key={label} className="flex justify-between items-center">
+                <p>
+                  <span className="font-semibold text-[#083C2C]">{label}:</span>{" "}
+                  {value}
+                </p>
+                {session.user.role === "administrador" && (
+                  <button
+                    className="p-0 m-0"
+                    onClick={() => handleEdit(label.toLowerCase(), value)}
+                  >
+                    <img
+                      src="/EDITAR-01.svg"
+                      alt="Editar"
+                      className="w-5 h-5" // Tamaño más pequeño
+                    />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {session.user.role === "administrador" && (
+            <div className="mt-6 space-y-4">
+              <button
+                onClick={() => setIsAgentModalOpen(true)}
+                className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full"
+              >
+                ASIGNAR AGENTE
+              </button>
+              <button
+                onClick={handleDelete}
+                className="w-full px-4 py-2 bg-white text-[#6FC6D1] rounded-full border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white"
+              >
+                ELIMINAR
+              </button>
             </div>
-          ))}
+          )}
         </div>
-        {session.user.role === "administrador" ? (
-          <button
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-500"
-            onClick={() => setIsModalOpen(true)}
-          >
-            Cambiar Imagen
-          </button>
-        ) : null}
-        {session.user.role === "administrador" ? (
-          <button
-            onClick={handleDelete}
-            className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md"
-          >
-            Eliminar
-          </button>
-        ) : null}
       </div>
 
       {/* modal de cambio de imagen */}
 
-      {isModalOpen && (
+      {isImageModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
@@ -333,7 +412,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
                 <button
                   type="button"
                   className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow hover:bg-gray-400"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => setIsImageModalOpen(false)}
                 >
                   Cancelar
                 </button>
@@ -422,6 +501,36 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
                 className="bg-blue-600 text-white px-4 py-2 rounded"
               >
                 Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal */}
+      {isAgentModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <h3 className="text-xl font-semibold mb-4">Asignar Agente</h3>
+            <input
+              type="number"
+              value={agentId ?? ""}
+              onChange={(e) => setAgentId(Number(e.target.value))}
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Ingrese el ID del agente"
+            />
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={closeModal}
+                className="py-2 px-4 bg-gray-400 text-white rounded-lg"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleAssignAgent}
+                className="py-2 px-4 bg-blue-500 text-white rounded-lg"
+              >
+                Asignar
               </button>
             </div>
           </div>

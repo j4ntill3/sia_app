@@ -18,11 +18,18 @@ const Navbar = () => {
   }, []); // Solo se ejecuta una vez al montar el componente
 
   return (
-    <nav className="relative flex justify-between bg-gray-800 p-4 w-full z-50">
-      <div className="flex items-center justify-between w-full">
-        <div className="text-white text-2xl font-bold">
-          <a href="/">SIA</a>
-        </div>
+    <nav className="relative flex justify-between bg-[#083C2C] p-4 w-full z-50">
+      <div className="flex items-center justify-between w-full flex-grow">
+        {/* Usamos el logo SVG guardado en public */}
+        <a href="/" className="flex items-center text-white">
+          <img
+            src="/SIA-LOGO-10.svg" // Cambia esto con el nombre de tu archivo SVG en public
+            alt="SIA Logo"
+            width={200} // Ajusta el tamaño según sea necesario
+            height={200} // Ajusta el tamaño según sea necesario
+            className="mr-2" // Espacio entre el logo y el texto, si es necesario
+          />
+        </a>
       </div>
 
       {/* Mostrar el botón de logout solo si hay sesión */}

@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth-actions";
 import Link from "next/link";
@@ -79,65 +78,72 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen justify-center">
-      <div className="flex flex-wrap items-center justify-center bg-gray-100 p-0">
-        {session.user.role === "administrador" ||
-        session.user.role === "agente" ? (
-          <Link href="/inmuebles">
-            <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
-              Inmuebles
-            </div>
-          </Link>
-        ) : null}
-        {session.user.role === "agente" ? (
-          <Link href="/misInmuebles">
-            <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
-              Mis Inmuebles
-            </div>
-          </Link>
-        ) : null}
-        {session.user.role === "administrador" ? (
-          <Link href="/altaInmueble">
-            <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
-              Alta Inmuebles
-            </div>
-          </Link>
-        ) : null}
-        {session.user.role === "administrador" ? (
-          <Link href="/agentes">
-            <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
-              Agentes
-            </div>
-          </Link>
-        ) : null}
-        {session.user.role === "administrador" ? (
-          <Link href="/altaAgente">
-            <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
-              Alta Agente
-            </div>
-          </Link>
-        ) : null}
-        {session.user.role === "agente" ? (
-          <Link href="/misConsultasClientes">
-            <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
-              Mis Clientes y Consultas
-            </div>
-          </Link>
-        ) : null}
-        {session.user.role === "agente" ? (
-          <Link href="/registrarConsultaCliente">
-            <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
-              Registrar Cliente y Consulta
-            </div>
-          </Link>
-        ) : null}
-        {session.user.role === "administrador" ? (
-          <Link href="/consultasClientes">
-            <div className="m-4 w-80 h-56 bg-white shadow-md rounded-lg active:shadow-inner active:bg-gray-200 flex items-center justify-center cursor-pointer">
-              Consultas Clientes
-            </div>
-          </Link>
-        ) : null}
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <div className="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
+        {/* Título de la carta */}
+        <h2 className="text-3xl font-bold text-center mb-6 text-[#083C2C]">
+          Opciones Disponibles
+        </h2>
+
+        <div className="flex flex-col gap-4 items-stretch">
+          {session.user.role === "administrador" ||
+          session.user.role === "agente" ? (
+            <Link href="/inmuebles">
+              <button className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full">
+                Inmuebles
+              </button>
+            </Link>
+          ) : null}
+          {session.user.role === "agente" ? (
+            <Link href="/misInmuebles">
+              <button className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full">
+                Mis Inmuebles
+              </button>
+            </Link>
+          ) : null}
+          {session.user.role === "administrador" ? (
+            <Link href="/altaInmueble">
+              <button className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full">
+                Alta Inmuebles
+              </button>
+            </Link>
+          ) : null}
+          {session.user.role === "administrador" ? (
+            <Link href="/agentes">
+              <button className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full">
+                Agentes
+              </button>
+            </Link>
+          ) : null}
+          {session.user.role === "administrador" ? (
+            <Link href="/altaAgente">
+              <button className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full">
+                Alta Agente
+              </button>
+            </Link>
+          ) : null}
+          {session.user.role === "agente" ? (
+            <Link href="/misConsultasClientes">
+              <button className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full">
+                Mis Clientes y Consultas
+              </button>
+            </Link>
+          ) : null}
+          {session.user.role === "agente" ? (
+            <Link href="/registrarConsultaCliente">
+              <button className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full">
+                Registrar Cliente y Consulta
+              </button>
+            </Link>
+          ) : null}
+          {session.user.role === "administrador" ? (
+            <Link href="/consultasClientes">
+              <button className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full">
+                Consultas Clientes
+              </button>
+            </Link>
+          ) : null}
+        </div>
       </div>
     </div>
   );

@@ -3,16 +3,12 @@
 import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth-actions"; // Lógica de autenticación
 import AgenteItem from "@/app/components/AgenteItem";
-import { useRouter } from "next/navigation"; // Cambiar de "next/router" a "next/navigation" en Next 13 y versiones posteriores
 
 const Agentes = () => {
   const [session, setSession] = useState<any>(null); // Sesión actual
   const [agentes, setAgentes] = useState<any[]>([]); // Lista de agentes
   const [error, setError] = useState<string | null>(null); // Estado de errores
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
-  const [isClient, setIsClient] = useState(false); // Estado para determinar si está en el cliente
-
-  const router = useRouter(); // Inicializa el enrutador de Next.js
 
   // Función para autenticar al usuario
   const authenticateUser = async () => {
@@ -52,15 +48,6 @@ const Agentes = () => {
     }
   };
 
-  // Función para redirigir al usuario al ver un agente
-  const handleView = (id: number) => {
-    router.push(`/agentes/${id}`); // Redirige a la ruta dinámica
-  };
-
-  useEffect(() => {
-    setIsClient(true); // Marca como cliente después del primer renderizado
-  }, []);
-
   useEffect(() => {
     const init = async () => {
       const userSession = await authenticateUser();
@@ -72,10 +59,8 @@ const Agentes = () => {
       setIsLoading(false); // Finaliza la carga al completar
     };
 
-    if (isClient) {
-      init();
-    }
-  }, [isClient]);
+    init();
+  }, []);
 
   // Mostrar un mensaje de carga mientras se resuelve la sesión y los datos
   if (isLoading) {
@@ -140,11 +125,7 @@ const Agentes = () => {
             </thead>
             <tbody>
               {agentes.map((agente) => (
-                <AgenteItem
-                  key={agente.empleado.id}
-                  agente={agente}
-                  onView={handleView} // Pasa la función al componente AgenteItem
-                />
+                <AgenteItem key={agente.empleado.id} agente={agente} />
               ))}
             </tbody>
           </table>
