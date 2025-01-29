@@ -132,16 +132,16 @@ export default function CrearAgente() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-100">
-      <div className="w-full max-w-lg p-8 bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
-          Crear Agente
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <div className="w-full max-w-sm px-8 bg-white shadow-md text-[#083C2C] rounded-2xl">
+        <h2 className="text-3xl font-bold pt-4 text-center text-[#083C2C]">
+          Alta Agente
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="nombre"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Nombre
             </label>
@@ -151,7 +151,7 @@ export default function CrearAgente() {
               name="nombre"
               value={formData.nombre}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa el nombre"
             />
           </div>
@@ -159,7 +159,7 @@ export default function CrearAgente() {
           <div className="mb-4">
             <label
               htmlFor="apellido"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Apellido
             </label>
@@ -169,7 +169,7 @@ export default function CrearAgente() {
               name="apellido"
               value={formData.apellido}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa el apellido"
             />
           </div>
@@ -177,7 +177,7 @@ export default function CrearAgente() {
           <div className="mb-4">
             <label
               htmlFor="telefono"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Teléfono
             </label>
@@ -187,7 +187,7 @@ export default function CrearAgente() {
               name="telefono"
               value={formData.telefono}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa el teléfono"
             />
           </div>
@@ -195,7 +195,7 @@ export default function CrearAgente() {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Email
             </label>
@@ -205,7 +205,7 @@ export default function CrearAgente() {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa el email"
             />
           </div>
@@ -213,7 +213,7 @@ export default function CrearAgente() {
           <div className="mb-4">
             <label
               htmlFor="DNI"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               DNI
             </label>
@@ -223,7 +223,7 @@ export default function CrearAgente() {
               name="DNI"
               value={formData.DNI}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa el DNI"
             />
           </div>
@@ -231,7 +231,7 @@ export default function CrearAgente() {
           <div className="mb-4">
             <label
               htmlFor="direccion"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Dirección
             </label>
@@ -241,7 +241,7 @@ export default function CrearAgente() {
               name="direccion"
               value={formData.direccion}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa la dirección"
             />
           </div>
@@ -249,7 +249,7 @@ export default function CrearAgente() {
           <div className="mb-4">
             <label
               htmlFor="cuit"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               CUIT
             </label>
@@ -259,17 +259,18 @@ export default function CrearAgente() {
               name="cuit"
               value={formData.cuit}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa el CUIT"
             />
           </div>
-
-          <button
-            type="submit"
-            className="w-full p-3 bg-blue-500 text-white font-semibold rounded-lg"
-          >
-            Crear Agente
-          </button>
+          <div className="pb-4">
+            <button
+              type="submit"
+              className="w-full bg-[#6FC6D1] text-white py-2 px-4 rounded-full text-sm font-sans hover:underline"
+            >
+              Crear Agente
+            </button>
+          </div>
         </form>
       </div>
     </div>

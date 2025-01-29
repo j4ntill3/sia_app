@@ -127,16 +127,16 @@ export default function CrearConsulta() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-100">
-      <div className="w-full max-w-lg p-8 bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <div className="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
+        <h2 className="text-3xl font-bold text-center mb-6 text-[#083C2C]">
           Crear Consulta
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="id_inmueble"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Inmueble
             </label>
@@ -146,7 +146,7 @@ export default function CrearConsulta() {
               name="id_inmueble"
               value={formData.id_inmueble}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="ID del inmueble"
             />
           </div>
@@ -154,7 +154,7 @@ export default function CrearConsulta() {
           <div className="mb-4">
             <label
               htmlFor="nombre"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Nombre
             </label>
@@ -164,7 +164,7 @@ export default function CrearConsulta() {
               name="nombre"
               value={formData.nombre}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa nombre del cliente"
             />
           </div>
@@ -172,7 +172,7 @@ export default function CrearConsulta() {
           <div className="mb-4">
             <label
               htmlFor="apellido"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Apellido
             </label>
@@ -182,7 +182,7 @@ export default function CrearConsulta() {
               name="apellido"
               value={formData.apellido}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa apellido del cliente"
             />
           </div>
@@ -190,7 +190,7 @@ export default function CrearConsulta() {
           <div className="mb-4">
             <label
               htmlFor="telefono"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Teléfono
             </label>
@@ -200,7 +200,7 @@ export default function CrearConsulta() {
               name="telefono"
               value={formData.telefono}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa teléfono del cliente"
             />
           </div>
@@ -208,7 +208,7 @@ export default function CrearConsulta() {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Correo Electrónico
             </label>
@@ -218,7 +218,7 @@ export default function CrearConsulta() {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa correo electrónico"
             />
           </div>
@@ -226,7 +226,7 @@ export default function CrearConsulta() {
           <div className="mb-4">
             <label
               htmlFor="descripcion"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Descripción
             </label>
@@ -235,14 +235,14 @@ export default function CrearConsulta() {
               name="descripcion"
               value={formData.descripcion}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-2xl mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Describe tu consulta"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full p-3 bg-blue-500 text-white font-semibold rounded-lg"
+            className="w-full bg-[#6FC6D1] text-white py-2 px-4 rounded-full text-sm font-sans hover:underline"
           >
             Crear Consulta
           </button>

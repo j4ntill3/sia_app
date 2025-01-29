@@ -317,8 +317,9 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
             src={ruta_imagen}
             alt={`Imagen del inmueble: ${title}`}
             className="w-full h-64 object-cover rounded-lg mt-4"
-          />
-          <div className="flex items-center mb-4 justify-end">
+          />{" "}
+          <div className="flex flex-row justify-between w-full items-center  my-1">
+            <span className="font-semibold text-[#083C2C]">ID: {id}</span>
             {session.user.role === "administrador" && (
               <button
                 onClick={() => setIsImageModalOpen(true)}
@@ -327,12 +328,11 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
                 <img
                   src="/CARGAR-DOCUMENTO-01.svg"
                   alt="Cambiar Imagen"
-                  className="w-6 h-6" // Ajusta el tamaño según lo necesites
+                  className="w-8 h-8" // Ajusta el tamaño según lo necesites
                 />
               </button>
             )}
           </div>
-
           <div className="space-y-4">
             {[
               { label: "Rubro", value: id_rubro },
@@ -358,25 +358,24 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
                     <img
                       src="/EDITAR-01.svg"
                       alt="Editar"
-                      className="w-5 h-5" // Tamaño más pequeño
+                      className="w-6 h-6" // Tamaño más pequeño
                     />
                   </button>
                 )}
               </div>
             ))}
           </div>
-
           {session.user.role === "administrador" && (
             <div className="mt-6 space-y-4">
               <button
                 onClick={() => setIsAgentModalOpen(true)}
-                className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full"
+                className="w-full px-4 py-2 bg-[#6FC6D1] text-white rounded-full hover:underline"
               >
                 ASIGNAR AGENTE
               </button>
               <button
                 onClick={handleDelete}
-                className="w-full px-4 py-2 bg-white text-[#6FC6D1] rounded-full border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white"
+                className="w-full px-4 py-2 bg-white text-[#6FC6D1] rounded-full border-2 border-[#6FC6D1] hover:underline"
               >
                 ELIMINAR
               </button>

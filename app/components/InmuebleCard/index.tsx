@@ -55,7 +55,7 @@ const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble }) => {
       </p>
       <button
         onClick={handleViewMore}
-        className="w-full text-xs text-white bg-[#6FC6D1] py-2 px-4 text-center rounded-full"
+        className="w-full text-xs text-white bg-[#6FC6D1] py-2 px-4 text-center rounded-full hover:underline"
       >
         VER MÁS
       </button>

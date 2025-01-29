@@ -33,11 +33,7 @@ const Navbar = () => {
       </div>
 
       {/* Mostrar el botón de logout solo si hay sesión */}
-      {session ? (
-        <div>
-          <LogoutButton />
-        </div>
-      ) : null}
+      {session ? <LogoutButton /> : null}
     </nav>
   );
 };

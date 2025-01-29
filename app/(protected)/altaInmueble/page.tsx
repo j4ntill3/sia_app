@@ -158,16 +158,16 @@ export default function CrearInmueble() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-100">
-      <div className="w-full max-w-lg p-8 bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
-          Crear Inmueble
+    <div className="flex flex-col py-2 items-center justify-center bg-gray-100">
+      <div className="w-full max-w-sm py-1.5 px-6 bg-white shadow-md rounded-2xl">
+        <h2 className="text-3xl font-bold text-center mt-2 mb-2 text-[#083C2C]">
+          Alta Inmueble
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="title"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Título
             </label>
@@ -177,7 +177,7 @@ export default function CrearInmueble() {
               name="title"
               value={formData.title}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa el título del inmueble"
             />
           </div>
@@ -185,7 +185,7 @@ export default function CrearInmueble() {
           <div className="mb-4">
             <label
               htmlFor="id_rubro"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Rubro
             </label>
@@ -194,7 +194,7 @@ export default function CrearInmueble() {
               name="id_rubro"
               value={formData.id_rubro}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
             >
               <option value="">Seleccione un rubro</option>
               {rubros.map((rubro) => (
@@ -208,7 +208,7 @@ export default function CrearInmueble() {
           <div className="mb-4">
             <label
               htmlFor="localidad"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Localidad
             </label>
@@ -218,7 +218,7 @@ export default function CrearInmueble() {
               name="localidad"
               value={formData.localidad}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa la localidad"
             />
           </div>
@@ -226,7 +226,7 @@ export default function CrearInmueble() {
           <div className="mb-4">
             <label
               htmlFor="direccion"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Dirección
             </label>
@@ -236,7 +236,7 @@ export default function CrearInmueble() {
               name="direccion"
               value={formData.direccion}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa la dirección"
             />
           </div>
@@ -244,7 +244,7 @@ export default function CrearInmueble() {
           <div className="mb-4">
             <label
               htmlFor="barrio"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Barrio
             </label>
@@ -254,7 +254,7 @@ export default function CrearInmueble() {
               name="barrio"
               value={formData.barrio}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa el barrio"
             />
           </div>
@@ -262,7 +262,7 @@ export default function CrearInmueble() {
           <div className="mb-4">
             <label
               htmlFor="num_habitaciones"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Número de Habitaciones
             </label>
@@ -272,7 +272,7 @@ export default function CrearInmueble() {
               name="num_habitaciones"
               value={formData.num_habitaciones}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Número de habitaciones"
             />
           </div>
@@ -280,7 +280,7 @@ export default function CrearInmueble() {
           <div className="mb-4">
             <label
               htmlFor="num_baños"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Número de Baños
             </label>
@@ -290,7 +290,7 @@ export default function CrearInmueble() {
               name="num_baños"
               value={formData.num_baños}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Número de baños"
             />
           </div>
@@ -298,7 +298,7 @@ export default function CrearInmueble() {
           <div className="mb-4">
             <label
               htmlFor="superficie"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Superficie
             </label>
@@ -308,7 +308,7 @@ export default function CrearInmueble() {
               name="superficie"
               value={formData.superficie}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Superficie en m²"
             />
           </div>
@@ -316,7 +316,7 @@ export default function CrearInmueble() {
           <div className="mb-4">
             <label
               htmlFor="garaje"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               ¿Cuenta con garaje?
             </label>
@@ -326,14 +326,14 @@ export default function CrearInmueble() {
               name="garaje"
               checked={formData.garaje}
               onChange={handleInputChange}
-              className="mt-1"
+              className="rounded mt-1 focus:ring-[#083C2C]"
             />
           </div>
 
           <div className="mb-4">
             <label
               htmlFor="id_estado"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Estado
             </label>
@@ -342,7 +342,7 @@ export default function CrearInmueble() {
               name="id_estado"
               value={formData.id_estado}
               onChange={handleInputChange}
-              className="mt-1 w-full p-2 border border-gray-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
             >
               <option value="">Seleccione un estado</option>
               {estados.map((estado) => (
@@ -352,13 +352,14 @@ export default function CrearInmueble() {
               ))}
             </select>
           </div>
-
-          <button
-            type="submit"
-            className="w-full p-3 bg-blue-500 text-white font-semibold rounded-lg"
-          >
-            Crear Inmueble
-          </button>
+          <div className="mb-1.5">
+            <button
+              type="submit"
+              className="w-full bg-[#6FC6D1] text-white py-2 px-4 rounded-full text-sm font-sans hover:underline"
+            >
+              Crear Inmueble
+            </button>
+          </div>
         </form>
       </div>
     </div>
