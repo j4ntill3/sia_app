@@ -1,7 +1,7 @@
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from "@/context/SessionProvider";
 
 export default function RootLayout({
   children,
@@ -34,12 +34,12 @@ export default function RootLayout({
             rel="stylesheet"
           />
         </head>
-        <body className="flex flex-col min-h-screen bg-gray-100">
-          {/* <SessionProvider> */}
-          <Navbar />
-          {children}
-          <Footer />
-          {/* </SessionProvider> */}
+        <body className="flex flex-col h-screen bg-gray-100">
+          <SessionProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </SessionProvider>
         </body>
       </html>
     </>

@@ -65,7 +65,7 @@ const Agentes = () => {
   // Mostrar un mensaje de carga mientras se resuelve la sesión y los datos
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">Cargando...</p>
       </div>
     );
@@ -74,7 +74,7 @@ const Agentes = () => {
   // Mostrar errores si ocurren
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -83,7 +83,7 @@ const Agentes = () => {
   // Mostrar mensaje si no hay sesión
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">
           No autenticado. Por favor inicia sesión.
         </p>
@@ -93,15 +93,18 @@ const Agentes = () => {
 
   // Renderizar la tabla de agentes
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+    <div className="flex justify-center items-center h-screen bg-gray-100 p-6">
       <div className="w-full max-w-4xl bg-white p-6 shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-4">
           Lista de Agentes
         </h2>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-lg">
           <table className="min-w-full table-auto bg-white border-collapse">
             <thead>
               <tr className="bg-gray-200">
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                  ID
+                </th>
                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
                   Nombre
                 </th>

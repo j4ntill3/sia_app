@@ -74,7 +74,7 @@ const Clientes = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -82,7 +82,7 @@ const Clientes = () => {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">
           No autenticado. Por favor inicia sesión.
         </p>
@@ -96,19 +96,19 @@ const Clientes = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">Cargando...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
-      <div className="w-full max-w-4xl bg-white p-6 shadow-lg rounded-lg">
+    <div className="flex justify-center items-center h-screen bg-gray-100 p-6">
+      <div className="w-full max-w-4xl bg-white p-6 shadow-lg rounded-xl">
         <h2 className="text-2xl font-semibold text-center mb-4">
           Lista de Consultas
         </h2>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl">
           <table className="min-w-full table-auto bg-white border-collapse">
             <thead>
               <tr className="bg-gray-200">

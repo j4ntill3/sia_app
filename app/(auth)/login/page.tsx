@@ -51,9 +51,9 @@ export default function Login() {
         setSuccessMessage("¡Login exitoso!");
         console.log("Login exitoso con:", { email, password });
 
-        // Redirige con el router si la página está montada
+        // Redirigir a "/" y recargar la página
         if (isMounted) {
-          router.push("/");
+          window.location.href = "/"; // Redirige a "/" antes de recargar
         }
       }
     } catch (error: any) {

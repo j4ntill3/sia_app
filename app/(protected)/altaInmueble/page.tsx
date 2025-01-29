@@ -135,7 +135,7 @@ export default function CrearInmueble() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">Cargando...</p>
       </div>
     );
@@ -143,7 +143,7 @@ export default function CrearInmueble() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -151,15 +151,15 @@ export default function CrearInmueble() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">No autenticado o no autorizado.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col py-2 items-center justify-center bg-gray-100">
-      <div className="w-full max-w-sm py-1.5 px-6 bg-white shadow-md rounded-2xl">
+    <div className="flex flex-col py-4 items-center justify-center bg-gray-100">
+      <div className="w-full max-w-sm py-4 px-6 bg-white shadow-md rounded-2xl">
         <h2 className="text-3xl font-bold text-center mt-2 mb-2 text-[#083C2C]">
           Alta Inmueble
         </h2>

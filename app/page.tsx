@@ -51,7 +51,7 @@ export default function Home() {
   // Mostrar un mensaje de carga mientras se resuelve la sesión
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">Cargando...</p>
       </div>
     );
@@ -60,7 +60,7 @@ export default function Home() {
   // Mostrar errores si ocurren
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -69,7 +69,7 @@ export default function Home() {
   // Mostrar mensaje si no hay sesión
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">
           No autenticado. Por favor inicia sesión.
         </p>

@@ -240,7 +240,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">Cargando...</p>
       </div>
     );
@@ -248,7 +248,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -256,7 +256,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">
           No autenticado. Por favor inicia sesión.
         </p>
@@ -266,7 +266,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
   if (!inmueble) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">
           No se encontraron detalles del inmueble.
         </p>
@@ -289,8 +289,8 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   } = inmueble;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="min-h-screen flex items-start justify-center bg-gray-100 p-4">
+    <div className=" flex items-center justify-center bg-gray-100 p-4">
+      <div className="flex py-2 items-start justify-center bg-gray-100 p-4">
         <div className="w-full max-w-3xl bg-white shadow-md rounded-lg p-6">
           <div className="space-y-4">
             {[{ label: "Título", value: title }].map(({ label, value }) => (

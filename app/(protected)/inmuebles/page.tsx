@@ -69,7 +69,7 @@ const Inmuebles = () => {
   // Mostrar un mensaje de carga mientras se resuelve la sesión y los datos
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">Cargando...</p>
       </div>
     );
@@ -78,7 +78,7 @@ const Inmuebles = () => {
   // Mostrar errores si ocurren
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -87,7 +87,7 @@ const Inmuebles = () => {
   // Mostrar mensaje si no hay sesión
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">
           No autenticado. Por favor inicia sesión.
         </p>
@@ -97,7 +97,7 @@ const Inmuebles = () => {
 
   // Renderizar los inmuebles
   return (
-    <div className="flex flex-wrap justify-center gap-6 bg-gray-100 p-4">
+    <div className="flex h-screen flex-wrap justify-center gap-6 bg-gray-100 p-4">
       {inmuebles.length === 0 ? (
         <p>No se encontraron inmuebles disponibles.</p>
       ) : (

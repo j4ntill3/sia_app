@@ -104,7 +104,7 @@ export default function CrearConsulta() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">Cargando...</p>
       </div>
     );
@@ -112,7 +112,7 @@ export default function CrearConsulta() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -120,15 +120,15 @@ export default function CrearConsulta() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">No autenticado o no autorizado.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
+    <div className="flex flex-col h-screen py-4 items-center justify-center bg-gray-100">
+      <div className="w-full max-w-sm py-4 px-8 bg-white shadow-md rounded-2xl">
         <h2 className="text-3xl font-bold text-center mb-6 text-[#083C2C]">
           Crear Consulta
         </h2>

@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   try {
     const agentes = await prisma.empleado.findMany({
       where: {
-        tipoId: 1,
+        tipoId: 2, // Cambio de tipoId 1 a 2
         eliminado: false,
       },
       include: {

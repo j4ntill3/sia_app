@@ -109,7 +109,7 @@ export default function CrearAgente() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">Cargando...</p>
       </div>
     );
@@ -117,7 +117,7 @@ export default function CrearAgente() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -125,7 +125,7 @@ export default function CrearAgente() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">No autenticado o no autorizado.</p>
       </div>
     );
@@ -133,7 +133,7 @@ export default function CrearAgente() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="w-full max-w-sm px-8 bg-white shadow-md text-[#083C2C] rounded-2xl">
+      <div className="w-full my-4 max-w-sm px-8 bg-white shadow-md text-[#083C2C] rounded-2xl">
         <h2 className="text-3xl font-bold pt-4 text-center text-[#083C2C]">
           Alta Agente
         </h2>
