@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import type Inmueble from "@/types/inmueble";
-
-const prisma = new PrismaClient();
 
 export async function GET(
   request: Request,

@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "@/actions/auth-actions"; // Lógica de autenticación
+import { getSession } from "@/actions/auth-actions";
 import InmuebleCard from "@/app/components/InmuebleCard";
 import type Inmueble from "@/types/inmueble";
 
 const misInmuebles = () => {
-  const [session, setSession] = useState<any>(null); // Sesión actual
-  const [inmuebles, setInmuebles] = useState<Inmueble[]>([]); // Lista de inmuebles
-  const [error, setError] = useState<string | null>(null); // Estado de errores
-  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  const [session, setSession] = useState<any>(null);
+  const [inmuebles, setInmuebles] = useState<Inmueble[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Función para autenticar al usuario
   const authenticateUser = async () => {

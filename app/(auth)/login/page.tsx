@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation"; // Importa useRouter desde next/navigation en lugar de next/router
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -11,10 +11,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  const router = useRouter(); // Asegúrate de que esto se importa desde 'next/navigation'
+  const router = useRouter();
 
   useEffect(() => {
-    setIsMounted(true); // Establece el estado como 'true' una vez que el componente esté montado
+    setIsMounted(true);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,8 +40,8 @@ export default function Login() {
       const result = await signIn("credentials", {
         email: email,
         password: password,
-        redirect: false, // Desactivar redirección automática
-        callbackUrl: "/", // Redirigir al home si el login es exitoso
+        redirect: false,
+        callbackUrl: "/",
       });
 
       if (result?.error) {
@@ -72,8 +72,6 @@ export default function Login() {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
-        {/* Cambio de rounded-lg a rounded-2xl */}
-        {/* Aplicamos el estilo para el título */}
         <h2 className="text-3xl font-bold text-center mb-6 text-[#083C2C]">
           Bienvenido a SIA
         </h2>
@@ -81,14 +79,14 @@ export default function Login() {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-sm font-sans font-medium text-[#083C2C]" // Cambié el color del label
+              className="block text-sm font-sans font-medium text-[#083C2C]"
             >
               Email
             </label>
             <input
               type="email"
               id="email"
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]" // Cambié el color del borde cuando el input se selecciona
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa tu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -97,14 +95,14 @@ export default function Login() {
           <div className="mb-10">
             <label
               htmlFor="password"
-              className="block font-sans text-sm font-medium text-[#083C2C]" // Cambié el color del label
+              className="block font-sans text-sm font-medium text-[#083C2C]"
             >
               Contraseña
             </label>
             <input
               type="password"
               id="password"
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]" // Cambié el color del borde cuando el input se selecciona
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
               placeholder="Ingresa tu contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

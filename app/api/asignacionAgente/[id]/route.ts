@@ -1,13 +1,10 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient(); // Asegúrate de importar el cliente de Prisma
+import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Obtenemos el ID del inmueble desde los parámetros de la ruta
     const { id } = await params;
 
     // Obtenemos el cuerpo de la solicitud (debe contener el ID del agente)
@@ -55,9 +52,9 @@ export async function PUT(
         message: "Agente asignado correctamente",
         data: {
           id: nuevoInmuebleAgente.id.toString(), // Convertir BigInt a String
-          id_inmueble: nuevoInmuebleAgente.id_inmueble, // `id_inmueble` ya es un `int` y no requiere conversión
-          id_agente: nuevoInmuebleAgente.id_agente, // `id_agente` ya es un `int` y no requiere conversión
-          eliminado: nuevoInmuebleAgente.eliminado, // `eliminado` es un `tinyint(1)` y no requiere conversión
+          id_inmueble: nuevoInmuebleAgente.id_inmueble,
+          id_agente: nuevoInmuebleAgente.id_agente,
+          eliminado: nuevoInmuebleAgente.eliminado,
         },
       }),
       { status: 200 }

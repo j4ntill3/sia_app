@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "@/actions/auth-actions"; // Lógica de autenticación
+import { getSession } from "@/actions/auth-actions";
 import InmuebleCard from "@/app/components/InmuebleCard";
 import type Inmueble from "@/types/inmueble";
 
 const Inmuebles = () => {
-  const [session, setSession] = useState<any>(null); // Sesión actual
-  const [inmuebles, setInmuebles] = useState<Inmueble[]>([]); // Lista de inmuebles
-  const [error, setError] = useState<string | null>(null); // Estado de errores
-  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  const [session, setSession] = useState<any>(null);
+  const [inmuebles, setInmuebles] = useState<Inmueble[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Función para autenticar al usuario
   const authenticateUser = async () => {
@@ -60,7 +60,7 @@ const Inmuebles = () => {
         await fetchInmuebles();
       }
 
-      setIsLoading(false); // Finaliza la carga al completar
+      setIsLoading(false);
     };
 
     init();
@@ -97,7 +97,7 @@ const Inmuebles = () => {
 
   // Renderizar los inmuebles
   return (
-    <div className="flex h-screen flex-wrap justify-center gap-6 bg-gray-100 p-4">
+    <div className="flex flex-wrap justify-center gap-6 bg-gray-100 p-4">
       {inmuebles.length === 0 ? (
         <p>No se encontraron inmuebles disponibles.</p>
       ) : (

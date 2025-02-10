@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { InmuebleRubro } from "@/types/inmueble_rubro";
 import { InmuebleEstado } from "@/types/inmueble_estado";
 import { getSession } from "@/actions/auth-actions";
+import { useRouter } from "next/navigation";
 
 type FormData = {
   title: string;
@@ -31,6 +32,8 @@ export default function CrearInmueble() {
     garaje: false,
     id_estado: "",
   });
+
+  const router = useRouter();
 
   const [rubros, setRubros] = useState<InmuebleRubro[]>([]);
   const [estados, setEstados] = useState<InmuebleEstado[]>([]);
@@ -105,7 +108,7 @@ export default function CrearInmueble() {
       num_habitaciones: Number(formData.num_habitaciones),
       num_baños: Number(formData.num_baños),
       superficie: Number(formData.superficie),
-      ruta_imagen: "/img/imagen_generica.webp",
+      ruta_imagen: "/img/image-icon-600nw-211642900.webp",
       eliminado: false,
     };
 
@@ -124,6 +127,7 @@ export default function CrearInmueble() {
 
       if (response.ok) {
         alert("Inmueble creado con éxito.");
+        router.push("/inmuebles");
       } else {
         alert(data.error || "Error desconocido.");
       }

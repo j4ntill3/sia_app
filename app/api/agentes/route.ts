@@ -1,13 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
-
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
     const agentes = await prisma.empleado.findMany({
       where: {
-        tipoId: 2, // Cambio de tipoId 1 a 2
+        tipoId: 2,
         eliminado: false,
       },
       include: {

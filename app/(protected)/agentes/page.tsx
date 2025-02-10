@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "@/actions/auth-actions"; // Lógica de autenticación
+import { getSession } from "@/actions/auth-actions";
 import AgenteItem from "@/app/components/AgenteItem";
 
 const Agentes = () => {
-  const [session, setSession] = useState<any>(null); // Sesión actual
-  const [agentes, setAgentes] = useState<any[]>([]); // Lista de agentes
-  const [error, setError] = useState<string | null>(null); // Estado de errores
-  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  const [session, setSession] = useState<any>(null);
+  const [agentes, setAgentes] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Función para autenticar al usuario
   const authenticateUser = async () => {
     try {
       const sessionData = await getSession();

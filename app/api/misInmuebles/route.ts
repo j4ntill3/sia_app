@@ -1,8 +1,6 @@
 import { NextRequest } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { getSession } from "@/actions/auth-actions"; // Importa la función getSession desde actions/auth-actions
-
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
@@ -41,7 +39,10 @@ export async function GET(request: NextRequest) {
       },
       include: {
         inmueble_imagen: {
-          select: { ruta_imagen: true },
+          take: 1, // Obtén solo un registro
+          orderBy: {
+            id: "desc", // Ordena por id en orden descendente para obtener el último registro
+          },
         },
       },
     });

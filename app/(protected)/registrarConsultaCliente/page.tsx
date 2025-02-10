@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getSession } from "@/actions/auth-actions";
+import { useRouter } from "next/navigation";
 
 type FormData = {
   id_inmueble: number | string;
@@ -24,6 +25,8 @@ export default function CrearConsulta() {
     descripcion: "",
   });
 
+  const router = useRouter();
+
   const [session, setSession] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -36,7 +39,7 @@ export default function CrearConsulta() {
 
         if (!sessionData) {
           setError("No autenticado. Por favor inicia sesión.");
-          setLoading(false); // Finalizamos el estado de carga
+          setLoading(false);
           return;
         }
 
@@ -44,7 +47,7 @@ export default function CrearConsulta() {
         setLoading(false);
       } catch (err) {
         setError("Error al autenticar al usuario.");
-        setLoading(false); // Finalizamos el estado de carga
+        setLoading(false);
       }
     };
 
@@ -76,7 +79,7 @@ export default function CrearConsulta() {
     const consultaData = {
       ...formData,
       id_inmueble: Number(formData.id_inmueble),
-      id_agente: Number(session.user.id), // Usamos id_agente de la sesión
+      id_agente: Number(session.user.id),
       fecha: new Date().toISOString(),
     };
 
@@ -93,6 +96,7 @@ export default function CrearConsulta() {
 
       if (response.ok) {
         alert("Consulta creada con éxito.");
+        router.push("/misConsultasClientes");
       } else {
         alert(data.error || "Error desconocido.");
       }

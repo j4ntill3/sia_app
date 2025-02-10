@@ -50,7 +50,6 @@ const Clientes = () => {
     init();
   }, []);
 
-  // Función para obtener los clientes desde la API
   const fetchClientes = async () => {
     try {
       const response = await fetch("/api/consultasClientes", {
@@ -62,7 +61,7 @@ const Clientes = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setClientes(data); // Asume que la API devuelve un array de clientes
+        setClientes(data);
       } else {
         setError("Error al obtener los clientes.");
       }
@@ -70,6 +69,29 @@ const Clientes = () => {
       console.error("Error al obtener clientes:", err);
       setError("Error al obtener los clientes.");
     }
+  };
+
+  const downloadCSV = () => {
+    const csvHeader =
+      "Nombre,Teléfono,Email,Fecha,Descripción,ID Inmueble,ID Agente\n";
+    const csvRows = clientes.map(
+      (cliente) =>
+        `${cliente.nombre},${cliente.telefono},${cliente.email},${
+          cliente.fecha
+        },${cliente.descripcion},${cliente.id_inmueble},${
+          cliente.id_agente || ""
+        }`
+    );
+
+    const csvContent = csvHeader + csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "clientes.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   if (error) {
@@ -130,13 +152,11 @@ const Clientes = () => {
                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
                   ID Inmueble
                 </th>
-                {session &&
-                session.user &&
-                session.user.role === "administrador" ? (
+                {session?.user?.role === "administrador" && (
                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
                     ID Agente
                   </th>
-                ) : null}
+                )}
               </tr>
             </thead>
             <tbody>
@@ -149,6 +169,11 @@ const Clientes = () => {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="flex w-full justify-end">
+          <button onClick={downloadCSV}>
+            <img src="/icons8-csv-50.png" alt="CSV Icon" className="w-6 h-6" />
+          </button>
         </div>
       </div>
     </div>

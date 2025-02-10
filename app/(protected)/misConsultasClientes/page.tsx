@@ -62,7 +62,7 @@ const Clientes = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setClientes(data); // Asume que la API devuelve un array de clientes
+        setClientes(data);
       } else {
         setError("Error al obtener los clientes.");
       }

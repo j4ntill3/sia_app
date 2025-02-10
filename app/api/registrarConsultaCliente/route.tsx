@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 import { getSession } from "@/actions/auth-actions"; // Asumiendo que tienes esta función
-
-const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {

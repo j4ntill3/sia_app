@@ -12,15 +12,15 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   const [error, setError] = useState<string | null>(null);
   const [id, setId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false); // Cambiar Imagen Modal
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null); // imagen
-  const [editMode, setEditMode] = useState<boolean>(false); // Para saber si estamos en el modal de edición
-  const [editField, setEditField] = useState<string>(""); // El campo que estamos editando
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [editField, setEditField] = useState<string>("");
   const [newValue, setNewValue] = useState<string>("");
   const [rubros, setRubros] = useState<InmuebleRubro[]>([]);
   const [estados, setEstados] = useState<InmuebleEstado[]>([]);
-  const [agentId, setAgentId] = useState<number | null>(null); // El nuevo valor para el campo
+  const [agentId, setAgentId] = useState<number | null>(null);
 
   const router = useRouter();
 
@@ -99,12 +99,11 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
         }
 
         const data = await response.json();
-        console.log(data.message); // Mostrar mensaje de éxito
+        console.log(data.message);
 
-        // Mostrar una alerta con el mensaje de éxito
         alert("Agente asignado al inmueble con éxito");
 
-        setIsAgentModalOpen(false); // Cerrar el modal
+        setIsAgentModalOpen(false);
       } catch (error) {
         console.error("Error al asignar el agente:", error);
         setError("Ocurrió un error al asignar el agente.");
@@ -114,7 +113,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const closeModal = () => {
     setIsImageModalOpen(false);
-    setIsAgentModalOpen(false); // Asegúrate de cerrar ambos modales
+    setIsAgentModalOpen(false);
   };
 
   const handleDelete = async () => {
@@ -166,7 +165,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
           body: JSON.stringify({
             file: base64Image,
             fileName: imageFile.name,
-            id_inmueble: id, // Pasamos el ID del inmueble
+            id_inmueble: id,
           }),
         });
 
@@ -194,7 +193,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const handleEdit = (field: string, value: string) => {
     setEditField(field);
-    setNewValue(""); // Limpiamos el valor cuando se abre el modal
+    setNewValue("");
     setEditMode(true);
   };
 
@@ -234,7 +233,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
       console.error("Error al guardar el dato:", error);
       setError("Error al guardar los cambios.");
     } finally {
-      setEditMode(false); // Cerramos el modal
+      setEditMode(false);
     }
   };
 
@@ -323,12 +322,12 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
             {session.user.role === "administrador" && (
               <button
                 onClick={() => setIsImageModalOpen(true)}
-                className="p-0 m-0" // Esto elimina los márgenes y el padding
+                className="p-0 m-0"
               >
                 <img
                   src="/CARGAR-DOCUMENTO-01.svg"
                   alt="Cambiar Imagen"
-                  className="w-8 h-8" // Ajusta el tamaño según lo necesites
+                  className="w-8 h-8"
                 />
               </button>
             )}
@@ -346,7 +345,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
               { label: "Estado", value: estado },
             ].map(({ label, value }) => (
               <div key={label} className="flex justify-between items-center">
-                <p>
+                <p className="text-[#083C2C]">
                   <span className="font-semibold text-[#083C2C]">{label}:</span>{" "}
                   {value}
                 </p>
@@ -358,7 +357,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
                     <img
                       src="/EDITAR-01.svg"
                       alt="Editar"
-                      className="w-6 h-6" // Tamaño más pequeño
+                      className="w-6 h-6"
                     />
                   </button>
                 )}

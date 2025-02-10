@@ -81,7 +81,7 @@ export default function CrearAgente() {
       tipoId: Number(formData.tipoId),
       DNI: Number(formData.DNI),
       fechaAlta: formData.fechaAlta,
-      fechaBaja: formData.fechaBaja || null, // Puede no tener fecha de baja aún
+      fechaBaja: formData.fechaBaja || null,
       eliminado: false,
     };
 
