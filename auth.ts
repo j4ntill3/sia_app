@@ -1,25 +1,29 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import authConfig from "./auth.config";
-
-const prisma = new PrismaClient();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   ...authConfig,
-  //  By default, the `id` property does not exist on `token` or `session`. See the [TypeScript](https://authjs.dev/getting-started/typescript) on how to add it.
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
-        // User is available during sign-in
-        token.role = user.role;
+        token.id = user.id || "";
+        token.email = user.email || "";
+        token.role = user.role || "";
+        token.empleadoId = user.empleadoId ?? null; // En caso de que no haya empleadoId, asignamos null
       }
       return token;
     },
-    session({ session, token }) {
-      session.user.role = token.role;
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id || ""; // Asignamos un valor predeterminado vacío en caso de que sea undefined o null
+        session.user.email = token.email || ""; // Lo mismo para email
+        session.user.role = token.role || ""; // Lo mismo para el rol
+        session.user.empleadoId = token.empleadoId ?? null; // Si no existe, le damos null
+      }
       return session;
     },
   },

@@ -12,6 +12,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        sans: ["Noto Sans", "serif"], // Configuramos Noto Sans como la fuente predeterminada
+      },
     },
   },
   plugins: [],

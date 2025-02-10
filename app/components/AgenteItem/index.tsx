@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import React from "react";
 import Persona from "@/types/persona";
 import Empleado from "@/types/empleado";
@@ -7,14 +10,15 @@ interface AgenteItemProps {
     empleado: Empleado;
     persona: Persona;
   };
-  onView: (id: number) => void;
 }
 
-const AgenteItem: React.FC<AgenteItemProps> = ({ agente, onView }) => {
+const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
   const { empleado, persona } = agente;
+  const router = useRouter();
 
   return (
-    <tr className="border-b hover:bg-gray-50">
+    <tr className="border-b font-sans hover:bg-gray-50">
+      <td className="px-4 py-2">{empleado.id}</td>
       <td className="px-4 py-2">
         {persona.nombre} {persona.apellido}
       </td>
@@ -41,8 +45,8 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente, onView }) => {
       </td>
       <td className="px-4 py-2 text-center">
         <button
-          onClick={() => onView(empleado.id)}
-          className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+          onClick={() => router.push(`/agentes/${empleado.id}`)}
+          className="px-4 py-2 text-white bg-[#6FC6D1] rounded-full hover:underline"
         >
           Ver
         </button>

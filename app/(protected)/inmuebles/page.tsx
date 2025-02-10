@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "@/actions/auth-actions"; // Lógica de autenticación
+import { getSession } from "@/actions/auth-actions";
 import InmuebleCard from "@/app/components/InmuebleCard";
 import type Inmueble from "@/types/inmueble";
 
 const Inmuebles = () => {
-  const [session, setSession] = useState<any>(null); // Sesión actual
-  const [inmuebles, setInmuebles] = useState<Inmueble[]>([]); // Lista de inmuebles
-  const [error, setError] = useState<string | null>(null); // Estado de errores
-  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  const [session, setSession] = useState<any>(null);
+  const [inmuebles, setInmuebles] = useState<Inmueble[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Función para autenticar al usuario
   const authenticateUser = async () => {
@@ -60,7 +60,7 @@ const Inmuebles = () => {
         await fetchInmuebles();
       }
 
-      setIsLoading(false); // Finaliza la carga al completar
+      setIsLoading(false);
     };
 
     init();
@@ -69,7 +69,7 @@ const Inmuebles = () => {
   // Mostrar un mensaje de carga mientras se resuelve la sesión y los datos
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">Cargando...</p>
       </div>
     );
@@ -78,7 +78,7 @@ const Inmuebles = () => {
   // Mostrar errores si ocurren
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -87,7 +87,7 @@ const Inmuebles = () => {
   // Mostrar mensaje si no hay sesión
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
         <p className="text-gray-600">
           No autenticado. Por favor inicia sesión.
         </p>

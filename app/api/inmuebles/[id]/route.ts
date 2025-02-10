@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import type Inmueble from "@/types/inmueble";
-
-const prisma = new PrismaClient();
 
 export async function GET(
   request: Request,
@@ -171,27 +169,29 @@ export async function PUT(
       );
     }
 
-    // Convertimos el valor a número si es necesario
-    const value =
+    // Convertimos el valor según el tipo de campo
+    let value: number | boolean | string = requestData.value;
+
+    if (
       dbField === "id_rubro" ||
       dbField === "num_habitaciones" ||
       dbField === "num_baños" ||
       dbField === "superficie" ||
       dbField === "id_estado"
-        ? Number(requestData.value)
-        : requestData.value;
-
-    if (
-      (dbField === "id_rubro" || dbField === "num_habitaciones") &&
-      isNaN(value)
     ) {
-      console.log("Error: El valor proporcionado no es un número válido.");
-      return new Response(
-        JSON.stringify({
-          error: `El valor de '${dbField}' debe ser un número válido`,
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      value = Number(requestData.value);
+
+      if (isNaN(value)) {
+        console.log("Error: El valor proporcionado no es un número válido.");
+        return new Response(
+          JSON.stringify({
+            error: `El valor de '${dbField}' debe ser un número válido`,
+          }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    } else if (dbField === "garaje") {
+      value = requestData.value === "true"; // Convertimos a booleano
     }
 
     console.log("Valor procesado (convertido):", value);

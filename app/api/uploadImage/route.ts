@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { PrismaClient } from "@prisma/client"; // Prisma Client para interactuar con la base de datos
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma"; // Prisma Client para interactuar con la base de datos
 
 // Esta configuración asegura que Next.js no intente analizar el cuerpo por defecto
 export const config = {

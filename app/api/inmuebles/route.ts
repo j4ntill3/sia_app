@@ -1,9 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
-import inmueble from "@/types/inmueble";
-import InmuebleImagen from "@/types/inmueble_imagen";
-
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,17 +7,13 @@ export async function GET(request: NextRequest) {
       where: { eliminado: false },
       include: {
         inmueble_imagen: {
-          select: { ruta_imagen: true }, // Solo obtener la ruta de las imágenes.
+          take: 1,
+          orderBy: {
+            id: "desc",
+          },
         },
       },
     });
-
-    if (!inmuebles || inmuebles.length === 0) {
-      return new Response(
-        JSON.stringify({ message: "No se encontraron inmuebles" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
-    }
 
     // Transformar los datos para incluir una imagen genérica si no hay imágenes asociadas
     const inmueblesConImagen = inmuebles.map((inmueble) => {
@@ -36,6 +28,13 @@ export async function GET(request: NextRequest) {
         ruta_imagen, // Asignamos la ruta de la imagen (o la genérica)
       };
     });
+
+    if (!inmuebles || inmuebles.length === 0) {
+      return new Response(
+        JSON.stringify({ message: "No se encontraron inmuebles" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     return new Response(JSON.stringify(inmueblesConImagen), {
       status: 200,
