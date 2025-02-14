@@ -39,20 +39,26 @@ export async function GET(
     // Estructurando el objeto conforme al tipo 'Inmueble'
     const inmueble: Inmueble = {
       id: inmuebleData.id,
-      title: inmuebleData.title,
-      id_rubro: inmuebleData.inmueble_rubro.rubro,
+      titulo: inmuebleData.titulo,
+      rubro: inmuebleData.inmueble_rubro?.rubro ?? "", // Asignamos un valor por defecto
+      estado: inmuebleData.inmueble_estado?.estado ?? "", // Asignamos un valor por defecto
       localidad: inmuebleData.localidad,
       direccion: inmuebleData.direccion,
       barrio: inmuebleData.barrio,
       num_habitaciones: inmuebleData.num_habitaciones,
-      num_baños: inmuebleData.num_baños,
+      num_banos: inmuebleData.num_baños,
       superficie: inmuebleData.superficie,
       garaje: inmuebleData.garaje,
       eliminado: inmuebleData.eliminado,
-      estado: inmuebleData.inmueble_estado?.estado,
       ruta_imagen:
         inmuebleData.inmueble_imagen?.[0]?.ruta_imagen ||
         "/img/image-icon-600nw-211642900.webp",
+      fecha_creacion: inmuebleData.fecha_creacion, // Asignamos el valor de la base de datos
+      id_usuario_creador: inmuebleData.id_usuario_creador, // Asignamos el valor de la base de datos
+      fecha_modificacion: inmuebleData.fecha_modificacion ?? null, // Permitir null si no está disponible
+      id_usuario_modificador: inmuebleData.id_usuario_modificador ?? null, // Permitir null si no está disponible
+      fecha_eliminacion: inmuebleData.fecha_eliminacion ?? null, // Permitir null si no está disponible
+      id_usuario_eliminador: inmuebleData.id_usuario_eliminador ?? null, // Permitir null si no está disponible
     };
 
     return new Response(JSON.stringify(inmueble), {

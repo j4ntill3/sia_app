@@ -1,13 +1,11 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/actions/auth-actions"; // Importa la función getSession desde actions/auth-actions
+import { getSession } from "@/actions/auth-actions";
 
 export async function GET(request: NextRequest) {
   try {
-    // Obtener la sesión utilizando tu función personalizada
     const session = await getSession();
-    const agenteId = session?.user.id; // Esto depende de cómo almacenes el ID en el token
-    console.log("Datos de la sesión:", session);
+    const agenteId = session?.user.empleadoId;
 
     if (!agenteId) {
       return new Response(
@@ -16,7 +14,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Asegúrate de que agenteId sea un número
     const agenteIdNumber = parseInt(agenteId as string, 10);
 
     if (isNaN(agenteIdNumber)) {
@@ -26,7 +23,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Obtener los inmuebles asignados al agente
     const inmuebles = await prisma.inmueble.findMany({
       where: {
         eliminado: false,

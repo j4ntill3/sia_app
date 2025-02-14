@@ -8,23 +8,27 @@ datasource db {
 }
 
 model inmueble {
-  id                 Int                  @id @default(autoincrement())
-  title              String
-  id_rubro           Int
-  localidad          String
-  direccion          String
-  barrio             String
-  num_habitaciones   Int
-  num_baños         Int                  @map("num_baños")
-  superficie         Float
-  garaje             Boolean
-  eliminado          Boolean?             @default(false)
-  id_estado          Int
-  consultas_clientes consultas_clientes[]
-  inmueble_rubro     inmueble_rubro       @relation(fields: [id_rubro], references: [id], onDelete: Cascade, map: "fk_inmueble_rubro")
-  inmueble_estado    inmueble_estado      @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inmueble_estado")
-  inmueble_agente    inmueble_agente[]
-  inmueble_imagen    inmueble_imagen[]
+  id                     Int               @id @default(autoincrement())
+  titulo                 String
+  id_rubro               Int
+  id_estado              Int
+  localidad              String
+  direccion              String
+  superficie             Float
+  barrio                 String
+  num_habitaciones       Int
+  num_baños             Int               @map("num_baños")
+  garaje                 Boolean           @default(false)
+  fecha_creacion         DateTime          @default(now()) @db.DateTime(0)
+  id_usuario_creador     Int
+  fecha_modificacion     DateTime?         @db.DateTime(0)
+  id_usuario_modificador Int?
+  eliminado              Boolean           @default(false)
+  fecha_eliminacion      DateTime?         @db.DateTime(0)
+  id_usuario_eliminador  Int?
+  inmueble_estado        inmueble_estado   @relation(fields: [id_estado], references: [id], map: "fk_inmueble_estado")
+  inmueble_rubro         inmueble_rubro    @relation(fields: [id_rubro], references: [id], map: "fk_inmueble_rubro")
+  inmueble_imagen        inmueble_imagen[]
 
   @@index([id_estado], map: "fk_inmueble_estado")
   @@index([id_rubro], map: "fk_inmueble_rubro")
@@ -74,16 +78,14 @@ model usuario {
 }
 
 model empleado {
-  id                 Int                  @id @default(autoincrement())
-  CUIT               String               @unique(map: "CUIT") @db.VarChar(20)
-  Fecha_Alta         DateTime             @db.Date
-  Fecha_Baja         DateTime?            @db.Date
-  tipoId             Int
-  eliminado          Boolean
-  consultas_clientes consultas_clientes[]
-  empleado_tipo      empleado_tipo        @relation(fields: [tipoId], references: [id], map: "Empleado_tipoId_fkey")
-  inmueble_agente    inmueble_agente[]
-  persona_empleado   persona_empleado[]
+  id               Int                @id @default(autoincrement())
+  CUIT             String             @unique(map: "CUIT") @db.VarChar(20)
+  Fecha_Alta       DateTime           @db.Date
+  Fecha_Baja       DateTime?          @db.Date
+  tipoId           Int
+  eliminado        Boolean
+  empleado_tipo    empleado_tipo      @relation(fields: [tipoId], references: [id], map: "Empleado_tipoId_fkey")
+  persona_empleado persona_empleado[]
 
   @@index([tipoId], map: "Empleado_tipoId_fkey")
 }
@@ -124,15 +126,6 @@ model inmueble_rubro {
   id       Int        @id @default(autoincrement())
   rubro    String     @db.VarChar(255)
   inmueble inmueble[]
-}
-
-model inmueble_imagen {
-  id          Int      @id @default(autoincrement())
-  id_inmueble Int
-  ruta_imagen String?  @db.VarChar(255)
-  inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_inmueble_imagen_inmueble")
-
-  @@index([id_inmueble], map: "fk_inmueble_imagen_inmueble")
 }
 
 model oauth_access_tokens {
@@ -188,31 +181,11 @@ model verificationtoken {
   @@unique([identifier, token], map: "identifier")
 }
 
-model inmueble_agente {
-  id          BigInt   @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
-  id_inmueble Int
-  id_agente   Int
-  eliminado   Boolean? @default(false)
-  inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inmueble_agente_ibfk_1")
-  empleado    empleado @relation(fields: [id_agente], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inmueble_agente_ibfk_2")
-
-  @@index([id_agente], map: "id_agente")
-  @@index([id_inmueble], map: "id_inmueble")
-}
-
-model consultas_clientes {
+model inmueble_imagen {
   id          Int      @id @default(autoincrement())
   id_inmueble Int
-  id_agente   Int
-  nombre      String   @db.VarChar(255)
-  apellido    String   @db.VarChar(255)
-  telefono    String   @db.VarChar(50)
-  email       String   @db.VarChar(255)
-  fecha       DateTime @db.DateTime(0)
-  descripcion String?  @db.Text
-  inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "consultas_clientes_ibfk_1")
-  empleado    empleado @relation(fields: [id_agente], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "consultas_clientes_ibfk_2")
+  ruta_imagen String?  @db.VarChar(255)
+  inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_inmueble_imagen_inmueble")
 
-  @@index([id_agente], map: "id_agente")
-  @@index([id_inmueble], map: "id_inmueble")
+  @@index([id_inmueble], map: "fk_inmueble_imagen_inmueble")
 }

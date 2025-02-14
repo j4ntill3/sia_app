@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
+import { getSession } from "@/actions/auth-actions";
 
 export async function GET(request: NextRequest) {
   try {
+    // Esto depende de cómo almacenes el ID en el token
     const inmuebles = await prisma.inmueble.findMany({
       where: { eliminado: false },
       include: {
@@ -53,20 +55,30 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 
+    // Obtener la sesión utilizando tu función personalizada
+    const session = await getSession();
+    const usuarioId = session?.user.usuarioId;
+
     // Asegúrate de que los valores sean del tipo correcto antes de insertarlos en la base de datos
     const nuevoInmueble = await prisma.inmueble.create({
       data: {
-        title: data.title,
-        id_rubro: Number(data.id_rubro), // Asegurarse de que id_rubro sea un número
+        titulo: data.title,
+        id_rubro: Number(data.id_rubro), // Asegurarse de que id_estado sea un número
+        id_estado: Number(data.id_estado), // Asegurarse de que id_rubro sea un número
         localidad: data.localidad,
         direccion: data.direccion,
+        superficie: Number(data.superficie), // Asegurarse de que superficie sea un número
         barrio: data.barrio || "", // Usar una cadena vacía si no se proporciona barrio
         num_habitaciones: Number(data.num_habitaciones), // Asegurarse de que sea un número
-        num_baños: Number(data.num_baños), // Asegurarse de que sea un número
-        superficie: Number(data.superficie), // Asegurarse de que superficie sea un número
+        num_baños: Number(data.num_baños),
         garaje: Boolean(data.garaje), // Convertir a booleano (true/false)
-        eliminado: Boolean(data.eliminado || false), // Asegurarse de que eliminado sea un booleano
-        id_estado: Number(data.id_estado), // Asegurarse de que id_estado sea un número
+        fecha_creacion: new Date(), // Fecha actual
+        id_usuario_creador: usuarioId, // Valor por defecto 1
+        fecha_modificacion: null, // Nulo por defecto
+        id_usuario_modificador: null, // Nulo por defecto
+        eliminado: Boolean(data.eliminado || false),
+        fecha_eliminacion: null, // Nulo por defecto
+        id_usuario_eliminador: null, // Nulo por defecto
       },
     });
 

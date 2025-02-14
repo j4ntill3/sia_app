@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+// auth.config.ts o el archivo donde tienes el provider de Credentials
 export default {
   providers: [
     Credentials({
@@ -26,22 +27,23 @@ export default {
             },
           },
           select: {
+            id: true, // ID de la tabla usuario
             clave: true,
             persona: {
               select: {
-                id: true,
+                id: true, // ID de la tabla persona
                 email: true,
                 persona_empleado: {
                   where: { eliminado: false },
                   select: {
-                    idempleado: true, // Seleccionar el ID del empleado
+                    idempleado: true,
                   },
                 },
               },
             },
             rolusuario: {
               select: {
-                tipo_rol: true, // Seleccionar el tipo de rol
+                tipo_rol: true,
               },
             },
           },
@@ -64,25 +66,15 @@ export default {
             ? user.persona.persona_empleado[0].idempleado
             : null;
 
-        console.log({
-          id: user.persona.id.toString(),
+        // Retornar los datos de la sesión, incluyendo el ID del usuario
+        return {
+          personaId: user.persona.id, // ID de la tabla persona
+          usuarioId: user.id, // ID de la tabla usuario
           email: user.persona.email,
           role: user.rolusuario.tipo_rol,
           empleadoId,
-        });
-
-        // Retornar los datos de la sesión
-        return {
-          id: user.persona.id.toString(),
-          email: user.persona.email,
-          role: user.rolusuario.tipo_rol,
-          empleadoId, // Incluir el empleadoId
         };
       },
     }),
   ],
-  pages: {
-    signIn: "/",
-    error: "/error",
-  },
-} satisfies NextAuthConfig;
+};

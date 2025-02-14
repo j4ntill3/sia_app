@@ -1,31 +1,43 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { getSession } from "@/actions/auth-actions"; // Asegúrate de importar correctamente la función
 
 export default function UserInfo() {
-  const { data: session, status } = useSession();
+  const [session, setSession] = useState(null);
+  const [status, setStatus] = useState("loading");
 
-  // Verificación: comprobamos el estado de la sesión
-  console.log("Estado de la sesión:", status);
-  console.log("Contenido de la sesión:", session);
+  useEffect(() => {
+    async function fetchSession() {
+      const sessionData = await getSession();
+      if (sessionData) {
+        setSession(sessionData);
+        setStatus("authenticated");
+      } else {
+        setStatus("not_authenticated");
+      }
+    }
+    fetchSession();
+  }, []);
 
   if (status === "loading") {
     return <p>Cargando datos...</p>;
   }
 
-  if (!session) {
+  if (status === "not_authenticated") {
     return <p>No estás autenticado.</p>;
   }
 
-  // Verificación: comprobamos que 'user' tiene los datos esperados
   const { user } = session;
-  console.log("Datos del usuario:", user);
 
   return (
-    <div className="p-4 bg-gray-100 rounded-xl shadow-md">
+    <div className="p-4 text-black bg-gray-100 rounded-xl shadow-md">
       <h1 className="text-xl font-bold mb-4">Información del Usuario</h1>
       <p>
-        <strong>ID:</strong> {user.id}
+        <strong>ID Persona:</strong> {user.personaId}
+      </p>
+      <p>
+        <strong>ID Usuario:</strong> {user.usuarioId}
       </p>
       <p>
         <strong>Email:</strong> {user.email}

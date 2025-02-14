@@ -10,19 +10,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id || "";
+        token.personaId = user.personaId || ""; // Usamos personaId
+        token.usuarioId = user.usuarioId || ""; // ID de usuario
         token.email = user.email || "";
         token.role = user.role || "";
-        token.empleadoId = user.empleadoId ?? null; // En caso de que no haya empleadoId, asignamos null
+        token.empleadoId = user.empleadoId ?? null;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id || ""; // Asignamos un valor predeterminado vacío en caso de que sea undefined o null
-        session.user.email = token.email || ""; // Lo mismo para email
-        session.user.role = token.role || ""; // Lo mismo para el rol
-        session.user.empleadoId = token.empleadoId ?? null; // Si no existe, le damos null
+        session.user.personaId = token.personaId || ""; // Usamos personaId
+        session.user.usuarioId = token.usuarioId || ""; // ID de usuario
+        session.user.email = token.email || "";
+        session.user.role = token.role || "";
+        session.user.empleadoId = token.empleadoId ?? null;
       }
       return session;
     },
