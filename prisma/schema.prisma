@@ -3,216 +3,226 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model inmueble {
-  id                 Int                  @id @default(autoincrement())
+model Property {
+  id                 String               @id @default(uuid()) @db.Uuid
   title              String
-  id_rubro           Int
-  localidad          String
-  direccion          String
-  barrio             String
-  num_habitaciones   Int
-  num_baños         Int                  @map("num_baños")
-  superficie         Float
-  garaje             Boolean
-  eliminado          Boolean?             @default(false)
-  id_estado          Int
-  consultas_clientes consultas_clientes[]
-  inmueble_rubro     inmueble_rubro       @relation(fields: [id_rubro], references: [id], onDelete: Cascade, map: "fk_inmueble_rubro")
-  inmueble_estado    inmueble_estado      @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inmueble_estado")
-  inmueble_agente    inmueble_agente[]
-  inmueble_imagen    inmueble_imagen[]
+  categoryId         String               @db.Uuid
+  locality           String
+  address            String
+  neighborhood       String
+  numBedrooms        Int
+  numBathrooms       Int
+  surface            Float
+  garage             Boolean
+  deleted            Boolean?             @default(false)
+  statusId           String               @db.Uuid
+  clientInquiries    ClientInquiry[]
+  propertyCategory   PropertyCategory     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  propertyStatus     PropertyStatus       @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  propertyAgent      PropertyAgent[]
+  propertyImage      PropertyImage[]
 
-  @@index([id_estado], map: "fk_inmueble_estado")
-  @@index([id_rubro], map: "fk_inmueble_rubro")
+  @@index([statusId])
+  @@index([categoryId])
 }
 
-model persona {
-  id               Int                @id @default(autoincrement())
-  telefono         String?
-  apellido         String
-  direccion        String?
-  email            String             @unique(map: "Persona_email_key")
-  fechaCreacion    DateTime           @default(now())
-  nombre           String
-  DNI              Int?               @unique(map: "DNI")
-  eliminado        Boolean
-  persona_empleado persona_empleado[]
-  usuario          usuario[]
+model Person {
+  id               String             @id @default(uuid()) @db.Uuid
+  phone            String?
+  lastName         String
+  address          String?
+  email            String             @unique
+  createdAt        DateTime           @default(now())
+  firstName        String
+  dni              Int?               @unique
+  deleted          Boolean
+  personEmployee   PersonEmployee[]
+  user             User[]
+  personImage      PersonImage[]      // Relación con imágenes de persona
 }
 
-model sesion {
-  id         Int      @id @default(autoincrement())
-  id_usuario Int
+model Session {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
   token      String
-  creado_en  DateTime @default(now())
-  eliminado  Boolean
-  usuario    usuario  @relation(fields: [id_usuario], references: [id], map: "Sesion_id_usuario_fkey")
+  createdAt  DateTime @default(now())
+  deleted    Boolean
+  user       User     @relation(fields: [userId], references: [id])
 
-  @@index([id_usuario], map: "Sesion_id_usuario_fkey")
+  @@index([userId])
 }
 
-model usuario {
-  id            Int         @id @default(autoincrement())
-  id_rol        Int
-  clave         String
-  id_persona    Int
-  eliminado     Boolean
-  emailVerified DateTime?   @db.DateTime(0)
-  createdAt     DateTime?   @default(now()) @db.DateTime(0)
-  updatedAt     DateTime?   @default(now()) @db.DateTime(0)
+model User {
+  id            String      @id @default(uuid()) @db.Uuid
+  roleId        String      @db.Uuid
+  password      String
+  personId      String      @db.Uuid
+  deleted       Boolean
+  emailVerified DateTime?   @db.Timestamp
+  createdAt     DateTime?   @default(now()) @db.Timestamp
+  updatedAt     DateTime?   @default(now()) @db.Timestamp
   account       account?
-  sesion        sesion[]
-  persona       persona     @relation(fields: [id_persona], references: [id], map: "Usuario_id_persona_fkey")
-  rolusuario    rol_usuario @relation(fields: [id_rol], references: [id], map: "Usuario_id_rol_fkey")
+  session       Session[]
+  person        Person      @relation(fields: [personId], references: [id])
+  userRole      UserRole    @relation(fields: [roleId], references: [id])
 
-  @@index([id_persona], map: "Usuario_id_persona_fkey")
-  @@index([id_rol], map: "Usuario_id_rol_fkey")
+  @@index([personId])
+  @@index([roleId])
 }
 
-model empleado {
-  id                 Int                  @id @default(autoincrement())
-  CUIT               String               @unique(map: "CUIT") @db.VarChar(20)
-  Fecha_Alta         DateTime             @db.Date
-  Fecha_Baja         DateTime?            @db.Date
-  tipoId             Int
-  eliminado          Boolean
-  consultas_clientes consultas_clientes[]
-  empleado_tipo      empleado_tipo        @relation(fields: [tipoId], references: [id], map: "Empleado_tipoId_fkey")
-  inmueble_agente    inmueble_agente[]
-  persona_empleado   persona_empleado[]
+model Employee {
+  id                 String             @id @default(uuid()) @db.Uuid
+  cuit               String             @unique
+  hireDate           DateTime           @db.Date
+  terminationDate    DateTime?          @db.Date
+  typeId             String             @db.Uuid
+  deleted            Boolean
+  clientInquiries    ClientInquiry[]
+  employeeType       EmployeeType       @relation(fields: [typeId], references: [id])
+  propertyAgent      PropertyAgent[]
+  personEmployee     PersonEmployee[]
 
-  @@index([tipoId], map: "Empleado_tipoId_fkey")
+  @@index([typeId])
 }
 
-model empleado_tipo {
-  id       Int        @id @default(autoincrement())
-  tipo     String     @unique(map: "EmpleadoTipo_tipo_key")
-  empleado empleado[]
+model EmployeeType {
+  id       String     @id @default(uuid()) @db.Uuid
+  type     String     @unique
+  employee Employee[]
 }
 
-model persona_empleado {
-  id             Int      @id @default(autoincrement())
-  idpersona      Int
-  idempleado     Int
-  fecha_creacion DateTime @default(now()) @db.DateTime(0)
-  eliminado      Boolean  @default(false)
-  empleado       empleado @relation(fields: [idempleado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_idempleado")
-  persona        persona  @relation(fields: [idpersona], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_idpersona")
+model PersonEmployee {
+  id             String   @id @default(uuid()) @db.Uuid
+  personId       String   @db.Uuid
+  employeeId     String   @db.Uuid
+  createdAt      DateTime @default(now()) @db.Timestamp
+  deleted        Boolean  @default(false)
+  employee       Employee @relation(fields: [employeeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  person         Person   @relation(fields: [personId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([idempleado], map: "fk_idempleado")
-  @@index([idpersona], map: "fk_idpersona")
+  @@index([employeeId])
+  @@index([personId])
 }
 
-model rol_usuario {
-  id        Int       @id @default(autoincrement())
-  tipo_rol  String
-  eliminado Boolean
-  usuario   usuario[]
+model UserRole {
+  id        String    @id @default(uuid()) @db.Uuid
+  roleType  String
+  deleted   Boolean
+  user      User[]
 }
 
-model inmueble_estado {
-  id       Int        @id @default(autoincrement())
-  estado   String     @db.VarChar(255)
-  inmueble inmueble[]
+model PropertyStatus {
+  id       String    @id @default(uuid()) @db.Uuid
+  status   String
+  property Property[]
 }
 
-model inmueble_rubro {
-  id       Int        @id @default(autoincrement())
-  rubro    String     @db.VarChar(255)
-  inmueble inmueble[]
+model PropertyCategory {
+  id       String    @id @default(uuid()) @db.Uuid
+  category String
+  property Property[]
 }
 
-model inmueble_imagen {
-  id          Int      @id @default(autoincrement())
-  id_inmueble Int
-  ruta_imagen String?  @db.VarChar(255)
-  inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_inmueble_imagen_inmueble")
+model PropertyImage {
+  id          String    @id @default(uuid()) @db.Uuid
+  propertyId  String    @db.Uuid
+  imagePath   String?
+  property    Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([id_inmueble], map: "fk_inmueble_imagen_inmueble")
+  @@index([propertyId])
 }
 
 model oauth_access_tokens {
-  id           Int       @id @default(autoincrement())
-  access_token String    @db.VarChar(255)
-  user_id      Int
-  expires_at   DateTime  @db.DateTime(0)
-  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  id           String    @id @default(uuid()) @db.Uuid
+  access_token String
+  user_id      String    @db.Uuid
+  expires_at   DateTime  @db.Timestamp
+  created_at   DateTime? @default(now()) @db.Timestamp
 }
 
 model oauth_authorization_codes {
-  authorization_code String   @id @db.VarChar(255)
-  redirect_uri       String   @db.VarChar(2048)
-  user_id            Int
-  expires_at         DateTime @db.DateTime(0)
+  authorization_code String   @id
+  redirect_uri       String
+  user_id            String   @db.Uuid
+  expires_at         DateTime @db.Timestamp
 }
 
 model oauth_refresh_tokens {
-  id            Int       @id @default(autoincrement())
-  refresh_token String    @unique(map: "unique_refresh_token") @db.VarChar(255)
-  user_id       Int
-  expires_at    DateTime  @db.DateTime(0)
-  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  id            String    @id @default(uuid()) @db.Uuid
+  refresh_token String    @unique
+  user_id       String   @db.Uuid
+  expires_at    DateTime  @db.Timestamp
+  created_at    DateTime? @default(now()) @db.Timestamp
 }
 
 model account {
-  id                       String    @id @default(dbgenerated("(uuid())")) @db.VarChar(36)
-  userId                   Int       @unique(map: "userId")
-  type                     String    @db.VarChar(255)
-  provider                 String    @db.VarChar(255)
-  providerAccountId        String    @db.VarChar(255)
+  id                       String    @id @default(uuid())
+  userId                   String    @unique @db.Uuid
+  type                     String
+  provider                 String
+  providerAccountId        String
   refresh_token            String?   @db.Text
   access_token             String?   @db.Text
   expires_at               Int?
-  token_type               String?   @db.VarChar(255)
-  scope                    String?   @db.VarChar(255)
+  token_type               String?
+  scope                    String?
   id_token                 String?   @db.Text
-  session_state            String?   @db.VarChar(255)
+  session_state            String?
   refresh_token_expires_in Int?
-  createdAt                DateTime? @default(now()) @db.DateTime(0)
-  updatedAt                DateTime? @default(now()) @db.DateTime(0)
-  usuario                  usuario   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "account_ibfk_1")
+  createdAt                DateTime? @default(now()) @db.Timestamp
+  updatedAt                DateTime? @default(now()) @db.Timestamp
+  user                     User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([provider, providerAccountId], map: "provider")
-  @@index([userId], map: "userId_2")
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model verificationtoken {
-  identifier String   @db.VarChar(255)
-  token      String   @db.VarChar(255)
-  expires    DateTime @db.DateTime(0)
+  identifier String
+  token      String
+  expires    DateTime @db.Timestamp
 
-  @@unique([identifier, token], map: "identifier")
+  @@unique([identifier, token])
 }
 
-model inmueble_agente {
-  id          BigInt   @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
-  id_inmueble Int
-  id_agente   Int
-  eliminado   Boolean? @default(false)
-  inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inmueble_agente_ibfk_1")
-  empleado    empleado @relation(fields: [id_agente], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "inmueble_agente_ibfk_2")
+model PropertyAgent {
+  id          String    @id @default(uuid()) @db.Uuid
+  propertyId  String    @db.Uuid
+  agentId     String    @db.Uuid
+  deleted     Boolean?  @default(false)
+  property    Property  @relation(fields: [propertyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  employee    Employee  @relation(fields: [agentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([id_agente], map: "id_agente")
-  @@index([id_inmueble], map: "id_inmueble")
+  @@index([agentId])
+  @@index([propertyId])
 }
 
-model consultas_clientes {
-  id          Int      @id @default(autoincrement())
-  id_inmueble Int
-  id_agente   Int
-  nombre      String   @db.VarChar(255)
-  apellido    String   @db.VarChar(255)
-  telefono    String   @db.VarChar(50)
-  email       String   @db.VarChar(255)
-  fecha       DateTime @db.DateTime(0)
-  descripcion String?  @db.Text
-  inmueble    inmueble @relation(fields: [id_inmueble], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "consultas_clientes_ibfk_1")
-  empleado    empleado @relation(fields: [id_agente], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "consultas_clientes_ibfk_2")
+model ClientInquiry {
+  id          String    @id @default(uuid()) @db.Uuid
+  propertyId  String    @db.Uuid
+  agentId     String    @db.Uuid
+  firstName   String
+  lastName    String
+  phone       String
+  email       String
+  date        DateTime @db.Timestamp
+  description String?  @db.Text
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  employee    Employee @relation(fields: [agentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([id_agente], map: "id_agente")
-  @@index([id_inmueble], map: "id_inmueble")
+  @@index([agentId])
+  @@index([propertyId])
+}
+
+model PersonImage {
+  id         String   @id @default(uuid()) @db.Uuid
+  personId   String   @db.Uuid
+  imagePath  String?
+  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([personId])
 }

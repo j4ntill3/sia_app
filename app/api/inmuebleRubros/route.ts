@@ -1,26 +1,22 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
+import { jsonError, jsonSuccess } from "@/lib/api-helpers";
+import type { PropertyCategory } from "@/types/inmueble_rubro";
 
 export async function GET(request: NextRequest) {
   try {
-    const rubros = await prisma.inmueble_rubro.findMany();
-
-    if (!rubros || rubros.length === 0) {
-      return new Response(
-        JSON.stringify({ message: "No se encontraron rubros" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
+    const rubrosDb = await prisma.propertyCategory.findMany();
+    if (!rubrosDb || rubrosDb.length === 0) {
+      return jsonError("No se encontraron rubros", 404);
     }
-
-    return new Response(JSON.stringify(rubros), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Mapear a tipo PropertyCategory
+    const rubros: PropertyCategory[] = rubrosDb.map((r) => ({
+      id: r.id,
+      category: r.category,
+    }));
+    return jsonSuccess<PropertyCategory[]>(rubros);
   } catch (error: any) {
     console.error("Error al obtener rubros:", error);
-    return new Response(
-      JSON.stringify({ error: error.message || "Error al obtener rubros" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return jsonError(error.message || "Error al obtener rubros", 500);
   }
 }

@@ -1,88 +1,87 @@
-import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-export default {
+const config: any = {
   providers: [
     Credentials({
-      authorize: async (credentials) => {
-        if (
-          !credentials ||
-          typeof credentials.email !== "string" ||
-          typeof credentials.password !== "string"
-        ) {
-          throw new Error(
-            "El email o la contraseña proporcionados no son válidos."
-          );
+      async authorize(credentials) {
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
+
+        if (!email || !password) {
+          return null;
         }
 
-        const user = await prisma.usuario.findFirst({
+        const user = await prisma.user.findFirst({
           where: {
-            eliminado: false,
-            persona: {
-              email: credentials.email,
-              eliminado: false,
+            deleted: false,
+            person: {
+              email: email,
+              deleted: false,
             },
           },
-          select: {
-            clave: true,
-            persona: {
-              select: {
-                id: true,
-                email: true,
-                persona_empleado: {
-                  where: { eliminado: false },
-                  select: {
-                    idempleado: true, // Seleccionar el ID del empleado
+          include: {
+            person: {
+              include: {
+                personEmployee: {
+                  include: {
+                    employee: true,
                   },
                 },
               },
             },
-            rolusuario: {
-              select: {
-                tipo_rol: true, // Seleccionar el tipo de rol
-              },
-            },
+            userRole: true,
           },
         });
 
         if (!user) {
-          throw new Error("Credenciales inválidas");
+          return null;
         }
 
-        // Validar la contraseña
-        const isValid = await bcrypt.compare(credentials.password, user.clave);
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
-        if (!isValid) {
-          throw new Error("Credenciales inválidas");
+        if (!isPasswordValid) {
+          return null;
         }
 
-        // Extraer el empleadoId correctamente
-        const empleadoId =
-          user.persona.persona_empleado.length > 0
-            ? user.persona.persona_empleado[0].idempleado
+        // Determine employee type
+        const employeeId =
+          user.person.personEmployee.length > 0
+            ? user.person.personEmployee[0].employeeId
             : null;
 
-        console.log({
-          id: user.persona.id.toString(),
-          email: user.persona.email,
-          role: user.rolusuario.tipo_rol,
-          empleadoId,
-        });
-
-        // Retornar los datos de la sesión
         return {
-          id: user.persona.id.toString(),
-          email: user.persona.email,
-          role: user.rolusuario.tipo_rol,
-          empleadoId, // Incluir el empleadoId
+          id: user.id.toString(),
+          email: user.person.email,
+          name: `${user.person.firstName} ${user.person.lastName}`,
+          role: user.userRole.roleType,
+          employeeId: employeeId,
         };
       },
     }),
   ],
-  pages: {
-    signIn: "/",
-    error: "/error",
+  callbacks: {
+    async jwt({ token, user }: any) {
+      if (user) {
+        token.role = user.role;
+        token.employeeId = user.employeeId;
+      }
+      return token;
+    },
+    async session({ session, token }: any) {
+      if (token) {
+        session.user.role = token.role;
+        session.user.employeeId = token.employeeId;
+      }
+      return session;
+    },
   },
-} satisfies NextAuthConfig;
+  pages: {
+    signIn: "/login",
+  },
+};
+
+export default config;

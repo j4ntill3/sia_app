@@ -1,11 +1,59 @@
-export default interface ConsultaCliente {
-  id: number; // Identificador único del cliente
-  id_inmueble: number; // Id del inmueble relacionado
-  id_agente: number; // Id del agente relacionado
-  nombre: string; // Nombre del cliente
-  apellido: string; // Apellido del cliente
-  telefono: string | null; // Teléfono del cliente (puede ser null si no tiene)
-  email: string | null; // Email del cliente (puede ser null si no tiene)
-  fecha: string; // Fecha relacionada con el cliente (por ejemplo, la fecha de creación o solicitud)
-  descripcion: string | null; // Descripción del cliente (puede ser null si no tiene)
+export interface ClientInquiry {
+  id: number;
+  propertyId: number;
+  agentId: number;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  date: Date;
+  description?: string;
+  property?: Property;
+  employee?: Employee;
+}
+
+export interface ClientInquiryCreate {
+  propertyId: number;
+  agentId: number;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  date: Date;
+  description?: string;
+}
+
+export interface ClientInquiryUpdate {
+  propertyId?: number;
+  agentId?: number;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  email?: string;
+  date?: Date;
+  description?: string;
+}
+
+export interface Property {
+  id: number;
+  title: string;
+  categoryId: number;
+  locality: string;
+  address: string;
+  neighborhood: string;
+  numBedrooms: number;
+  numBathrooms: number;
+  surface: number;
+  garage: boolean;
+  deleted?: boolean;
+  statusId: number;
+}
+
+export interface Employee {
+  id: number;
+  cuit: string;
+  hireDate: Date;
+  terminationDate?: Date;
+  typeId: number;
+  deleted: boolean;
 }

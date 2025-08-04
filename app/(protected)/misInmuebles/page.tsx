@@ -3,13 +3,19 @@
 import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth-actions";
 import InmuebleCard from "@/app/components/InmuebleCard";
-import type Inmueble from "@/types/inmueble";
+import type { Property as Inmueble } from "@/types/inmueble";
+import InmuebleSearch from "@/app/components/InmuebleSearch";
+import Pagination from "@/app/components/Pagination";
 
 const misInmuebles = () => {
   const [session, setSession] = useState<any>(null);
   const [inmuebles, setInmuebles] = useState<Inmueble[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [totalItems, setTotalItems] = useState(0);
 
   // Función para autenticar al usuario
   const authenticateUser = async () => {
@@ -34,26 +40,44 @@ const misInmuebles = () => {
     }
   };
 
+  const fetchMisInmuebles = async (pageToFetch = 1) => {
+    try {
+      const response = await fetch(
+        `/api/misInmuebles?page=${pageToFetch}&pageSize=5`
+      );
+      if (!response.ok) {
+        throw new Error("Error al obtener los inmuebles.");
+      }
+      const inmueblesData = await response.json();
+      setInmuebles(inmueblesData.data.data || []);
+      setTotalPages(inmueblesData.data.totalPages || 1);
+      setTotalItems(inmueblesData.data.totalCount || 0);
+    } catch (err) {
+      setError("Error al obtener los inmuebles.");
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       const userSession = await authenticateUser();
-
       if (userSession) {
-        // Hacer la solicitud a la API para obtener los inmuebles del agente
-        const response = await fetch(`/api/misInmuebles`);
-        if (response.ok) {
-          const inmueblesData = await response.json();
-          setInmuebles(inmueblesData);
-        } else {
-          setError("Error al obtener los inmuebles.");
-        }
+        await fetchMisInmuebles(page);
       }
-
       setIsLoading(false);
     };
-
     init();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
+  // Filtrar inmuebles según el texto de búsqueda
+  const filteredInmuebles = inmuebles.filter((inmueble) => {
+    const q = searchQuery.toLowerCase();
+    return (
+      inmueble.title?.toLowerCase().includes(q) ||
+      inmueble.neighborhood?.toLowerCase().includes(q) ||
+      inmueble.address?.toLowerCase().includes(q)
+    );
+  });
 
   // Mostrar un mensaje de carga mientras se resuelve la sesión y los datos
   if (isLoading) {
@@ -86,14 +110,25 @@ const misInmuebles = () => {
 
   // Renderizar los inmuebles
   return (
-    <div className="flex flex-wrap justify-center gap-6 bg-gray-100 p-4">
-      {inmuebles.length === 0 ? (
-        <p>No se encontraron inmuebles disponibles.</p>
-      ) : (
-        inmuebles.map((inmueble) => (
-          <InmuebleCard key={inmueble.id} inmueble={inmueble} />
-        ))
-      )}
+    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
+      <InmuebleSearch onSearch={setSearchQuery} />
+      <div className="flex flex-wrap justify-center gap-6 w-full">
+        {filteredInmuebles.length === 0 ? (
+          <p>No se encontraron inmuebles disponibles.</p>
+        ) : (
+          filteredInmuebles.map((inmueble) => (
+            <InmuebleCard key={inmueble.id} inmueble={inmueble} />
+          ))
+        )}
+      </div>
+      {/* Paginación */}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        onChange={setPage}
+        totalItems={totalItems}
+        pageSize={5}
+      />
     </div>
   );
 };

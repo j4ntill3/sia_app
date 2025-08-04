@@ -38,7 +38,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
         if (!response.ok) throw new Error("Error al obtener el inmueble");
 
         const data = await response.json();
-        setInmueble(data);
+        setInmueble(data.data);
       } catch {
         setError("Ocurrió un error al cargar los detalles.");
       } finally {

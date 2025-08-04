@@ -1,224 +1,201 @@
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import type Inmueble from "@/types/inmueble";
+import { requireAuth, jsonError, jsonSuccess } from "@/lib/api-helpers";
+import { propertySchema } from "@/lib/validation";
+import type { Property, PropertyImage } from "@/types/inmueble";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = await params; // Asegurándonos de esperar a los parámetros
-
   try {
-    const inmuebleData = await prisma.inmueble.findFirst({
+    const id = params.id;
+    if (!id) {
+      return jsonError("ID de propiedad inválido", 400);
+    }
+    const property = await prisma.property.findFirst({
       where: {
-        id: Number(id),
-        eliminado: false, // Solo devolver inmuebles que no estén eliminados
+        id: id,
+        deleted: false,
       },
       include: {
-        inmueble_estado: {
-          select: { estado: true },
-        },
-        inmueble_rubro: {
-          select: { rubro: true },
-        },
-        inmueble_imagen: {
-          take: 1, // Obtén solo un registro
-          orderBy: {
-            id: "desc", // Ordena por id en orden descendente para obtener el último registro
+        propertyStatus: {
+          select: {
+            status: true,
           },
+        },
+        propertyCategory: {
+          select: {
+            category: true,
+          },
+        },
+        propertyImage: {
+          orderBy: { id: "desc" },
         },
       },
     });
-
-    if (!inmuebleData) {
-      return new Response(JSON.stringify({ error: "Inmueble no encontrado" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!property) {
+      return jsonError("Propiedad no encontrada", 404);
     }
-
-    // Estructurando el objeto conforme al tipo 'Inmueble'
-    const inmueble: Inmueble = {
-      id: inmuebleData.id,
-      title: inmuebleData.title,
-      id_rubro: inmuebleData.inmueble_rubro.rubro,
-      localidad: inmuebleData.localidad,
-      direccion: inmuebleData.direccion,
-      barrio: inmuebleData.barrio,
-      num_habitaciones: inmuebleData.num_habitaciones,
-      num_baños: inmuebleData.num_baños,
-      superficie: inmuebleData.superficie,
-      garaje: inmuebleData.garaje,
-      eliminado: inmuebleData.eliminado,
-      estado: inmuebleData.inmueble_estado?.estado,
-      ruta_imagen:
-        inmuebleData.inmueble_imagen?.[0]?.ruta_imagen ||
-        "/img/image-icon-600nw-211642900.webp",
+    // Mapear a tipo Property
+    const propertyData: Property = {
+      id: property.id,
+      title: property.title,
+      categoryId: property.categoryId,
+      locality: property.locality,
+      address: property.address,
+      neighborhood: property.neighborhood,
+      numBedrooms: property.numBedrooms,
+      numBathrooms: property.numBathrooms,
+      surface: property.surface,
+      garage: property.garage,
+      deleted: property.deleted ?? false,
+      statusId: property.statusId,
+      propertyImage:
+        property.propertyImage?.map((img) => ({
+          id: img.id,
+          propertyId: img.propertyId,
+          imagePath: img.imagePath || undefined,
+        })) || [],
+      propertyCategory: property.propertyCategory
+        ? {
+            id: property.categoryId,
+            category: property.propertyCategory.category,
+          }
+        : undefined,
+      propertyStatus: property.propertyStatus
+        ? { id: property.statusId, status: property.propertyStatus.status }
+        : undefined,
     };
-
-    return new Response(JSON.stringify(inmueble), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonSuccess<Property>(propertyData);
   } catch (error) {
-    console.error("Error al obtener el inmueble:", error);
-    return new Response(
-      JSON.stringify({ error: "Error al obtener el inmueble" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
-  }
-}
-
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  // Asegúrate de esperar los parámetros antes de acceder a sus propiedades
-  const { id } = await params; // Ahora esperamos a que los params sean resueltos
-
-  try {
-    // Verificar si el inmueble existe
-    const inmuebleExistente = await prisma.inmueble.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!inmuebleExistente) {
-      return new Response(JSON.stringify({ error: "Inmueble no encontrado" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // Marcar el inmueble como eliminado
-    const inmuebleEliminado = await prisma.inmueble.update({
-      where: { id: Number(id) },
-      data: { eliminado: true },
-    });
-
-    return new Response(JSON.stringify(inmuebleEliminado), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.error("Error al eliminar el inmueble:", error);
-    return new Response(
-      JSON.stringify({ error: "Error al eliminar el inmueble" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    console.error("Error al obtener propiedad:", error);
+    return jsonError("Error interno del servidor", 500);
   }
 }
 
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const { session, error, status } = await requireAuth(
+    request,
+    "administrador"
+  );
+  if (error) return jsonError(error, status);
   try {
-    console.log("Parámetros recibidos:", params);
-
-    const { id } = await params;
-
-    // Verificamos si el inmueble existe
-    const inmuebleExistente = await prisma.inmueble.findUnique({
-      where: { id: Number(id) },
+    const id = params.id;
+    if (!id) {
+      return jsonError("ID de propiedad inválido", 400);
+    }
+    const body = await request.json();
+    // Validar datos con zod (parcial)
+    const parse = propertySchema.partial().safeParse({
+      ...body,
+      categoryId: body.categoryId,
+      numBedrooms:
+        body.numBedrooms !== undefined ? Number(body.numBedrooms) : undefined,
+      numBathrooms:
+        body.numBathrooms !== undefined ? Number(body.numBathrooms) : undefined,
+      surface: body.surface !== undefined ? Number(body.surface) : undefined,
+      garage: body.garage !== undefined ? Boolean(body.garage) : undefined,
+      statusId: body.statusId,
     });
-
-    console.log("Inmueble existente:", inmuebleExistente);
-
-    if (!inmuebleExistente) {
-      return new Response(JSON.stringify({ error: "Inmueble no encontrado" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // Obtenemos los datos del cuerpo de la solicitud
-    const requestData = await request.json();
-    console.log("Datos recibidos en el cuerpo de la solicitud:", requestData);
-
-    // Verificamos que la solicitud contenga 'field' y 'value'
-    if (!requestData.field || !requestData.value) {
-      console.log("Error: Faltan datos en la solicitud:", requestData);
-      return new Response(
-        JSON.stringify({ error: "Falta el campo o el valor para actualizar" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+    if (!parse.success) {
+      return jsonError(
+        "Datos inválidos: " + JSON.stringify(parse.error.flatten().fieldErrors),
+        400
       );
     }
-
-    // Mapeo entre los nombres mostrados en el frontend y las columnas reales en la base de datos
-    const fieldMapping: Record<string, string> = {
-      título: "title",
-      rubro: "id_rubro",
-      localidad: "localidad",
-      dirección: "direccion",
-      barrio: "barrio",
-      habitaciones: "num_habitaciones",
-      baños: "num_baños",
-      superficie: "superficie",
-      garaje: "garaje",
-      estado: "id_estado",
-    };
-
-    const dbField = fieldMapping[requestData.field];
-    console.log("Campo a actualizar:", dbField);
-    console.log("Valor recibido (original):", requestData.value);
-
-    if (!dbField) {
-      console.log("Error: Campo inválido proporcionado:", requestData.field);
-      return new Response(
-        JSON.stringify({ error: "Campo inválido para actualizar" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    const updateData = parse.data;
+    // Validar que la propiedad existe
+    const existingProperty = await prisma.property.findFirst({
+      where: {
+        id: id,
+        deleted: false,
+      },
+    });
+    if (!existingProperty) {
+      return jsonError("Propiedad no encontrada", 404);
     }
-
-    // Convertimos el valor según el tipo de campo
-    let value: number | boolean | string = requestData.value;
-
-    if (
-      dbField === "id_rubro" ||
-      dbField === "num_habitaciones" ||
-      dbField === "num_baños" ||
-      dbField === "superficie" ||
-      dbField === "id_estado"
-    ) {
-      value = Number(requestData.value);
-
-      if (isNaN(value)) {
-        console.log("Error: El valor proporcionado no es un número válido.");
-        return new Response(
-          JSON.stringify({
-            error: `El valor de '${dbField}' debe ser un número válido`,
-          }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
-        );
-      }
-    } else if (dbField === "garaje") {
-      value = requestData.value === "true"; // Convertimos a booleano
-    }
-
-    console.log("Valor procesado (convertido):", value);
-
-    // Construimos el objeto de actualización
-    const updateData = {
-      [dbField]: value,
-    };
-    console.log("Objeto de actualización:", updateData);
-
-    // Actualizamos el inmueble en la base de datos
-    const inmuebleActualizado = await prisma.inmueble.update({
-      where: { id: Number(id) },
+    const updatedProperty = await prisma.property.update({
+      where: { id: id },
       data: updateData,
+      include: {
+        propertyStatus: {
+          select: {
+            status: true,
+          },
+        },
+        propertyCategory: {
+          select: {
+            category: true,
+          },
+        },
+        propertyImage: true,
+      },
     });
-
-    console.log("Inmueble actualizado exitosamente:", inmuebleActualizado);
-
-    return new Response(JSON.stringify(inmuebleActualizado), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Mapear a tipo Property
+    const propertyData: Property = {
+      id: updatedProperty.id,
+      title: updatedProperty.title,
+      categoryId: updatedProperty.categoryId,
+      locality: updatedProperty.locality,
+      address: updatedProperty.address,
+      neighborhood: updatedProperty.neighborhood,
+      numBedrooms: updatedProperty.numBedrooms,
+      numBathrooms: updatedProperty.numBathrooms,
+      surface: updatedProperty.surface,
+      garage: updatedProperty.garage,
+      deleted: updatedProperty.deleted ?? false,
+      statusId: updatedProperty.statusId,
+      propertyImage:
+        updatedProperty.propertyImage?.map((img) => ({
+          id: img.id,
+          propertyId: img.propertyId,
+          imagePath: img.imagePath || undefined,
+        })) || [],
+      propertyCategory: updatedProperty.propertyCategory
+        ? {
+            id: updatedProperty.categoryId,
+            category: updatedProperty.propertyCategory.category,
+          }
+        : undefined,
+      propertyStatus: updatedProperty.propertyStatus
+        ? {
+            id: updatedProperty.statusId,
+            status: updatedProperty.propertyStatus.status,
+          }
+        : undefined,
+    };
+    return jsonSuccess<Property>(propertyData);
   } catch (error) {
-    console.error("Error al actualizar el inmueble:", error);
-    return new Response(
-      JSON.stringify({ error: "Error al actualizar el inmueble" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    console.error("Error al actualizar propiedad:", error);
+    return jsonError("Error interno del servidor", 500);
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { session, error, status } = await requireAuth(
+    request,
+    "administrador"
+  );
+  if (error) return jsonError(error, status);
+  try {
+    const id = params.id;
+    if (!id) {
+      return jsonError("ID de propiedad inválido", 400);
+    }
+    await prisma.property.update({
+      where: { id: id },
+      data: { deleted: true },
+    });
+    return jsonSuccess({ message: "Propiedad eliminada correctamente" });
+  } catch (error) {
+    console.error("Error al eliminar propiedad:", error);
+    return jsonError("Error interno del servidor", 500);
   }
 }

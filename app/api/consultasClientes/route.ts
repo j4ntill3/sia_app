@@ -1,48 +1,31 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
+import { requireAuth, jsonError, jsonSuccess } from "@/lib/api-helpers";
+import type { ClientInquiry } from "@/types/consulta_cliente";
 
 export async function GET(request: NextRequest) {
+  const { session, error, status } = await requireAuth(
+    request,
+    "administrador"
+  );
+  if (error) return jsonError(error, status);
   try {
-    // Consultar todos los registros de la tabla consultas_clientes
-    const consultasClientes = await prisma.consultas_clientes.findMany({
-      select: {
-        id: true,
-        id_inmueble: true,
-        id_agente: true,
-        nombre: true,
-        apellido: true,
-        telefono: true,
-        email: true,
-        fecha: true,
-        descripcion: true,
-      },
-    });
-
-    console.log("Consultas encontradas:", consultasClientes);
-
-    if (!consultasClientes || consultasClientes.length === 0) {
-      console.log("No se encontraron consultas de clientes");
-      return new Response(
-        JSON.stringify({
-          message: "No se encontraron consultas de clientes",
-        }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // Retornar las consultas en formato JSON
-    console.log("Retornando consultas en formato JSON");
-    return new Response(JSON.stringify(consultasClientes), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error: any) {
+    const consultasDb = await prisma.clientInquiry.findMany();
+    // Mapear a tipo ClientInquiry
+    const consultasClientes: ClientInquiry[] = consultasDb.map((c) => ({
+      id: c.id,
+      propertyId: c.propertyId,
+      agentId: c.agentId,
+      firstName: c.firstName,
+      lastName: c.lastName,
+      phone: c.phone,
+      email: c.email,
+      date: c.date,
+      description: c.description || undefined,
+    }));
+    return jsonSuccess<ClientInquiry[]>(consultasClientes);
+  } catch (error) {
     console.error("Error al obtener consultas de clientes:", error);
-    return new Response(
-      JSON.stringify({
-        error: error.message || "Error al obtener consultas de clientes",
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return jsonError("Error al obtener consultas de clientes", 500);
   }
 }

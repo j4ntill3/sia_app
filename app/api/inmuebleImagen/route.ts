@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 import fs from "fs";
 import path from "path";
+import { jsonError, jsonSuccess } from "@/lib/api-helpers";
+import type { PropertyImage } from "@/types/inmueble_imagen";
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,10 +12,7 @@ export async function POST(request: NextRequest) {
     const imageFile = formData.get("image") as File;
 
     if (!id_inmueble || !imageFile) {
-      return new Response(JSON.stringify({ error: "Faltan parámetros" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return jsonError("Faltan parámetros", 400);
     }
 
     const uploadDir = "./public/img";
@@ -30,24 +29,26 @@ export async function POST(request: NextRequest) {
 
     const imagePath = `/img/${fileName}`;
 
-    const newImage = await prisma.inmueble_imagen.create({
+    const newImageDb = await prisma.propertyImage.create({
       data: {
-        id_inmueble: parseInt(id_inmueble), // Asegurarse de que sea un número
-        ruta_imagen: imagePath,
+        propertyId: id_inmueble,
+        imagePath: imagePath,
       },
     });
 
-    return new Response(JSON.stringify({ url: imagePath }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
+    // Mapear a tipo PropertyImage
+    const newImage: PropertyImage = {
+      id: newImageDb.id,
+      propertyId: newImageDb.propertyId,
+      imagePath: newImageDb.imagePath || undefined,
+    };
+
+    return jsonSuccess<{ url: string; image: PropertyImage }>({
+      url: imagePath,
+      image: newImage,
     });
   } catch (error) {
     console.error("Error al guardar la imagen:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Error al guardar la imagen en la base de datos",
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return jsonError("Error al guardar la imagen en la base de datos", 500);
   }
 }

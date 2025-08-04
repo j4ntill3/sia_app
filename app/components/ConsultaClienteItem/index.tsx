@@ -50,26 +50,26 @@ const ClienteItem: React.FC<ClienteItemProps> = ({ cliente, onView }) => {
 
   return (
     <tr className="border-b hover:bg-gray-50">
-      <td className="px-4 font-sans py-2">
+      <td className="px-4 font-sans py-2 text-gray-900">
         {cliente.nombre} {cliente.apellido}
       </td>
-      <td className="px-4 font-sans py-2">
+      <td className="px-4 font-sans py-2 text-gray-900">
         {cliente.telefono ?? "No disponible"}
       </td>
-      <td className="px-4 font-sans py-2">
+      <td className="px-4 font-sans py-2 text-gray-900">
         {cliente.email ?? "No disponible"}
       </td>
-      <td className="px-4 font-sans py-2">
+      <td className="px-4 font-sans py-2 text-gray-900">
         {new Date(cliente.fecha).toLocaleDateString("es-AR")}
       </td>
-      <td className="px-4 font-sans py-2">
+      <td className="px-4 font-sans py-2 text-gray-900">
         {cliente.descripcion ?? "No disponible"}
       </td>
-      <td className="px-4 font-sans py-2">
+      <td className="px-4 font-sans py-2 text-gray-900">
         {cliente.id_inmueble ?? "No disponible"}
       </td>
       {session && session.user && session.user.role === "administrador" ? (
-        <td className="px-4 font-sans py-2">
+        <td className="px-4 font-sans py-2 text-gray-900">
           {cliente.id_agente ?? "No disponible"}
         </td>
       ) : null}

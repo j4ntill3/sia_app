@@ -131,7 +131,7 @@ export default function CrearConsulta() {
   }
 
   return (
-    <div className="flex flex-col h-screen py-4 items-center justify-center bg-gray-100">
+    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
       <div className="w-full max-w-sm py-4 px-8 bg-white shadow-md rounded-2xl">
         <h2 className="text-3xl font-bold text-center mb-6 text-[#083C2C]">
           Crear Consulta

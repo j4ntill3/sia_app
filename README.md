@@ -34,3 +34,71 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# SIA App - Backend API
+
+## Estructura de Respuestas
+
+Todas las respuestas de la API siguen el formato:
+
+```json
+{
+  "data": {
+    /* datos de éxito */
+  },
+  "error": "Mensaje de error opcional",
+  "message": "Mensaje opcional"
+}
+```
+
+## Autenticación y Roles
+
+- La autenticación se realiza mediante sesión (NextAuth).
+- Los endpoints protegidos requieren un rol específico:
+  - `administrador`: acceso total (gestión de inmuebles, agentes, consultas)
+  - `agente`: acceso a sus propios inmuebles y consultas
+
+## Ejemplo de Endpoints
+
+### Obtener inmuebles (público)
+
+`GET /api/inmuebles`
+
+### Crear inmueble (solo administrador)
+
+`POST /api/inmuebles`
+
+### Obtener mis inmuebles (solo agente)
+
+`GET /api/misInmuebles`
+
+### Registrar consulta de cliente (solo agente)
+
+`POST /api/registrarConsultaCliente`
+
+### Obtener todas las consultas de clientes (solo administrador)
+
+`GET /api/consultasClientes`
+
+## Validación de Datos
+
+- Todos los datos de entrada se validan con Zod.
+- Los esquemas están en `lib/validation.ts`.
+
+## Helpers y Utilidades
+
+- `lib/api-helpers.ts`: helpers para autenticación y respuestas.
+- `lib/db.ts`: helpers para queries comunes de Prisma.
+- `lib/type-utils.ts`: helpers para parseo seguro de tipos.
+- `lib/validation.ts`: esquemas de validación y tipos.
+- `lib/response-types.ts`: tipos TypeScript para respuestas de API.
+
+## Soft Delete
+
+- Los recursos eliminados no se borran físicamente, sino que se marcan con un flag (`deleted` o `eliminado`).
+- Los helpers de queries filtran automáticamente los eliminados.
+
+## Tipado y Documentación
+
+- Todos los handlers y helpers están tipados con TypeScript.
+- Los esquemas de validación y tipos de respuesta están documentados en los archivos correspondientes.

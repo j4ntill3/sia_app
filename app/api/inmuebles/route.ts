@@ -1,96 +1,146 @@
-import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { requireAuth, jsonError, jsonSuccess } from "@/lib/api-helpers";
+import { propertySchema } from "@/lib/validation";
+import type { Property, PropertyImage } from "@/types/inmueble";
 
 export async function GET(request: NextRequest) {
   try {
-    const inmuebles = await prisma.inmueble.findMany({
-      where: { eliminado: false },
-      include: {
-        inmueble_imagen: {
-          take: 1,
-          orderBy: {
-            id: "desc",
-          },
-        },
-      },
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const pageSize = parseInt(searchParams.get("pageSize") || "5", 10);
+    const skip = (page - 1) * pageSize;
+
+    const [total, properties] = await Promise.all([
+      prisma.property.count({ where: { deleted: false } }),
+      prisma.property.findMany({
+        where: { deleted: false },
+        include: { propertyImage: { orderBy: { id: "desc" } } },
+        skip,
+        take: pageSize,
+        orderBy: { id: "asc" },
+      }),
+    ]);
+
+    const propertiesWithImage: Property[] = properties.map((property) => ({
+      id: property.id,
+      title: property.title,
+      categoryId: property.categoryId,
+      locality: property.locality,
+      address: property.address,
+      neighborhood: property.neighborhood,
+      numBedrooms: property.numBedrooms,
+      numBathrooms: property.numBathrooms,
+      surface: property.surface,
+      garage: property.garage,
+      deleted: property.deleted ?? false,
+      statusId: property.statusId,
+      propertyImage:
+        property.propertyImage?.map((img) => ({
+          id: img.id,
+          propertyId: img.propertyId,
+          imagePath: img.imagePath || undefined,
+        })) || [],
+    }));
+
+    const totalPages = Math.ceil(total / pageSize);
+
+    return jsonSuccess({
+      data: propertiesWithImage,
+      total,
+      page,
+      pageSize,
+      totalPages,
     });
-
-    // Transformar los datos para incluir una imagen genérica si no hay imágenes asociadas
-    const inmueblesConImagen = inmuebles.map((inmueble) => {
-      // Si no hay imágenes asociadas, asignar la imagen genérica
-      const ruta_imagen =
-        inmueble.inmueble_imagen && inmueble.inmueble_imagen.length > 0
-          ? inmueble.inmueble_imagen[0].ruta_imagen // Tomar la primera imagen
-          : "img/image-icon-600nw-211642900.webp"; // Ruta de la imagen genérica
-
-      return {
-        ...inmueble,
-        ruta_imagen, // Asignamos la ruta de la imagen (o la genérica)
-      };
-    });
-
-    if (!inmuebles || inmuebles.length === 0) {
-      return new Response(
-        JSON.stringify({ message: "No se encontraron inmuebles" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    return new Response(JSON.stringify(inmueblesConImagen), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error: any) {
-    console.error("Error al obtener inmuebles:", error);
-    return new Response(
-      JSON.stringify({ error: error.message || "Error al obtener inmuebles" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+  } catch (error) {
+    console.error("Error al obtener propiedades:", error);
+    return jsonError("Error interno del servidor", 500);
   }
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const data = await request.json();
+  // Solo administradores pueden crear propiedades
+  const { session, error, status } = await requireAuth(
+    request,
+    "administrador"
+  );
+  if (error) return jsonError(error, status);
 
-    // Asegúrate de que los valores sean del tipo correcto antes de insertarlos en la base de datos
-    const nuevoInmueble = await prisma.inmueble.create({
+  try {
+    const body = await request.json();
+    // Validar datos con zod
+    const parse = propertySchema.safeParse({
+      ...body,
+      categoryId: Number(body.categoryId),
+      numBedrooms: Number(body.numBedrooms),
+      numBathrooms: Number(body.numBathrooms),
+      surface: Number(body.surface),
+      garage: Boolean(body.garage),
+      statusId: Number(body.statusId),
+    });
+    if (!parse.success) {
+      return jsonError(
+        "Datos inválidos: " + JSON.stringify(parse.error.flatten().fieldErrors),
+        400
+      );
+    }
+    const data = parse.data;
+
+    // Crear la propiedad
+    const newProperty = await prisma.property.create({
       data: {
         title: data.title,
-        id_rubro: Number(data.id_rubro), // Asegurarse de que id_rubro sea un número
-        localidad: data.localidad,
-        direccion: data.direccion,
-        barrio: data.barrio || "", // Usar una cadena vacía si no se proporciona barrio
-        num_habitaciones: Number(data.num_habitaciones), // Asegurarse de que sea un número
-        num_baños: Number(data.num_baños), // Asegurarse de que sea un número
-        superficie: Number(data.superficie), // Asegurarse de que superficie sea un número
-        garaje: Boolean(data.garaje), // Convertir a booleano (true/false)
-        eliminado: Boolean(data.eliminado || false), // Asegurarse de que eliminado sea un booleano
-        id_estado: Number(data.id_estado), // Asegurarse de que id_estado sea un número
+        categoryId: data.categoryId,
+        locality: data.locality,
+        address: data.address,
+        neighborhood: data.neighborhood,
+        numBedrooms: data.numBedrooms,
+        numBathrooms: data.numBathrooms,
+        surface: data.surface,
+        garage: data.garage,
+        statusId: data.statusId,
+        deleted: false,
       },
     });
 
-    // Crear la imagen asociada al inmueble con la ruta proporcionada
-    const nuevaImagen = await prisma.inmueble_imagen.create({
-      data: {
-        id_inmueble: nuevoInmueble.id,
-        ruta_imagen: data.ruta_imagen || "/img/imagen_generica.webp", // Ruta de imagen genérica si no se proporciona
-      },
-    });
+    let propertyImages: PropertyImage[] = [];
+    // Si se proporciona una imagen, crear el registro de imagen
+    if (data.imagePath) {
+      const img = await prisma.propertyImage.create({
+        data: {
+          propertyId: newProperty.id,
+          imagePath: data.imagePath,
+        },
+      });
+      propertyImages = [
+        {
+          id: img.id,
+          propertyId: img.propertyId,
+          imagePath: img.imagePath || undefined,
+        },
+      ];
+    }
 
-    return new Response(
-      JSON.stringify({
-        message: "Inmueble creado correctamente",
-        nuevoInmueble,
-        nuevaImagen,
-      }),
-      { status: 201, headers: { "Content-Type": "application/json" } }
-    );
-  } catch (error: any) {
-    console.error("Error al crear el inmueble:", error);
-    return new Response(
-      JSON.stringify({ error: error.message || "Error interno del servidor" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    // Mapear a tipo Property
+    const propertyResult: Property = {
+      id: newProperty.id,
+      title: newProperty.title,
+      categoryId: newProperty.categoryId,
+      locality: newProperty.locality,
+      address: newProperty.address,
+      neighborhood: newProperty.neighborhood,
+      numBedrooms: newProperty.numBedrooms,
+      numBathrooms: newProperty.numBathrooms,
+      surface: newProperty.surface,
+      garage: newProperty.garage,
+      deleted: newProperty.deleted ?? false,
+      statusId: newProperty.statusId,
+      propertyImage: propertyImages,
+    };
+
+    return jsonSuccess<Property>(propertyResult, 201);
+  } catch (error) {
+    console.error("Error al crear propiedad:", error);
+    return jsonError("Error interno del servidor", 500);
   }
 }

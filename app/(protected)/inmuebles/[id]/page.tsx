@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getSession } from "@/actions/auth-actions";
-import { InmuebleRubro } from "@/types/inmueble_rubro";
-import { InmuebleEstado } from "@/types/inmueble_estado";
+import { PropertyCategory } from "@/types/inmueble_rubro";
+import { PropertyStatus } from "@/types/inmueble_estado";
 
 const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   const [session, setSession] = useState<any>(null);
@@ -18,8 +18,8 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editField, setEditField] = useState<string>("");
   const [newValue, setNewValue] = useState<string>("");
-  const [rubros, setRubros] = useState<InmuebleRubro[]>([]);
-  const [estados, setEstados] = useState<InmuebleEstado[]>([]);
+  const [rubros, setRubros] = useState<PropertyCategory[]>([]);
+  const [estados, setEstados] = useState<PropertyStatus[]>([]);
   const [agentId, setAgentId] = useState<number | null>(null);
 
   const router = useRouter();
@@ -31,7 +31,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
       if (!response.ok) throw new Error("Error al obtener el inmueble");
 
       const data = await response.json();
-      setInmueble(data);
+      setInmueble(data.data);
     } catch {
       setError("Ocurrió un error al cargar los detalles.");
     } finally {
@@ -43,13 +43,13 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
     const fetchRubros = async () => {
       const response = await fetch("/api/inmuebleRubros");
       const data = await response.json();
-      setRubros(data);
+      setRubros(data.data || []);
     };
 
     const fetchEstados = async () => {
       const response = await fetch("/api/inmuebleEstados");
       const data = await response.json();
-      setEstados(data);
+      setEstados(data.data || []);
     };
 
     fetchRubros();
@@ -165,17 +165,14 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
           body: JSON.stringify({
             file: base64Image,
             fileName: imageFile.name,
-            id_inmueble: id,
+            propertyId: id,
           }),
         });
 
         const data = await response.json();
         if (response.ok) {
-          setInmueble((prevState: any) => ({
-            ...prevState,
-            ruta_imagen: data.inmuebleImagen.ruta_imagen,
-          }));
           setIsImageModalOpen(false);
+          window.location.reload();
         } else {
           setError("Error al guardar la imagen.");
         }
@@ -275,16 +272,17 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const {
     title,
-    id_rubro,
-    localidad,
-    direccion,
-    barrio,
-    num_habitaciones,
-    num_baños,
-    superficie,
-    garaje,
-    estado,
-    ruta_imagen,
+    propertyCategory,
+    locality,
+    address,
+    neighborhood,
+    numBedrooms,
+    numBathrooms,
+    surface,
+    garage,
+    propertyStatus,
+    propertyImage,
+    // id, // Eliminar esta línea para evitar la redeclaración
   } = inmueble;
 
   return (
@@ -313,10 +311,17 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
             ))}
           </div>
           <img
-            src={ruta_imagen}
+            src={
+              inmueble.propertyImage &&
+              Array.isArray(inmueble.propertyImage) &&
+              inmueble.propertyImage.length > 0 &&
+              inmueble.propertyImage[0].imagePath
+                ? inmueble.propertyImage[0].imagePath
+                : "/img/no-image.webp"
+            }
             alt={`Imagen del inmueble: ${title}`}
             className="w-full h-64 object-cover rounded-lg mt-4"
-          />{" "}
+          />
           <div className="flex flex-row justify-between w-full items-center  my-1">
             <span className="font-semibold text-[#083C2C]">ID: {id}</span>
             {session.user.role === "administrador" && (
@@ -334,15 +339,18 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
           <div className="space-y-4">
             {[
-              { label: "Rubro", value: id_rubro },
-              { label: "Localidad", value: localidad },
-              { label: "Dirección", value: direccion },
-              { label: "Barrio", value: barrio },
-              { label: "Habitaciones", value: num_habitaciones },
-              { label: "Baños", value: num_baños },
-              { label: "Superficie", value: `${superficie} m²` },
-              { label: "Garaje", value: garaje ? "Sí" : "No" },
-              { label: "Estado", value: estado },
+              { label: "Rubro", value: propertyCategory?.category || "-" },
+              { label: "Localidad", value: locality || "-" },
+              { label: "Dirección", value: address || "-" },
+              { label: "Barrio", value: neighborhood || "-" },
+              { label: "Habitaciones", value: numBedrooms ?? "-" },
+              { label: "Baños", value: numBathrooms ?? "-" },
+              {
+                label: "Superficie",
+                value: surface !== undefined ? `${surface} m²` : "-",
+              },
+              { label: "Garaje", value: garage ? "Sí" : "No" },
+              { label: "Estado", value: propertyStatus?.status || "-" },
             ].map(({ label, value }) => (
               <div key={label} className="flex justify-between items-center">
                 <p className="text-[#083C2C]">
@@ -443,7 +451,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
                 <option value="">Seleccionar rubro</option>
                 {rubros.map((rubro) => (
                   <option key={rubro.id} value={rubro.id}>
-                    {rubro.rubro}
+                    {rubro.category}
                   </option>
                 ))}
               </select>
@@ -457,7 +465,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
                 <option value="">Seleccionar estado</option>
                 {estados.map((estado) => (
                   <option key={estado.id} value={estado.id}>
-                    {estado.estado}
+                    {estado.status}
                   </option>
                 ))}
               </select>
@@ -592,7 +600,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
         if (!response.ok) throw new Error("Error al obtener el inmueble");
 
         const data = await response.json();
-        setInmueble(data);
+        setInmueble(data.data);
       } catch {
         setError("Ocurrió un error al cargar los detalles.");
       } finally {
@@ -847,7 +855,7 @@ const InmuebleDetail = ({ params }: { params: Promise<{ id: string }> }) => {
         if (!response.ok) throw new Error("Error al obtener el inmueble");
 
         const data = await response.json();
-        setInmueble(data);
+        setInmueble(data.data);
       } catch {
         setError("Ocurrió un error al cargar los detalles.");
       } finally {

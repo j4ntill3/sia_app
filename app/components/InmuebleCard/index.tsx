@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import type Inmueble from "@/types/inmueble";
+import type { Property as Inmueble } from "@/types/inmueble";
 
 interface InmuebleCardProps {
   inmueble: Inmueble;
@@ -18,7 +18,14 @@ const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble }) => {
   return (
     <div className="w-full max-w-sm p-6 bg-white shadow-md flex flex-col rounded-2xl">
       <img
-        src={inmueble.ruta_imagen}
+        src={
+          inmueble.propertyImage &&
+          Array.isArray(inmueble.propertyImage) &&
+          inmueble.propertyImage.length > 0 &&
+          inmueble.propertyImage[0].imagePath
+            ? inmueble.propertyImage[0].imagePath
+            : "/img/no-image.webp"
+        }
         alt={inmueble.title}
         className="w-full h-48 object-cover mb-4 rounded"
       />
@@ -28,30 +35,26 @@ const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble }) => {
         {inmueble.title}
       </h3>
       <p className="text-[#083C2C] text-sm mb-2">
-        {" "}
-        {/* Color actualizado */}
-        <strong>Dirección:</strong> {inmueble.direccion}
+        <strong>Dirección:</strong> {inmueble.address}
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
-        {" "}
-        {/* Color actualizado */}
-        <strong>Barrio:</strong> {inmueble.barrio}
+        <strong>Barrio:</strong> {inmueble.neighborhood}
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
-        {" "}
-        {/* Color actualizado */}
-        <strong>Habitaciones:</strong> {inmueble.num_habitaciones} -{" "}
-        <strong>Baños:</strong> {inmueble.num_baños}
+        <strong>Habitaciones:</strong> {inmueble.numBedrooms} -{" "}
+        <strong>Baños:</strong> {inmueble.numBathrooms}
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
-        {" "}
-        {/* Color actualizado */}
-        <strong>Superficie:</strong> {inmueble.superficie} m²
+        <strong>Superficie:</strong> {inmueble.surface} m²
+      </p>
+      <p className="text-[#083C2C] text-sm mb-2">
+        <strong>Garaje:</strong> {inmueble.garage ? "Sí" : "No"}
+      </p>
+      <p className="text-[#083C2C] text-sm mb-2">
+        <strong>Rubro:</strong> {inmueble.propertyCategory?.category || "-"}
       </p>
       <p className="text-[#083C2C] text-sm mb-4">
-        {" "}
-        {/* Color actualizado */}
-        <strong>Garaje:</strong> {inmueble.garaje ? "Sí" : "No"}
+        <strong>Estado:</strong> {inmueble.propertyStatus?.status || "-"}
       </p>
       <button
         onClick={handleViewMore}

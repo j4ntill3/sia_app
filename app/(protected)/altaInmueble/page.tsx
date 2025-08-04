@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { InmuebleRubro } from "@/types/inmueble_rubro";
-import { InmuebleEstado } from "@/types/inmueble_estado";
+import { PropertyCategory } from "@/types/inmueble_rubro";
+import { PropertyStatus } from "@/types/inmueble_estado";
 import { getSession } from "@/actions/auth-actions";
 import { useRouter } from "next/navigation";
 
@@ -35,23 +35,25 @@ export default function CrearInmueble() {
 
   const router = useRouter();
 
-  const [rubros, setRubros] = useState<InmuebleRubro[]>([]);
-  const [estados, setEstados] = useState<InmuebleEstado[]>([]);
+  const [rubros, setRubros] = useState<PropertyCategory[]>([]);
+  const [estados, setEstados] = useState<PropertyStatus[]>([]);
   const [session, setSession] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRubros = async () => {
       const response = await fetch("/api/inmuebleRubros");
       const data = await response.json();
-      setRubros(data);
+      setRubros(data.data || []);
     };
 
     const fetchEstados = async () => {
       const response = await fetch("/api/inmuebleEstados");
       const data = await response.json();
-      setEstados(data);
+      setEstados(data.data || []);
     };
 
     fetchRubros();
@@ -98,22 +100,34 @@ export default function CrearInmueble() {
     }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setSelectedImage(null);
+      setImagePreview(null);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 1. Crear el inmueble sin imagen
     const inmuebleData = {
-      ...formData,
-      id_rubro: Number(formData.id_rubro),
-      id_estado: Number(formData.id_estado),
-      num_habitaciones: Number(formData.num_habitaciones),
-      num_baños: Number(formData.num_baños),
-      superficie: Number(formData.superficie),
-      ruta_imagen: "/img/image-icon-600nw-211642900.webp",
-      eliminado: false,
+      title: formData.title,
+      categoryId: Number(formData.id_rubro),
+      locality: formData.localidad,
+      address: formData.direccion,
+      neighborhood: formData.barrio,
+      numBedrooms: Number(formData.num_habitaciones),
+      numBathrooms: Number(formData.num_baños),
+      surface: Number(formData.superficie),
+      garage: Boolean(formData.garaje),
+      statusId: Number(formData.id_estado),
+      imagePath: "/img/no-image.webp",
     };
-
-    console.log("Datos del formulario a enviar:", inmuebleData);
-
     try {
       const response = await fetch("/api/inmuebles", {
         method: "POST",
@@ -122,17 +136,52 @@ export default function CrearInmueble() {
           "Content-Type": "application/json",
         },
       });
-
       const data = await response.json();
-
-      if (response.ok) {
+      if (!response.ok || !data.data || !data.data.id) {
+        alert(data.error || "Error desconocido al crear el inmueble.");
+        return;
+      }
+      const newPropertyId = data.data.id;
+      // 2. Si hay imagen seleccionada, subirla con el id real
+      if (selectedImage) {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64 = reader.result as string;
+          try {
+            console.log("Subiendo imagen...");
+            console.log("Enviando a /api/uploadImage:", {
+              file: base64,
+              fileName: selectedImage.name,
+              propertyId: newPropertyId,
+            });
+            const uploadRes = await fetch("/api/uploadImage", {
+              method: "POST",
+              body: JSON.stringify({
+                file: base64,
+                fileName: selectedImage.name,
+                propertyId: newPropertyId,
+              }),
+              headers: { "Content-Type": "application/json" },
+            });
+            const uploadData = await uploadRes.json();
+            console.log("Respuesta de /api/uploadImage:", uploadData);
+            if (uploadRes.ok && uploadData.data?.image?.imagePath) {
+              alert("Inmueble creado con imagen.");
+            } else {
+              alert("Inmueble creado, pero la imagen no se pudo guardar.");
+            }
+            router.push("/inmuebles");
+          } catch (error) {
+            alert("Inmueble creado, pero hubo un error al subir la imagen.");
+            router.push("/inmuebles");
+          }
+        };
+        reader.readAsDataURL(selectedImage);
+      } else {
         alert("Inmueble creado con éxito.");
         router.push("/inmuebles");
-      } else {
-        alert(data.error || "Error desconocido.");
       }
     } catch (error) {
-      console.error("Error de conexión:", error);
       alert("Hubo un error al intentar crear el inmueble.");
     }
   };
@@ -162,7 +211,7 @@ export default function CrearInmueble() {
   }
 
   return (
-    <div className="flex flex-col py-4 items-center justify-center bg-gray-100">
+    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
       <div className="w-full max-w-sm py-4 px-6 bg-white shadow-md rounded-2xl">
         <h2 className="text-3xl font-bold text-center mt-2 mb-2 text-[#083C2C]">
           Alta Inmueble
@@ -203,7 +252,7 @@ export default function CrearInmueble() {
               <option value="">Seleccione un rubro</option>
               {rubros.map((rubro) => (
                 <option key={rubro.id} value={rubro.id}>
-                  {rubro.rubro}
+                  {rubro.category}
                 </option>
               ))}
             </select>
@@ -351,10 +400,33 @@ export default function CrearInmueble() {
               <option value="">Seleccione un estado</option>
               {estados.map((estado) => (
                 <option key={estado.id} value={estado.id}>
-                  {estado.estado}
+                  {estado.status}
                 </option>
               ))}
             </select>
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="imagen"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
+            >
+              Imagen del inmueble
+            </label>
+            <input
+              type="file"
+              id="imagen"
+              name="imagen"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="mt-2 rounded-lg w-full h-40 object-cover border"
+              />
+            )}
           </div>
           <div className="mb-1.5">
             <button

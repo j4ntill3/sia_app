@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import React from "react";
-import Persona from "@/types/persona";
-import Empleado from "@/types/empleado";
+import { Persona } from "@/types/persona";
+import { Employee } from "@/types/empleado";
 
 interface AgenteItemProps {
   agente: {
-    empleado: Empleado;
+    empleado: Employee;
     persona: Persona;
   };
 }
@@ -18,29 +18,33 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
 
   return (
     <tr className="border-b font-sans hover:bg-gray-50">
-      <td className="px-4 py-2">{empleado.id}</td>
-      <td className="px-4 py-2">
-        {persona.nombre} {persona.apellido}
+      <td className="px-4 py-2 text-gray-900">{empleado.id}</td>
+      <td className="px-4 py-2 text-gray-900">
+        {persona.firstName} {persona.lastName}
       </td>
-      <td className="px-4 py-2">{empleado.CUIT}</td>
-      <td className="px-4 py-2">
-        {new Date(empleado.fecha_alta).toLocaleDateString("es-AR")}
-      </td>
-      <td className="px-4 py-2">
-        {empleado.fecha_baja
-          ? new Date(empleado.fecha_baja).toLocaleDateString("es-AR")
+      <td className="px-4 py-2 text-gray-900">{empleado.cuit}</td>
+      <td className="px-4 py-2 text-gray-900">
+        {empleado.hireDate
+          ? new Date(empleado.hireDate).toLocaleDateString("es-AR")
           : ""}
       </td>
-      <td className="px-4 py-2">{persona.telefono ?? "No disponible"}</td>
+      <td className="px-4 py-2 text-gray-900">
+        {empleado.terminationDate
+          ? new Date(empleado.terminationDate).toLocaleDateString("es-AR")
+          : "-"}
+      </td>
+      <td className="px-4 py-2 text-gray-900">
+        {persona.telefono ?? "No disponible"}
+      </td>
       <td className="px-4 py-2">
         <span
           className={`px-2 py-1 text-sm rounded-full ${
-            empleado.eliminado
+            empleado.deleted
               ? "bg-red-100 text-red-600"
               : "bg-green-100 text-green-600"
           }`}
         >
-          {empleado.eliminado ? "Eliminado" : "Activo"}
+          {empleado.deleted ? "Eliminado" : "Activo"}
         </span>
       </td>
       <td className="px-4 py-2 text-center">

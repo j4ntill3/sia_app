@@ -1,83 +1,75 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/actions/auth-actions"; // Importa la función getSession desde actions/auth-actions
+import { requireAuth, jsonError, jsonSuccess } from "@/lib/api-helpers";
+import type { Property } from "@/types/inmueble";
 
 export async function GET(request: NextRequest) {
+  const { session, error, status } = await requireAuth(request, "agente");
+  if (error) return jsonError(error, status);
   try {
-    // Obtener la sesión utilizando tu función personalizada
-    const session = await getSession();
-    const agenteId = session?.user.id; // Esto depende de cómo almacenes el ID en el token
-    console.log("Datos de la sesión:", session);
+    const agentIdNumber = Number(session.user.id);
+    // Leer parámetros de paginación
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const pageSize = parseInt(searchParams.get("pageSize") || "5", 10);
+    const skip = (page - 1) * pageSize;
 
-    if (!agenteId) {
-      return new Response(
-        JSON.stringify({ error: "No autenticado o no se encontró el agente" }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // Asegúrate de que agenteId sea un número
-    const agenteIdNumber = parseInt(agenteId as string, 10);
-
-    if (isNaN(agenteIdNumber)) {
-      return new Response(JSON.stringify({ error: "ID del agente inválido" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // Obtener los inmuebles asignados al agente
-    const inmuebles = await prisma.inmueble.findMany({
+    // Contar total de inmuebles
+    const totalCount = await prisma.property.count({
       where: {
-        eliminado: false,
-        inmueble_agente: {
+        deleted: false,
+        propertyAgent: {
           some: {
-            id_agente: agenteIdNumber,
-            eliminado: false,
+            agentId: agentIdNumber,
+            deleted: false,
+          },
+        },
+      },
+    });
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+
+    // Obtener inmuebles paginados
+    const propertiesDb = await prisma.property.findMany({
+      where: {
+        deleted: false,
+        propertyAgent: {
+          some: {
+            agentId: agentIdNumber,
+            deleted: false,
           },
         },
       },
       include: {
-        inmueble_imagen: {
-          take: 1, // Obtén solo un registro
-          orderBy: {
-            id: "desc", // Ordena por id en orden descendente para obtener el último registro
-          },
-        },
+        propertyImage: true,
       },
+      skip,
+      take: pageSize,
+      orderBy: { id: "desc" },
     });
-
-    if (!inmuebles || inmuebles.length === 0) {
-      return new Response(
-        JSON.stringify({
-          message: "No se encontraron inmuebles asignados al agente",
-        }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // Transformar los datos para incluir una imagen genérica si no hay imágenes asociadas
-    const inmueblesConImagen = inmuebles.map((inmueble) => {
-      const ruta_imagen =
-        inmueble.inmueble_imagen && inmueble.inmueble_imagen.length > 0
-          ? inmueble.inmueble_imagen[0].ruta_imagen
-          : "img/image-icon-600nw-211642900.webp"; // Ruta de la imagen genérica
-
-      return {
-        ...inmueble,
-        ruta_imagen,
-      };
-    });
-
-    return new Response(JSON.stringify(inmueblesConImagen), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error: any) {
-    console.error("Error al obtener inmuebles:", error);
-    return new Response(
-      JSON.stringify({ error: error.message || "Error al obtener inmuebles" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    // Mapear a tipo Property
+    const properties: Property[] = propertiesDb.map((property) => ({
+      id: property.id,
+      title: property.title,
+      categoryId: property.categoryId,
+      locality: property.locality,
+      address: property.address,
+      neighborhood: property.neighborhood,
+      numBedrooms: property.numBedrooms,
+      numBathrooms: property.numBathrooms,
+      surface: property.surface,
+      garage: property.garage,
+      deleted: property.deleted ?? false,
+      statusId: property.statusId,
+      propertyImage:
+        property.propertyImage?.map((img) => ({
+          id: img.id,
+          propertyId: img.propertyId,
+          imagePath: img.imagePath || undefined,
+        })) || [],
+    }));
+    return jsonSuccess({ data: properties, totalPages });
+  } catch (error) {
+    console.error("Error al obtener mis propiedades:", error);
+    return jsonError("Error interno del servidor", 500);
   }
 }

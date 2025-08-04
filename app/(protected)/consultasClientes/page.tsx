@@ -61,7 +61,7 @@ const Clientes = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setClientes(data);
+        setClientes(data.data || []);
       } else {
         setError("Error al obtener los clientes.");
       }
@@ -125,7 +125,7 @@ const Clientes = () => {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100 p-6">
+    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
       <div className="w-full max-w-4xl bg-white p-6 shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-4">
           Lista de Consultas

@@ -41,7 +41,7 @@ const Agentes = () => {
       }
 
       const agentesData = await response.json();
-      setAgentes(agentesData);
+      setAgentes(agentesData.data || []);
     } catch (err) {
       setError("Error al obtener los agentes.");
     }
@@ -92,37 +92,37 @@ const Agentes = () => {
 
   // Renderizar la tabla de agentes
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100 p-6">
+    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
       <div className="w-full max-w-4xl bg-white p-6 shadow-lg rounded-lg">
-        <h2 className="text-2xl font-semibold text-center mb-4">
+        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-900">
           Lista de Agentes
         </h2>
         <div className="overflow-x-auto rounded-lg">
           <table className="min-w-full table-auto bg-white border-collapse">
             <thead>
               <tr className="bg-gray-200">
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
                   ID
                 </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
                   Nombre
                 </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
                   CUIT
                 </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
                   Fecha de Alta
                 </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
                   Fecha de Baja
                 </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
                   Teléfono
                 </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
                   Estado
                 </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300"></th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300"></th>
               </tr>
             </thead>
             <tbody>

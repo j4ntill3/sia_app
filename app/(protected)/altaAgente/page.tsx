@@ -33,6 +33,8 @@ export default function CrearAgente() {
   const [session, setSession] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // Función de autenticación
   const authenticateUser = async () => {
@@ -73,6 +75,17 @@ export default function CrearAgente() {
     }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setSelectedImage(null);
+      setImagePreview(null);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -96,8 +109,25 @@ export default function CrearAgente() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        alert("Agente creado con éxito.");
+      if (response.ok && data.data && data.data.personaId) {
+        // Subir imagen si hay
+        if (selectedImage) {
+          const formDataImg = new FormData();
+          formDataImg.append("id_persona", data.data.personaId.toString());
+          formDataImg.append("image", selectedImage);
+          const imgRes = await fetch("/api/personaImagen", {
+            method: "POST",
+            body: formDataImg,
+          });
+          const imgData = await imgRes.json();
+          if (imgRes.ok && imgData.data?.image?.imagePath) {
+            alert("Agente creado con imagen.");
+          } else {
+            alert("Agente creado, pero la imagen no se pudo guardar.");
+          }
+        } else {
+          alert("Agente creado con éxito.");
+        }
       } else {
         alert(data.error || "Error desconocido.");
       }
@@ -132,7 +162,7 @@ export default function CrearAgente() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
       <div className="w-full my-4 max-w-sm px-8 bg-white shadow-md text-[#083C2C] rounded-2xl">
         <h2 className="text-3xl font-bold pt-4 text-center text-[#083C2C]">
           Alta Agente
@@ -263,10 +293,60 @@ export default function CrearAgente() {
               placeholder="Ingresa el CUIT"
             />
           </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="fechaAlta"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
+            >
+              Fecha de Alta
+            </label>
+            <input
+              type="date"
+              id="fechaAlta"
+              name="fechaAlta"
+              value={formData.fechaAlta}
+              onChange={handleInputChange}
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="fechaBaja"
+              className="block text-sm font-sans font-medium text-[#083C2C]"
+            >
+              Fecha de Baja (opcional)
+            </label>
+            <input
+              type="date"
+              id="fechaBaja"
+              name="fechaBaja"
+              value={formData.fechaBaja}
+              onChange={handleInputChange}
+              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-sans font-medium text-[#083C2C]">
+              Imagen de perfil
+            </label>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Previsualización"
+                className="mt-2 w-32 h-32 object-cover rounded-full border"
+              />
+            )}
+          </div>
+
           <div className="pb-4">
             <button
               type="submit"
-              className="w-full bg-[#6FC6D1] text-white py-2 px-4 rounded-full text-sm font-sans hover:underline"
+              className="w-full bg-[#083C2C] text-white rounded-full py-2 hover:bg-[#0A4A35] transition-colors"
             >
               Crear Agente
             </button>
