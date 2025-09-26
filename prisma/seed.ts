@@ -8,155 +8,155 @@ async function main() {
 
   // Crear roles de usuario
   console.log("📝 Creando roles de usuario...");
-  const adminRole = await prisma.userRole.create({
-    data: { roleType: "administrador", deleted: false },
+  const adminRole = await prisma.rol_usuario.create({
+    data: { tipo_rol: "administrador", eliminado: false },
   });
-  const agenteRole = await prisma.userRole.create({
-    data: { roleType: "agente", deleted: false },
+  const agenteRole = await prisma.rol_usuario.create({
+    data: { tipo_rol: "agente", eliminado: false },
   });
-  const clienteRole = await prisma.userRole.create({
-    data: { roleType: "cliente", deleted: false },
+  await prisma.rol_usuario.create({
+    data: { tipo_rol: "cliente", eliminado: false },
   });
 
   // Crear tipos de empleado
   console.log("👥 Creando tipos de empleado...");
-  const adminType = await prisma.employeeType.create({
-    data: { type: "administrador" },
+  const adminType = await prisma.tipo_empleado.create({
+    data: { tipo: "administrador" },
   });
-  const agenteType = await prisma.employeeType.create({
-    data: { type: "agente" },
+  const agenteType = await prisma.tipo_empleado.create({
+    data: { tipo: "agente" },
   });
 
   // Crear estados de propiedad
   console.log("🏠 Creando estados de propiedad...");
-  const statusDisponible = await prisma.propertyStatus.create({
-    data: { status: "Disponible" },
+  const statusDisponible = await prisma.estado_propiedad.create({
+    data: { estado: "Disponible" },
   });
-  const statusAlquilado = await prisma.propertyStatus.create({
-    data: { status: "Alquilado" },
+  const statusAlquilado = await prisma.estado_propiedad.create({
+    data: { estado: "Alquilado" },
   });
-  const statusVendido = await prisma.propertyStatus.create({
-    data: { status: "Vendido" },
+  await prisma.estado_propiedad.create({
+    data: { estado: "Vendido" },
   });
-  const statusReservado = await prisma.propertyStatus.create({
-    data: { status: "Reservado" },
+  await prisma.estado_propiedad.create({
+    data: { estado: "Reservado" },
   });
-  const statusMantenimiento = await prisma.propertyStatus.create({
-    data: { status: "En mantenimiento" },
+  await prisma.estado_propiedad.create({
+    data: { estado: "En mantenimiento" },
   });
 
   // Crear categorías de propiedad
   console.log("🏘️ Creando categorías de propiedad...");
-  const catCasa = await prisma.propertyCategory.create({
-    data: { category: "Casa" },
+  const catCasa = await prisma.categoria_propiedad.create({
+    data: { categoria: "Casa" },
   });
-  const catDepto = await prisma.propertyCategory.create({
-    data: { category: "Departamento" },
+  const catDepto = await prisma.categoria_propiedad.create({
+    data: { categoria: "Departamento" },
   });
-  const catTerreno = await prisma.propertyCategory.create({
-    data: { category: "Terreno" },
+  const catTerreno = await prisma.categoria_propiedad.create({
+    data: { categoria: "Terreno" },
   });
-  const catComercial = await prisma.propertyCategory.create({
-    data: { category: "Comercial" },
+  const catComercial = await prisma.categoria_propiedad.create({
+    data: { categoria: "Comercial" },
   });
-  const catOficina = await prisma.propertyCategory.create({
-    data: { category: "Oficina" },
+  const catOficina = await prisma.categoria_propiedad.create({
+    data: { categoria: "Oficina" },
   });
 
   // Crear personas
   console.log("👤 Creando personas...");
-  const persons = await Promise.all([
-    prisma.person.create({
+  const personas = await Promise.all([
+  prisma.persona.create({
       data: {
-        firstName: "Ana",
-        lastName: "García",
-        email: "ana.garcia@ejemplo.com",
-        phone: "123456789",
-        address: "Calle Principal 123",
+        nombre: "Ana",
+        apellido: "García",
+        correo: "ana.garcia@ejemplo.com",
+        telefono: "123456789",
+        direccion: "Calle Principal 123",
         dni: 12345678,
-        deleted: false,
+        eliminado: false,
       },
     }),
-    prisma.person.create({
+    prisma.persona.create({
       data: {
-        firstName: "Carlos",
-        lastName: "López",
-        email: "carlos.lopez@ejemplo.com",
-        phone: "987654321",
-        address: "Avenida Central 456",
+        nombre: "Carlos",
+        apellido: "López",
+        correo: "carlos.lopez@ejemplo.com",
+        telefono: "987654321",
+        direccion: "Avenida Central 456",
         dni: 87654321,
-        deleted: false,
+        eliminado: false,
       },
     }),
-    prisma.person.create({
+    prisma.persona.create({
       data: {
-        firstName: "María",
-        lastName: "Rodríguez",
-        email: "maria.rodriguez@ejemplo.com",
-        phone: "555555555",
-        address: "Plaza Mayor 789",
+        nombre: "María",
+        apellido: "Rodríguez",
+        correo: "maria.rodriguez@ejemplo.com",
+        telefono: "555555555",
+        direccion: "Plaza Mayor 789",
         dni: 55555555,
-        deleted: false,
+        eliminado: false,
       },
     }),
-    prisma.person.create({
+    prisma.persona.create({
       data: {
-        firstName: "Juan",
-        lastName: "Martínez",
-        email: "juan.martinez@ejemplo.com",
-        phone: "111111111",
-        address: "Calle Secundaria 321",
+        nombre: "Juan",
+        apellido: "Martínez",
+        correo: "juan.martinez@ejemplo.com",
+        telefono: "111111111",
+        direccion: "Calle Secundaria 321",
         dni: 11111111,
-        deleted: false,
+        eliminado: false,
       },
     }),
   ]);
 
   // Crear empleados
   console.log("👷 Creando empleados...");
-  const employees = await Promise.all([
-    prisma.employee.create({
+  const empleados = await Promise.all([
+  prisma.empleado.create({
       data: {
         cuit: "20-12345678-9",
-        hireDate: new Date("2024-01-01"),
-        typeId: adminType.id,
-        deleted: false,
+        fecha_ingreso: new Date("2024-01-01"),
+        tipo_id: adminType.id,
+        eliminado: false,
       },
     }),
-    prisma.employee.create({
+    prisma.empleado.create({
       data: {
         cuit: "20-87654321-0",
-        hireDate: new Date("2024-02-01"),
-        typeId: agenteType.id,
-        deleted: false,
+        fecha_ingreso: new Date("2024-02-01"),
+        tipo_id: agenteType.id,
+        eliminado: false,
       },
     }),
-    prisma.employee.create({
+    prisma.empleado.create({
       data: {
         cuit: "20-55555555-1",
-        hireDate: new Date("2024-03-01"),
-        typeId: agenteType.id,
-        deleted: false,
+        fecha_ingreso: new Date("2024-03-01"),
+        tipo_id: agenteType.id,
+        eliminado: false,
       },
     }),
-    prisma.employee.create({
+    prisma.empleado.create({
       data: {
         cuit: "20-11111111-2",
-        hireDate: new Date("2024-04-01"),
-        typeId: agenteType.id,
-        deleted: false,
+        fecha_ingreso: new Date("2024-04-01"),
+        tipo_id: agenteType.id,
+        eliminado: false,
       },
     }),
   ]);
 
   // Crear relaciones persona-empleado
   console.log("🔗 Creando relaciones persona-empleado...");
-  for (let i = 0; i < persons.length; i++) {
-    await prisma.personEmployee.create({
+  for (let i = 0; i < personas.length; i++) {
+  await prisma.persona_empleado.create({
       data: {
-        personId: persons[i].id,
-        employeeId: employees[i].id,
-        deleted: false,
+        persona_id: personas[i].id,
+        empleado_id: empleados[i].id,
+        eliminado: false,
       },
     });
   }
@@ -164,229 +164,255 @@ async function main() {
   // Crear usuarios con contraseñas hasheadas
   console.log("👤 Creando usuarios...");
   const hashedPassword = await bcrypt.hash("password123", 10);
-  await prisma.user.create({
+  await prisma.usuario.create({
     data: {
-      roleId: adminRole.id,
-      password: hashedPassword,
-      personId: persons[0].id,
-      deleted: false,
+      rol_id: adminRole.id,
+      contrasena: hashedPassword,
+      persona_id: personas[0].id,
+      eliminado: false,
     },
   });
-  for (let i = 1; i < persons.length; i++) {
-    await prisma.user.create({
+  for (let i = 1; i < personas.length; i++) {
+  await prisma.usuario.create({
       data: {
-        roleId: agenteRole.id,
-        password: hashedPassword,
-        personId: persons[i].id,
-        deleted: false,
+        rol_id: agenteRole.id,
+        contrasena: hashedPassword,
+        persona_id: personas[i].id,
+        eliminado: false,
       },
     });
   }
 
+  // Crear localidades
+  console.log("🌍 Creando localidades...");
+  const localidadBuenosAires = await prisma.localidad.create({ data: { nombre: "Buenos Aires" } });
+  const localidadSanIsidro = await prisma.localidad.create({ data: { nombre: "San Isidro" } });
+  const localidadRosario = await prisma.localidad.create({ data: { nombre: "Rosario" } });
+  const localidadTigre = await prisma.localidad.create({ data: { nombre: "Tigre" } });
+
+  // Crear zonas
+  console.log("🗺️ Creando zonas...");
+  const zonaCentro = await prisma.zona.create({ data: { nombre: "Centro" } });
+  const zonaNorte = await prisma.zona.create({ data: { nombre: "Norte" } });
+  await prisma.zona.create({ data: { nombre: "Sur" } });
+  await prisma.zona.create({ data: { nombre: "Oeste" } });
+
   // Crear propiedades de ejemplo
   console.log("🏠 Creando propiedades de ejemplo...");
-  const properties = await Promise.all([
-    prisma.property.create({
+  const propiedades = await Promise.all([
+  prisma.propiedad.create({
       data: {
-        title: "Casa moderna en Palermo",
-        categoryId: catCasa.id,
-        locality: "Buenos Aires",
-        address: "Av. Santa Fe 1234",
-        neighborhood: "Palermo",
-        numBedrooms: 3,
-        numBathrooms: 2,
-        surface: 120.5,
-        garage: true,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Casa moderna en Palermo",
+        categoria_id: catCasa.id,
+        localidad_id: localidadBuenosAires.id,
+        zona_id: zonaCentro.id,
+        direccion: "Av. Santa Fe 1234",
+        barrio: "Palermo",
+        dormitorios: 3,
+        banos: 2,
+        superficie: 120.5,
+        cochera: true,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Departamento céntrico",
-        categoryId: catDepto.id,
-        locality: "Buenos Aires",
-        address: "Florida 567",
-        neighborhood: "Microcentro",
-        numBedrooms: 2,
-        numBathrooms: 1,
-        surface: 65.0,
-        garage: false,
-        statusId: statusAlquilado.id,
-        deleted: false,
+        titulo: "Departamento céntrico",
+        categoria_id: catDepto.id,
+        localidad_id: localidadBuenosAires.id,
+        zona_id: zonaCentro.id,
+        direccion: "Florida 567",
+        barrio: "Microcentro",
+        dormitorios: 2,
+        banos: 1,
+        superficie: 65.0,
+        cochera: false,
+        estado_id: statusAlquilado.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Casa quinta en San Isidro",
-        categoryId: catCasa.id,
-        locality: "San Isidro",
-        address: "Camino Real 890",
-        neighborhood: "San Isidro",
-        numBedrooms: 4,
-        numBathrooms: 3,
-        surface: 250.0,
-        garage: true,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Casa quinta en San Isidro",
+        categoria_id: catCasa.id,
+        localidad_id: localidadSanIsidro.id,
+        zona_id: zonaNorte.id,
+        direccion: "Camino Real 890",
+        barrio: "San Isidro",
+        dormitorios: 4,
+        banos: 3,
+        superficie: 250.0,
+        cochera: true,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Local comercial en Recoleta",
-        categoryId: catComercial.id,
-        locality: "Buenos Aires",
-        address: "Av. Alvear 456",
-        neighborhood: "Recoleta",
-        numBedrooms: 0,
-        numBathrooms: 1,
-        surface: 80.0,
-        garage: false,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Local comercial en Recoleta",
+        categoria_id: catComercial.id,
+        localidad_id: localidadBuenosAires.id,
+        zona_id: zonaCentro.id,
+        direccion: "Av. Alvear 456",
+        barrio: "Recoleta",
+        dormitorios: 0,
+        banos: 1,
+        superficie: 80.0,
+        cochera: false,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Penthouse de lujo en Puerto Madero",
-        categoryId: catDepto.id,
-        locality: "Buenos Aires",
-        address: "Juana Manso 123",
-        neighborhood: "Puerto Madero",
-        numBedrooms: 5,
-        numBathrooms: 4,
-        surface: 350.0,
-        garage: true,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Penthouse de lujo en Puerto Madero",
+        categoria_id: catDepto.id,
+        localidad_id: localidadBuenosAires.id,
+        zona_id: zonaCentro.id,
+        direccion: "Juana Manso 123",
+        barrio: "Puerto Madero",
+        dormitorios: 5,
+        banos: 4,
+        superficie: 350.0,
+        cochera: true,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Oficina pequeña en el centro",
-        categoryId: catOficina.id,
-        locality: "Rosario",
-        address: "Córdoba 789",
-        neighborhood: "Centro",
-        numBedrooms: 0,
-        numBathrooms: 1,
-        surface: 40.0,
-        garage: false,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Oficina pequeña en el centro",
+        categoria_id: catOficina.id,
+        localidad_id: localidadRosario.id,
+        zona_id: zonaCentro.id,
+        direccion: "Córdoba 789",
+        barrio: "Centro",
+        dormitorios: 0,
+        banos: 1,
+        superficie: 40.0,
+        cochera: false,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Terreno amplio en Tigre",
-        categoryId: catTerreno.id,
-        locality: "Tigre",
-        address: "Ruta 27 km 10",
-        neighborhood: "Delta",
-        numBedrooms: 0,
-        numBathrooms: 0,
-        surface: 1000.0,
-        garage: false,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Terreno amplio en Tigre",
+        categoria_id: catTerreno.id,
+        localidad_id: localidadTigre.id,
+        zona_id: zonaNorte.id,
+        direccion: "Ruta 27 km 10",
+        barrio: "Delta",
+        dormitorios: 0,
+        banos: 0,
+        superficie: 1000.0,
+        cochera: false,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Casa clásica en Belgrano",
-        categoryId: catCasa.id,
-        locality: "Buenos Aires",
-        address: "Juramento 2345",
-        neighborhood: "Belgrano",
-        numBedrooms: 4,
-        numBathrooms: 3,
-        surface: 180.0,
-        garage: true,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Casa clásica en Belgrano",
+        categoria_id: catCasa.id,
+        localidad_id: localidadBuenosAires.id,
+        zona_id: zonaCentro.id,
+        direccion: "Juramento 2345",
+        barrio: "Belgrano",
+        dormitorios: 4,
+        banos: 3,
+        superficie: 180.0,
+        cochera: true,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Oficina moderna en Microcentro",
-        categoryId: catOficina.id,
-        locality: "Buenos Aires",
-        address: "Lavalle 1000",
-        neighborhood: "Microcentro",
-        numBedrooms: 0,
-        numBathrooms: 2,
-        surface: 90.0,
-        garage: false,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Oficina moderna en Microcentro",
+        categoria_id: catOficina.id,
+        localidad_id: localidadBuenosAires.id,
+        zona_id: zonaCentro.id,
+        direccion: "Lavalle 1000",
+        barrio: "Microcentro",
+        dormitorios: 0,
+        banos: 2,
+        superficie: 90.0,
+        cochera: false,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Casa familiar en Caballito",
-        categoryId: catCasa.id,
-        locality: "Buenos Aires",
-        address: "Av. Rivadavia 5000",
-        neighborhood: "Caballito",
-        numBedrooms: 3,
-        numBathrooms: 2,
-        surface: 130.0,
-        garage: true,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Casa familiar en Caballito",
+        categoria_id: catCasa.id,
+        localidad_id: localidadBuenosAires.id,
+        zona_id: zonaCentro.id,
+        direccion: "Av. Rivadavia 5000",
+        barrio: "Caballito",
+        dormitorios: 3,
+        banos: 2,
+        superficie: 130.0,
+        cochera: true,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Departamento con vista al río",
-        categoryId: catDepto.id,
-        locality: "Rosario",
-        address: "Av. Belgrano 200",
-        neighborhood: "Río Paraná",
-        numBedrooms: 2,
-        numBathrooms: 2,
-        surface: 75.0,
-        garage: true,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Departamento con vista al río",
+        categoria_id: catDepto.id,
+        localidad_id: localidadRosario.id,
+        zona_id: zonaCentro.id,
+        direccion: "Av. Belgrano 200",
+        barrio: "Río Paraná",
+        dormitorios: 2,
+        banos: 2,
+        superficie: 75.0,
+        cochera: true,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
-    prisma.property.create({
+  prisma.propiedad.create({
       data: {
-        title: "Lote comercial en San Telmo",
-        categoryId: catComercial.id,
-        locality: "Buenos Aires",
-        address: "Defensa 800",
-        neighborhood: "San Telmo",
-        numBedrooms: 0,
-        numBathrooms: 1,
-        surface: 150.0,
-        garage: false,
-        statusId: statusDisponible.id,
-        deleted: false,
+        titulo: "Lote comercial en San Telmo",
+        categoria_id: catComercial.id,
+        localidad_id: localidadBuenosAires.id,
+        zona_id: zonaCentro.id,
+        direccion: "Defensa 800",
+        barrio: "San Telmo",
+        dormitorios: 0,
+        banos: 1,
+        superficie: 150.0,
+        cochera: false,
+        estado_id: statusDisponible.id,
+        eliminado: false,
       },
     }),
   ]);
 
   // Crear imágenes para propiedades
   console.log("🖼️ Creando imágenes de propiedades...");
-  for (const property of properties) {
-    await prisma.propertyImage.create({
+  for (const propiedad of propiedades) {
+  await prisma.imagen_propiedad.create({
       data: {
-        propertyId: property.id,
-        imagePath: `/img/no-image.webp`,
+        propiedad_id: propiedad.id,
+        imagen: `/img/no-image.webp`,
       },
     });
   }
 
   // Crear asignaciones de propiedad-agente
   console.log("👥 Asignando agentes a propiedades...");
-  for (let i = 0; i < properties.length; i++) {
-    await prisma.propertyAgent.create({
+  for (let i = 0; i < propiedades.length; i++) {
+  await prisma.agente_propiedad.create({
       data: {
-        propertyId: properties[i].id,
-        agentId: employees[i % employees.length].id,
-        deleted: false,
+        propiedad_id: propiedades[i].id,
+        agente_id: empleados[i % empleados.length].id,
+        eliminado: false,
       },
     });
   }

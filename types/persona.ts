@@ -1,17 +1,15 @@
 export interface Persona {
-  id: number;
+  id: string;
   nombre: string;
   apellido: string;
-  email: string;
+  correo: string;
   telefono?: string;
   direccion?: string;
-  DNI?: number;
+  dni?: number;
   eliminado: boolean;
-  fechaCreacion: Date;
-  personaEmpleado?: PersonaEmpleado[];
-  usuario?: Usuario[];
-  firstName?: string;
-  lastName?: string;
+  creado_en: Date;
+  empleados?: PersonaEmpleado[];
+  usuarios?: Usuario[];
 }
 
 export interface PersonaCreate {

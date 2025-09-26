@@ -1,55 +1,56 @@
-import { PropertyCategory } from "./inmueble_rubro";
-import { PropertyStatus } from "./inmueble_estado";
 
-export interface Property {
+export interface Propiedad {
   id: string;
-  title: string;
-  categoryId: string;
-  locality: string;
-  address: string;
-  neighborhood: string;
-  numBedrooms: number;
-  numBathrooms: number;
-  surface: number;
-  garage: boolean;
-  deleted?: boolean;
-  statusId: string;
-  propertyCategory?: PropertyCategory;
-  propertyStatus?: PropertyStatus;
-  propertyImage?: PropertyImage[];
+  titulo: string;
+  categoria_id: string;
+  localidad_id: string;
+  zona_id: string;
+  direccion: string;
+  barrio: string;
+  dormitorios: number;
+  banos: number;
+  superficie: number;
+  cochera: boolean;
+  eliminado?: boolean;
+  estado_id: string;
+  categoria?: CategoriaPropiedad;
+  estado?: EstadoPropiedad;
+  imagenes?: ImagenPropiedad[];
 }
 
-export interface PropertyCreate {
-  title: string;
-  categoryId: string;
-  locality: string;
-  address: string;
-  neighborhood: string;
-  numBedrooms: number;
-  numBathrooms: number;
-  surface: number;
-  garage: boolean;
-  statusId: string;
-  deleted?: boolean;
+export interface PropiedadCreate {
+  titulo: string;
+  categoria_id: string;
+  localidad_id: string;
+  zona_id: string;
+  direccion: string;
+  barrio: string;
+  dormitorios: number;
+  banos: number;
+  superficie: number;
+  cochera: boolean;
+  estado_id: string;
+  eliminado?: boolean;
 }
 
-export interface PropertyUpdate {
-  title?: string;
-  categoryId?: string;
-  locality?: string;
-  address?: string;
-  neighborhood?: string;
-  numBedrooms?: number;
-  numBathrooms?: number;
-  surface?: number;
-  garage?: boolean;
-  statusId?: string;
-  deleted?: boolean;
+export interface PropiedadUpdate {
+  titulo?: string;
+  categoria_id?: string;
+  localidad_id?: string;
+  zona_id?: string;
+  direccion?: string;
+  barrio?: string;
+  dormitorios?: number;
+  banos?: number;
+  superficie?: number;
+  cochera?: boolean;
+  estado_id?: string;
+  eliminado?: boolean;
 }
 
-export interface PropertyImage {
+export interface ImagenPropiedad {
   id: string;
-  propertyId: string;
-  imagePath?: string;
-  property?: Property;
+  propiedad_id: string;
+  imagen?: string;
+  propiedad?: Propiedad;
 }

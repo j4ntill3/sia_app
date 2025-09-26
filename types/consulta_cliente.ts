@@ -1,15 +1,15 @@
-export interface ClientInquiry {
-  id: number;
-  propertyId: number;
-  agentId: number;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  date: Date;
-  description?: string;
-  property?: Property;
-  employee?: Employee;
+export interface ConsultaCliente {
+  id: string;
+  propiedad_id: string;
+  agente_id: string;
+  nombre: string;
+  apellido: string;
+  telefono: string;
+  correo: string;
+  fecha: Date;
+  descripcion?: string;
+  propiedad?: Propiedad;
+  empleado?: Empleado;
 }
 
 export interface ClientInquiryCreate {

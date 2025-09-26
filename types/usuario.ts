@@ -1,14 +1,14 @@
-export interface User {
-  id: number;
-  roleId: number;
-  password: string;
-  personId: number;
-  deleted: boolean;
-  emailVerified?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
-  person?: Person;
-  userRole?: UserRole;
+export interface Usuario {
+  id: string;
+  rol_id: string;
+  contrasena: string;
+  persona_id: string;
+  eliminado: boolean;
+  verificado_en?: Date;
+  creado_en?: Date;
+  actualizado_en?: Date;
+  persona?: Persona;
+  rol?: RolUsuario;
 }
 
 export interface UserCreate {

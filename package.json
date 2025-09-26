@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "cypress": "cypress open",
+    "cypress:headless": "cypress run"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -35,7 +37,10 @@
     "zod": "^4.0.8"
   },
   "devDependencies": {
+    "@testing-library/cypress": "^10.0.3",
     "@types/bcryptjs": "^2.4.6",
+    "@types/cypress": "^0.1.6",
+    "cypress": "^14.5.3",
     "ts-node": "^10.9.2"
   }
 }

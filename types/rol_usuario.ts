@@ -1,7 +1,6 @@
-type rol_usuario = {
-  id: number;
-  tipo_rol: string;
+export interface RolUsuario {
+  id: string;
+  tipo: string;
   eliminado: boolean;
-};
-
-export default rol_usuario;
+  usuarios?: Usuario[];
+}

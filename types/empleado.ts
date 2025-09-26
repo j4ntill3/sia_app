@@ -1,12 +1,12 @@
-export interface Employee {
+export interface Empleado {
   id: string;
   cuit: string;
-  hireDate: Date;
-  terminationDate?: Date;
-  typeId: string;
-  deleted: boolean;
-  employeeType?: EmployeeType;
-  personEmployee?: PersonEmployee[];
+  fecha_ingreso: Date;
+  fecha_egreso?: Date;
+  tipo_id: string;
+  eliminado: boolean;
+  tipo?: TipoEmpleado;
+  personas_empleado?: PersonaEmpleado[];
 }
 
 export interface EmployeeCreate {

@@ -7,133 +7,156 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Property {
+model propiedad {
   id                 String               @id @default(uuid()) @db.Uuid
-  title              String
-  categoryId         String               @db.Uuid
-  locality           String
-  address            String
-  neighborhood       String
-  numBedrooms        Int
-  numBathrooms       Int
-  surface            Float
-  garage             Boolean
-  deleted            Boolean?             @default(false)
-  statusId           String               @db.Uuid
-  clientInquiries    ClientInquiry[]
-  propertyCategory   PropertyCategory     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  propertyStatus     PropertyStatus       @relation(fields: [statusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  propertyAgent      PropertyAgent[]
-  propertyImage      PropertyImage[]
+  titulo             String               @map("title")
+  categoria_id       String               @db.Uuid @map("categoryId")
+  localidad_id       String               @db.Uuid @map("localidadId")
+  zona_id            String               @db.Uuid @map("zonaId")
+  direccion          String               @map("address")
+  barrio             String               @map("neighborhood")
+  dormitorios        Int                  @map("numBedrooms")
+  banos              Int                  @map("numBathrooms")
+  superficie         Float                @map("surface")
+  cochera            Boolean              @map("garage")
+  eliminado          Boolean?             @default(false) @map("deleted")
+  estado_id          String               @db.Uuid @map("statusId")
+  consultas_clientes consulta_cliente[]
+  categoria          categoria_propiedad   @relation(fields: [categoria_id], references: [id], onDelete: Cascade)
+  estado             estado_propiedad      @relation(fields: [estado_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  agentes            agente_propiedad[]
+  imagenes           imagen_propiedad[]
+  localidad          localidad            @relation(fields: [localidad_id], references: [id], onDelete: NoAction)
+  zona               zona                 @relation(fields: [zona_id], references: [id], onDelete: NoAction)
 
-  @@index([statusId])
-  @@index([categoryId])
+  @@index([estado_id])
+  @@index([categoria_id])
+  @@index([localidad_id])
+  @@index([zona_id])
+  @@map("propiedades")
+}
+model localidad {
+  id        String      @id @default(uuid()) @db.Uuid
+  nombre    String
+  propiedades  propiedad[]
+  @@map("localidad")
 }
 
-model Person {
+model zona {
+  id        String      @id @default(uuid()) @db.Uuid
+  nombre    String
+  propiedades  propiedad[]
+  @@map("zona")
+}
+
+model persona {
   id               String             @id @default(uuid()) @db.Uuid
-  phone            String?
-  lastName         String
-  address          String?
-  email            String             @unique
-  createdAt        DateTime           @default(now())
-  firstName        String
+  telefono         String?
+  apellido         String
+  direccion        String?
+  correo           String             @unique
+  creado_en        DateTime           @default(now())
+  nombre           String
   dni              Int?               @unique
-  deleted          Boolean
-  personEmployee   PersonEmployee[]
-  user             User[]
-  personImage      PersonImage[]      // Relación con imágenes de persona
+  eliminado        Boolean
+  empleados        persona_empleado[]
+  usuarios         usuario[]
+  imagenes         imagen_persona[]
 }
 
-model Session {
+model session {
   id         String   @id @default(uuid()) @db.Uuid
-  userId     String   @db.Uuid
+  usuario_id     String   @db.Uuid
   token      String
-  createdAt  DateTime @default(now())
-  deleted    Boolean
-  user       User     @relation(fields: [userId], references: [id])
+  creado_en  DateTime @default(now())
+  eliminado    Boolean
+  usuario       usuario     @relation(fields: [usuario_id], references: [id])
 
-  @@index([userId])
+  @@index([usuario_id])
 }
 
-model User {
+model usuario {
   id            String      @id @default(uuid()) @db.Uuid
-  roleId        String      @db.Uuid
-  password      String
-  personId      String      @db.Uuid
-  deleted       Boolean
-  emailVerified DateTime?   @db.Timestamp
-  createdAt     DateTime?   @default(now()) @db.Timestamp
-  updatedAt     DateTime?   @default(now()) @db.Timestamp
-  account       account?
-  session       Session[]
-  person        Person      @relation(fields: [personId], references: [id])
-  userRole      UserRole    @relation(fields: [roleId], references: [id])
+  rol_id        String      @db.Uuid
+  contrasena    String
+  persona_id    String      @db.Uuid
+  eliminado     Boolean
+  correo_verificado DateTime?   @db.Timestamp
+  creado_en     DateTime?   @default(now()) @db.Timestamp
+  actualizado_en DateTime?   @default(now()) @db.Timestamp
+  cuenta       account?
+  sesiones       session[]
+  persona        persona      @relation(fields: [persona_id], references: [id])
+  rol_usuario      rol_usuario    @relation(fields: [rol_id], references: [id])
 
-  @@index([personId])
-  @@index([roleId])
+  @@index([persona_id])
+  @@index([rol_id])
+
+  @@map("usuario")
 }
 
-model Employee {
+model empleado {
   id                 String             @id @default(uuid()) @db.Uuid
   cuit               String             @unique
-  hireDate           DateTime           @db.Date
-  terminationDate    DateTime?          @db.Date
-  typeId             String             @db.Uuid
-  deleted            Boolean
-  clientInquiries    ClientInquiry[]
-  employeeType       EmployeeType       @relation(fields: [typeId], references: [id])
-  propertyAgent      PropertyAgent[]
-  personEmployee     PersonEmployee[]
-
-  @@index([typeId])
+  fecha_ingreso      DateTime           @db.Date @map("hireDate")
+  fecha_egreso       DateTime?          @db.Date @map("terminationDate")
+  tipo_id            String             @db.Uuid @map("typeId")
+  eliminado          Boolean            @map("deleted")
+  consultas_clientes consulta_cliente[]
+  tipo               tipo_empleado       @relation(fields: [tipo_id], references: [id])
+  propiedades_agente agente_propiedad[]
+  personas_empleado  persona_empleado[]
+  @@index([tipo_id])
+  @@map("empleados")
 }
 
-model EmployeeType {
+model tipo_empleado {
   id       String     @id @default(uuid()) @db.Uuid
-  type     String     @unique
-  employee Employee[]
+  tipo     String     @unique @map("type")
+  empleados empleado[]
+  @@map("tipos_empleados")
 }
 
-model PersonEmployee {
+model persona_empleado {
   id             String   @id @default(uuid()) @db.Uuid
-  personId       String   @db.Uuid
-  employeeId     String   @db.Uuid
-  createdAt      DateTime @default(now()) @db.Timestamp
-  deleted        Boolean  @default(false)
-  employee       Employee @relation(fields: [employeeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  person         Person   @relation(fields: [personId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([employeeId])
-  @@index([personId])
+  persona_id     String   @db.Uuid @map("personId")
+  empleado_id    String   @db.Uuid @map("employeeId")
+  creado_en      DateTime @default(now()) @db.Timestamp @map("createdAt")
+  eliminado      Boolean  @default(false) @map("deleted")
+  empleado       empleado @relation(fields: [empleado_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  persona        persona  @relation(fields: [persona_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  @@index([empleado_id])
+  @@index([persona_id])
+  @@map("personas_empleados")
 }
 
-model UserRole {
+model rol_usuario {
   id        String    @id @default(uuid()) @db.Uuid
-  roleType  String
-  deleted   Boolean
-  user      User[]
+  tipo_rol  String
+  eliminado   Boolean
+  usuarios      usuario[]
 }
 
-model PropertyStatus {
+model estado_propiedad {
   id       String    @id @default(uuid()) @db.Uuid
-  status   String
-  property Property[]
+  estado   String
+  propiedades propiedad[]
+  @@map("estados_propiedades")
 }
-
-model PropertyCategory {
+model categoria_propiedad {
   id       String    @id @default(uuid()) @db.Uuid
-  category String
-  property Property[]
+  categoria String
+  propiedades propiedad[]
+  @@map("categorias_propiedades")
 }
 
-model PropertyImage {
+model imagen_propiedad {
   id          String    @id @default(uuid()) @db.Uuid
-  propertyId  String    @db.Uuid
-  imagePath   String?
-  property    Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([propertyId])
+  propiedad_id  String    @db.Uuid @map("propertyId")
+  imagen        String?   @map("imagePath")
+  propiedad     propiedad @relation(fields: [propiedad_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  @@index([propiedad_id])
+  @@map("imagenes_propiedades")
 }
 
 model oauth_access_tokens {
@@ -158,10 +181,9 @@ model oauth_refresh_tokens {
   expires_at    DateTime  @db.Timestamp
   created_at    DateTime? @default(now()) @db.Timestamp
 }
-
 model account {
   id                       String    @id @default(uuid())
-  userId                   String    @unique @db.Uuid
+  usuario_id               String    @unique @db.Uuid
   type                     String
   provider                 String
   providerAccountId        String
@@ -175,10 +197,10 @@ model account {
   refresh_token_expires_in Int?
   createdAt                DateTime? @default(now()) @db.Timestamp
   updatedAt                DateTime? @default(now()) @db.Timestamp
-  user                     User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  usuario                  usuario   @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([provider, providerAccountId])
-  @@index([userId])
+  @@index([usuario_id])
 }
 
 model verificationtoken {
@@ -189,40 +211,40 @@ model verificationtoken {
   @@unique([identifier, token])
 }
 
-model PropertyAgent {
+model agente_propiedad {
   id          String    @id @default(uuid()) @db.Uuid
-  propertyId  String    @db.Uuid
-  agentId     String    @db.Uuid
-  deleted     Boolean?  @default(false)
-  property    Property  @relation(fields: [propertyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  employee    Employee  @relation(fields: [agentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([agentId])
-  @@index([propertyId])
+  propiedad_id  String    @db.Uuid @map("propertyId")
+  agente_id     String    @db.Uuid @map("agentId")
+  eliminado     Boolean?  @default(false) @map("deleted")
+  propiedad     propiedad @relation(fields: [propiedad_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  empleado      empleado  @relation(fields: [agente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  @@index([agente_id])
+  @@index([propiedad_id])
+  @@map("agentes_propiedades")
 }
 
-model ClientInquiry {
+model consulta_cliente {
   id          String    @id @default(uuid()) @db.Uuid
-  propertyId  String    @db.Uuid
-  agentId     String    @db.Uuid
-  firstName   String
-  lastName    String
-  phone       String
-  email       String
-  date        DateTime @db.Timestamp
-  description String?  @db.Text
-  property    Property @relation(fields: [propertyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  employee    Employee @relation(fields: [agentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([agentId])
-  @@index([propertyId])
+  propiedad_id  String    @db.Uuid @map("propertyId")
+  agente_id     String    @db.Uuid @map("agentId")
+  nombre        String    @map("firstName")
+  apellido      String    @map("lastName")
+  telefono      String    @map("phone")
+  correo        String    @map("email")
+  fecha         DateTime @db.Timestamp @map("date")
+  descripcion   String?  @db.Text @map("description")
+  propiedad     propiedad @relation(fields: [propiedad_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  empleado      empleado  @relation(fields: [agente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  @@index([agente_id])
+  @@index([propiedad_id])
+  @@map("consultas_clientes")
 }
 
-model PersonImage {
+model imagen_persona {
   id         String   @id @default(uuid()) @db.Uuid
-  personId   String   @db.Uuid
-  imagePath  String?
-  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([personId])
+  persona_id String   @db.Uuid @map("personId")
+  imagen     String?  @map("imagePath")
+  persona    persona  @relation(fields: [persona_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  @@index([persona_id])
+  @@map("imagenes_personas")
 }

@@ -15,51 +15,48 @@ const config: any = {
           return null;
         }
 
-        const user = await prisma.user.findFirst({
+        const user = await prisma.usuario.findFirst({
           where: {
-            deleted: false,
-            person: {
-              email: email,
-              deleted: false,
+            eliminado: false,
+            persona: {
+              correo: email,
+              eliminado: false,
             },
           },
           include: {
-            person: {
+            persona: {
               include: {
-                personEmployee: {
+                empleados: {
                   include: {
-                    employee: true,
+                    empleado: true,
                   },
                 },
               },
             },
-            userRole: true,
+            rol_usuario: true,
           },
         });
 
         if (!user) {
-          return null;
-        }
+           return null;
+         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+         const isPasswordValid = await bcrypt.compare(password, user.contrasena);
 
-        if (!isPasswordValid) {
-          return null;
-        }
+         if (!isPasswordValid) {
+           return null;
+         }
 
-        // Determine employee type
-        const employeeId =
-          user.person.personEmployee.length > 0
-            ? user.person.personEmployee[0].employeeId
-            : null;
+    // Obtener el empleado relacionado (si existe)
+    const empleadoRelacionado = user.persona.empleados?.[0]?.empleado;
 
-        return {
-          id: user.id.toString(),
-          email: user.person.email,
-          name: `${user.person.firstName} ${user.person.lastName}`,
-          role: user.userRole.roleType,
-          employeeId: employeeId,
-        };
+         return {
+           id: user.id.toString(),
+           email: user.persona.correo,
+           name: `${user.persona.nombre} ${user.persona.apellido}`,
+           role: user.rol_usuario?.tipo_rol,
+           empleadoId: empleadoRelacionado?.id ?? null,
+         };
       },
     }),
   ],
