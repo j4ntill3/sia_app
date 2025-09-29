@@ -19,42 +19,30 @@ const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble }) => {
     <div className="w-full max-w-sm p-6 bg-white shadow-md flex flex-col rounded-2xl">
       <img
         src={
-          inmueble.propertyImage &&
-          Array.isArray(inmueble.propertyImage) &&
-          inmueble.propertyImage.length > 0 &&
-          inmueble.propertyImage[0].imagePath
-            ? inmueble.propertyImage[0].imagePath
+          inmueble.imagenes && Array.isArray(inmueble.imagenes) && inmueble.imagenes.length > 0 && inmueble.imagenes[0].imagen
+            ? inmueble.imagenes[0].imagen
             : "/img/no-image.webp"
         }
-        alt={inmueble.title}
+        alt={inmueble.titulo}
         className="w-full h-48 object-cover mb-4 rounded"
       />
       <h3 className="text-xl font-semibold text-[#083C2C] mb-2">
-        {" "}
-        {/* Color actualizado */}
-        {inmueble.title}
+        {inmueble.titulo}
       </h3>
       <p className="text-[#083C2C] text-sm mb-2">
-        <strong>Dirección:</strong> {inmueble.address}
+        <strong>Dirección:</strong> {inmueble.direccion}
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
-        <strong>Barrio:</strong> {inmueble.neighborhood}
+        <strong>Barrio:</strong> {inmueble.barrio}
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
-        <strong>Habitaciones:</strong> {inmueble.numBedrooms} -{" "}
-        <strong>Baños:</strong> {inmueble.numBathrooms}
+        <strong>Habitaciones:</strong> {inmueble.dormitorios} - <strong>Baños:</strong> {inmueble.banos}
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
-        <strong>Superficie:</strong> {inmueble.surface} m²
+        <strong>Superficie:</strong> {inmueble.superficie} m²
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
-        <strong>Garaje:</strong> {inmueble.garage ? "Sí" : "No"}
-      </p>
-      <p className="text-[#083C2C] text-sm mb-2">
-        <strong>Rubro:</strong> {inmueble.propertyCategory?.category || "-"}
-      </p>
-      <p className="text-[#083C2C] text-sm mb-4">
-        <strong>Estado:</strong> {inmueble.propertyStatus?.status || "-"}
+        <strong>Garaje:</strong> {inmueble.cochera ? "Sí" : "No"}
       </p>
       <button
         onClick={handleViewMore}

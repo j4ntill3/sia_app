@@ -20,46 +20,42 @@ async function main() {
 
   // Crear tipos de empleado
   console.log("👥 Creando tipos de empleado...");
-  const adminType = await prisma.tipo_empleado.create({
-    data: { tipo: "administrador" },
-  });
-  const agenteType = await prisma.tipo_empleado.create({
-    data: { tipo: "agente" },
-  });
+  await prisma.tipo_empleado.create({ data: { tipo: "administrador" } }); // id = 1
+  await prisma.tipo_empleado.create({ data: { tipo: "agente" } }); // id = 2
 
-  // Crear estados de propiedad
-  console.log("🏠 Creando estados de propiedad...");
-  const statusDisponible = await prisma.estado_propiedad.create({
+  // Crear estados de inmueble
+  console.log("🏠 Creando estados de inmueble...");
+  const statusDisponible = await prisma.estado_inmueble.create({
     data: { estado: "Disponible" },
   });
-  const statusAlquilado = await prisma.estado_propiedad.create({
+  const statusAlquilado = await prisma.estado_inmueble.create({
     data: { estado: "Alquilado" },
   });
-  await prisma.estado_propiedad.create({
+  await prisma.estado_inmueble.create({
     data: { estado: "Vendido" },
   });
-  await prisma.estado_propiedad.create({
+  await prisma.estado_inmueble.create({
     data: { estado: "Reservado" },
   });
-  await prisma.estado_propiedad.create({
+  await prisma.estado_inmueble.create({
     data: { estado: "En mantenimiento" },
   });
 
-  // Crear categorías de propiedad
-  console.log("🏘️ Creando categorías de propiedad...");
-  const catCasa = await prisma.categoria_propiedad.create({
+  // Crear categorías de inmueble
+  console.log("🏘️ Creando categorías de inmueble...");
+  const catCasa = await prisma.categoria_inmueble.create({
     data: { categoria: "Casa" },
   });
-  const catDepto = await prisma.categoria_propiedad.create({
+  const catDepto = await prisma.categoria_inmueble.create({
     data: { categoria: "Departamento" },
   });
-  const catTerreno = await prisma.categoria_propiedad.create({
+  const catTerreno = await prisma.categoria_inmueble.create({
     data: { categoria: "Terreno" },
   });
-  const catComercial = await prisma.categoria_propiedad.create({
+  const catComercial = await prisma.categoria_inmueble.create({
     data: { categoria: "Comercial" },
   });
-  const catOficina = await prisma.categoria_propiedad.create({
+  const catOficina = await prisma.categoria_inmueble.create({
     data: { categoria: "Oficina" },
   });
 
@@ -115,11 +111,11 @@ async function main() {
   // Crear empleados
   console.log("👷 Creando empleados...");
   const empleados = await Promise.all([
-  prisma.empleado.create({
+    prisma.empleado.create({
       data: {
         cuit: "20-12345678-9",
         fecha_ingreso: new Date("2024-01-01"),
-        tipo_id: adminType.id,
+        tipo_id: 1, // administrador
         eliminado: false,
       },
     }),
@@ -127,7 +123,7 @@ async function main() {
       data: {
         cuit: "20-87654321-0",
         fecha_ingreso: new Date("2024-02-01"),
-        tipo_id: agenteType.id,
+        tipo_id: 2, // agente
         eliminado: false,
       },
     }),
@@ -135,7 +131,7 @@ async function main() {
       data: {
         cuit: "20-55555555-1",
         fecha_ingreso: new Date("2024-03-01"),
-        tipo_id: agenteType.id,
+        tipo_id: 2, // agente
         eliminado: false,
       },
     }),
@@ -143,7 +139,7 @@ async function main() {
       data: {
         cuit: "20-11111111-2",
         fecha_ingreso: new Date("2024-04-01"),
-        tipo_id: agenteType.id,
+        tipo_id: 2, // agente
         eliminado: false,
       },
     }),
@@ -152,7 +148,7 @@ async function main() {
   // Crear relaciones persona-empleado
   console.log("🔗 Creando relaciones persona-empleado...");
   for (let i = 0; i < personas.length; i++) {
-  await prisma.persona_empleado.create({
+    await prisma.persona_empleado.create({
       data: {
         persona_id: personas[i].id,
         empleado_id: empleados[i].id,
@@ -197,10 +193,10 @@ async function main() {
   await prisma.zona.create({ data: { nombre: "Sur" } });
   await prisma.zona.create({ data: { nombre: "Oeste" } });
 
-  // Crear propiedades de ejemplo
-  console.log("🏠 Creando propiedades de ejemplo...");
-  const propiedades = await Promise.all([
-  prisma.propiedad.create({
+  // Crear inmuebles de ejemplo
+  console.log("🏠 Creando inmuebles de ejemplo...");
+  const inmuebles = await Promise.all([
+  prisma.inmueble.create({
       data: {
         titulo: "Casa moderna en Palermo",
         categoria_id: catCasa.id,
@@ -216,7 +212,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Departamento céntrico",
         categoria_id: catDepto.id,
@@ -232,7 +228,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Casa quinta en San Isidro",
         categoria_id: catCasa.id,
@@ -248,7 +244,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Local comercial en Recoleta",
         categoria_id: catComercial.id,
@@ -264,7 +260,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Penthouse de lujo en Puerto Madero",
         categoria_id: catDepto.id,
@@ -280,7 +276,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Oficina pequeña en el centro",
         categoria_id: catOficina.id,
@@ -296,7 +292,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Terreno amplio en Tigre",
         categoria_id: catTerreno.id,
@@ -312,7 +308,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Casa clásica en Belgrano",
         categoria_id: catCasa.id,
@@ -328,7 +324,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Oficina moderna en Microcentro",
         categoria_id: catOficina.id,
@@ -344,7 +340,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Casa familiar en Caballito",
         categoria_id: catCasa.id,
@@ -360,7 +356,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Departamento con vista al río",
         categoria_id: catDepto.id,
@@ -376,7 +372,7 @@ async function main() {
         eliminado: false,
       },
     }),
-  prisma.propiedad.create({
+  prisma.inmueble.create({
       data: {
         titulo: "Lote comercial en San Telmo",
         categoria_id: catComercial.id,
@@ -394,23 +390,23 @@ async function main() {
     }),
   ]);
 
-  // Crear imágenes para propiedades
-  console.log("🖼️ Creando imágenes de propiedades...");
-  for (const propiedad of propiedades) {
-  await prisma.imagen_propiedad.create({
+  // Crear imágenes para inmuebles
+  console.log("🖼️ Creando imágenes de inmuebles...");
+  for (const inmueble of inmuebles) {
+    await prisma.imagen_inmueble.create({
       data: {
-        propiedad_id: propiedad.id,
+        inmueble_id: inmueble.id,
         imagen: `/img/no-image.webp`,
       },
     });
   }
 
-  // Crear asignaciones de propiedad-agente
-  console.log("👥 Asignando agentes a propiedades...");
-  for (let i = 0; i < propiedades.length; i++) {
-  await prisma.agente_propiedad.create({
+  // Crear asignaciones de inmueble-agente
+  console.log("👥 Asignando agentes a inmuebles...");
+  for (let i = 0; i < inmuebles.length; i++) {
+    await prisma.agente_inmueble.create({
       data: {
-        propiedad_id: propiedades[i].id,
+        inmueble_id: inmuebles[i].id,
         agente_id: empleados[i % empleados.length].id,
         eliminado: false,
       },

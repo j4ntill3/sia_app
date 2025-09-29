@@ -1,5 +1,17 @@
 
-export interface Propiedad {
+export interface EstadoInmueble {
+  id: string;
+  estado: string;
+  inmuebles?: Inmueble[];
+}
+
+export interface CategoriaInmueble {
+  id: string;
+  categoria: string;
+  inmuebles?: Inmueble[];
+}
+
+export interface Inmueble {
   id: string;
   titulo: string;
   categoria_id: string;
@@ -13,12 +25,12 @@ export interface Propiedad {
   cochera: boolean;
   eliminado?: boolean;
   estado_id: string;
-  categoria?: CategoriaPropiedad;
-  estado?: EstadoPropiedad;
-  imagenes?: ImagenPropiedad[];
+  categoria?: CategoriaInmueble;
+  estado?: EstadoInmueble;
+  imagenes?: ImagenInmueble[];
 }
 
-export interface PropiedadCreate {
+export interface InmuebleCreate {
   titulo: string;
   categoria_id: string;
   localidad_id: string;
@@ -33,7 +45,7 @@ export interface PropiedadCreate {
   eliminado?: boolean;
 }
 
-export interface PropiedadUpdate {
+export interface InmuebleUpdate {
   titulo?: string;
   categoria_id?: string;
   localidad_id?: string;
@@ -48,9 +60,9 @@ export interface PropiedadUpdate {
   eliminado?: boolean;
 }
 
-export interface ImagenPropiedad {
+export interface ImagenInmueble {
   id: string;
-  propiedad_id: string;
+  inmueble_id: string;
   imagen?: string;
-  propiedad?: Propiedad;
+  inmueble?: Inmueble;
 }

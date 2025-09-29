@@ -3,20 +3,21 @@ import { z } from "zod";
 /**
  * Esquema de validación para propiedades (inmuebles)
  */
-export const propertySchema = z.object({
-  title: z.string().min(1),
-  categoryId: z.string().uuid(),
-  locality: z.string().min(1),
-  address: z.string().min(1),
-  neighborhood: z.string().min(1),
-  numBedrooms: z.number().int(),
-  numBathrooms: z.number().int(),
-  surface: z.number(),
-  garage: z.boolean(),
-  statusId: z.string().uuid(),
-  imagePath: z.string().optional(),
+export const inmuebleSchema = z.object({
+  titulo: z.string().min(1),
+  categoria_id: z.string().uuid(),
+  localidad_id: z.string().uuid(),
+  zona_id: z.string().uuid(),
+  direccion: z.string().min(1),
+  barrio: z.string().min(1),
+  dormitorios: z.number().int(),
+  banos: z.number().int(),
+  superficie: z.number(),
+  cochera: z.boolean(),
+  estado_id: z.string().uuid(),
+  imagen: z.string().optional(),
 });
-export type PropertyInput = z.infer<typeof propertySchema>;
+export type InmuebleInput = z.infer<typeof inmuebleSchema>;
 
 /**
  * Esquema de validación para agentes

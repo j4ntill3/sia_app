@@ -1,6 +1,8 @@
+import { Inmueble } from "./inmueble";
+import { Empleado } from "./empleado";
 export interface ConsultaCliente {
   id: string;
-  propiedad_id: string;
+  inmueble_id: string;
   agente_id: string;
   nombre: string;
   apellido: string;
@@ -8,30 +10,31 @@ export interface ConsultaCliente {
   correo: string;
   fecha: Date;
   descripcion?: string;
-  propiedad?: Propiedad;
+  inmueble?: Inmueble;
   empleado?: Empleado;
 }
 
-export interface ClientInquiryCreate {
-  propertyId: number;
-  agentId: number;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  date: Date;
-  description?: string;
+
+export interface ConsultaClienteCreate {
+  inmueble_id: string;
+  agente_id: string;
+  nombre: string;
+  apellido: string;
+  telefono: string;
+  correo: string;
+  fecha: Date;
+  descripcion?: string;
 }
 
-export interface ClientInquiryUpdate {
-  propertyId?: number;
-  agentId?: number;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  email?: string;
-  date?: Date;
-  description?: string;
+export interface ConsultaClienteUpdate {
+  inmueble_id?: string;
+  agente_id?: string;
+  nombre?: string;
+  apellido?: string;
+  telefono?: string;
+  correo?: string;
+  fecha?: Date;
+  descripcion?: string;
 }
 
 export interface Property {

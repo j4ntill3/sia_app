@@ -16,31 +16,42 @@ export async function GET(
       );
     }
 
-    const employee = await prisma.employee.findFirst({
+    // Obtener el UUID del tipo "agente"
+    const tipoAgente = await prisma.tipo_empleado.findFirst({
+      where: { tipo: "agente" },
+    });
+    if (!tipoAgente) {
+      return NextResponse.json({ error: "Tipo de agente no encontrado" }, { status: 500 });
+    }
+    const empleado = await prisma.empleado.findFirst({
       where: {
         id: id,
-        deleted: false,
-        typeId: "2", // Solo agentes - ahora es string
+        eliminado: false,
+        tipo_id: tipoAgente.id,
       },
       include: {
-        personEmployee: {
+        personas_empleado: {
           include: {
-            person: true,
+            persona: {
+              include: {
+                imagenes: true,
+              },
+            },
           },
         },
       },
     });
 
-    if (!employee) {
+    if (!empleado) {
       return NextResponse.json(
         { error: "Agente no encontrado" },
         { status: 404 }
       );
     }
 
-    const person = employee.personEmployee[0]?.person;
+    const persona = empleado.personas_empleado[0]?.persona;
 
-    if (!person) {
+    if (!persona) {
       return NextResponse.json(
         { error: "Información de persona no encontrada" },
         { status: 404 }
@@ -48,28 +59,25 @@ export async function GET(
     }
 
     // Buscar imagen de persona
-    const personImage = await prisma.personImage.findFirst({
-      where: { personId: person.id },
-      orderBy: { id: "desc" },
-    });
+    const imagen_persona = persona.imagenes?.[0]?.imagen || null;
 
     // Mapear a los nombres esperados por el frontend
-    const persona = {
-      nombre: person.firstName,
-      apellido: person.lastName,
-      email: person.email,
-      telefono: person.phone,
-      direccion: person.address,
-      dni: person.dni,
-      imagen: personImage?.imagePath || null,
+    const personaResult = {
+      nombre: persona.nombre,
+      apellido: persona.apellido,
+      correo: persona.correo,
+      telefono: persona.telefono,
+      direccion: persona.direccion,
+      dni: persona.dni,
+      imagen: imagen_persona,
     };
-    const empleado = {
-      CUIT: employee.cuit,
-      fecha_alta: employee.hireDate,
-      fecha_baja: employee.terminationDate,
+    const empleadoResult = {
+      cuit: empleado.cuit,
+      fecha_ingreso: empleado.fecha_ingreso,
+      fecha_egreso: empleado.fecha_egreso,
     };
 
-    return NextResponse.json({ persona, empleado });
+    return NextResponse.json({ persona: personaResult, empleado: empleadoResult });
   } catch (error) {
     console.error("Error al obtener agente:", error);
     return NextResponse.json(

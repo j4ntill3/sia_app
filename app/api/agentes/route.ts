@@ -1,173 +1,106 @@
 import { prisma } from "@/lib/prisma";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { requireAuth, jsonError, jsonSuccess } from "@/lib/api-helpers";
+import { requireAuth } from "@/lib/api-helpers";
 import { agentSchema } from "@/lib/validation";
-import type { Employee, Person } from "@/types/empleado";
+import type { persona as Person } from "@prisma/client";
 
+// GET: Listar agentes
 export async function GET(request: NextRequest) {
   try {
-    const employees = await prisma.employee.findMany({
+    const agentes = await prisma.empleado.findMany({
       where: {
-        typeId: "2",
-        deleted: false,
+        tipo: {
+          tipo: "agente"
+        },
+        eliminado: false,
       },
       include: {
-        personEmployee: {
+        personas_empleado: {
           include: {
-            person: true,
+            persona: true,
           },
         },
       },
     });
-
-    // Mapear a tipo Employee y Person
-    const agentesConPersona: {
-      empleado: Employee;
-      persona: Person | undefined;
-    }[] = employees.map((employee) => {
-      const personDb = employee.personEmployee[0]?.person;
-      const persona: Person | undefined = personDb
-        ? {
-            id: personDb.id,
-            firstName: personDb.firstName,
-            lastName: personDb.lastName,
-            email: personDb.email,
-            phone: personDb.phone || undefined,
-            address: personDb.address || undefined,
-            dni: personDb.dni || undefined,
-            deleted: personDb.deleted,
-            createdAt: personDb.createdAt,
-          }
-        : undefined;
-      const empleadoResult: Employee = {
-        id: employee.id,
-        cuit: employee.cuit,
-        hireDate: employee.hireDate,
-        terminationDate: employee.terminationDate || undefined,
-        typeId: employee.typeId,
-        deleted: employee.deleted,
-        personEmployee: undefined,
+    const agentesConPersona = agentes.map((empleado: any) => {
+      const personaDb: Person | undefined = empleado.personas_empleado[0]?.persona;
+      return {
+        empleado,
+        persona: personaDb || undefined,
       };
-      return { empleado: empleadoResult, persona };
     });
-
-    return jsonSuccess(agentesConPersona);
+    return NextResponse.json({ data: agentesConPersona });
   } catch (error) {
     console.error("Error al obtener agentes:", error);
-    return jsonError("Error al obtener agentes", 500);
+    return NextResponse.json({ error: "Error al obtener agentes" }, { status: 500 });
   }
 }
 
+// POST: Crear agente
 export async function POST(request: NextRequest) {
-  // Solo administradores pueden crear agentes
-  const { session, error, status } = await requireAuth(
-    request,
-    "administrador"
-  );
-  if (error) return jsonError(error, status);
-
+  const { error, status } = await requireAuth(request, "administrador");
+  if (error) return NextResponse.json({ error }, { status });
   try {
     const body = await request.json();
-    // Validar datos con zod
     const parse = agentSchema.safeParse({
       ...body,
       tipoId: body.tipoId,
       DNI: Number(body.DNI),
     });
-    if (!parse.success) {
-      return jsonError(
-        "Datos inválidos: " + JSON.stringify(parse.error.flatten().fieldErrors),
-        400
-      );
+    if (!parse.success || !parse.data) {
+      return NextResponse.json({ error: "Datos inválidos", detalles: parse.error ? parse.error.flatten().fieldErrors : {} }, { status: 400 });
     }
     const data = parse.data;
-
-    // 1. Crear la persona
-    const person = await prisma.person.create({
+    const tipoEmpleado = await prisma.tipo_empleado.findFirst({ where: { tipo: "agente" } });
+    const tipo_id = tipoEmpleado?.id ?? "";
+    const rolUsuario = await prisma.rol_usuario.findFirst({ where: { tipo_rol: "agente" } });
+    const rol_id = rolUsuario?.id ?? "";
+    const person = await prisma.persona.create({
       data: {
-        firstName: data.nombre,
-        lastName: data.apellido,
-        phone: data.telefono,
-        email: data.email,
+        nombre: data.nombre,
+        apellido: data.apellido,
+        telefono: data.telefono,
+        correo: data.email,
         dni: data.DNI,
-        address: data.direccion,
-        deleted: false,
+        direccion: data.direccion,
+        eliminado: false,
       },
     });
-
-    // 2. Crear el empleado
-    const employee = await prisma.employee.create({
+    const employee = await prisma.empleado.create({
       data: {
         cuit: data.cuit,
-        hireDate: new Date(data.fechaAlta + "T00:00:00Z"),
-        terminationDate: data.fechaBaja
-          ? new Date(data.fechaBaja + "T00:00:00Z")
-          : null,
-        typeId: "2", // Tipo agente
-        deleted: false,
+        fecha_ingreso: new Date(data.fechaAlta + "T00:00:00Z"),
+        fecha_egreso: data.fechaBaja ? new Date(data.fechaBaja + "T00:00:00Z") : null,
+        tipo_id,
+        eliminado: false,
       },
     });
-
-    // 3. Crear la relación personEmployee
-    await prisma.personEmployee.create({
+    await prisma.persona_empleado.create({
       data: {
-        personId: person.id,
-        employeeId: employee.id,
-        deleted: false,
+        persona_id: person.id,
+        empleado_id: employee.id,
+        eliminado: false,
       },
     });
-
-    // 4. Crear el usuario con contraseña hasheada
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash("123456", salt);
-
-    await prisma.user.create({
+    await prisma.usuario.create({
       data: {
-        roleId: "2",
-        password: hashedPassword,
-        personId: person.id,
-        deleted: false,
+        rol_id,
+        contrasena: hashedPassword,
+        persona_id: person.id,
+        eliminado: false,
       },
     });
-
-    // Mapear a tipo Employee y Person
-    const personaResult: Person = {
-      id: person.id,
-      firstName: person.firstName,
-      lastName: person.lastName,
-      email: person.email,
-      phone: person.phone || undefined,
-      address: person.address || undefined,
-      dni: person.dni || undefined,
-      deleted: person.deleted,
-      createdAt: person.createdAt,
-    };
-    const empleadoResult: Employee = {
-      id: employee.id,
-      cuit: employee.cuit,
-      hireDate: employee.hireDate,
-      terminationDate: employee.terminationDate || undefined,
-      typeId: employee.typeId,
-      deleted: employee.deleted,
-      personEmployee: undefined,
-    };
-
-    return jsonSuccess(
-      {
-        success: true,
-        message: "Agente creado exitosamente",
-        empleado: empleadoResult,
-        persona: personaResult,
-      },
-      201
-    );
+    return NextResponse.json({
+      success: true,
+      message: "Agente creado exitosamente",
+      empleado: employee,
+      persona: person,
+    }, { status: 201 });
   } catch (error) {
     console.error("Error al crear agente:", error);
-    return jsonError(
-      "Error al crear agente: " +
-        (error instanceof Error ? error.message : "Error desconocido"),
-      500
-    );
+    return NextResponse.json({ error: "Error al crear agente" }, { status: 500 });
   }
 }

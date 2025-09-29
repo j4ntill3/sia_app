@@ -1,29 +1,16 @@
-export interface PropertyCategory {
+import { Inmueble } from "./inmueble";
+export interface RubroInmueble {
   id: string;
-  category: string;
-  property?: Property[];
+  rubro: string;
+  inmuebles?: Inmueble[];
 }
 
-export interface PropertyCategoryCreate {
-  category: string;
+export interface RubroInmuebleCreate {
+  rubro: string;
 }
 
-export interface PropertyCategoryUpdate {
-  category?: string;
+export interface RubroInmuebleUpdate {
+  rubro?: string;
 }
 
-export interface Property {
-  id: string;
-  title: string;
-  categoryId: string;
-  locality: string;
-  address: string;
-  neighborhood: string;
-  numBedrooms: number;
-  numBathrooms: number;
-  surface: number;
-  garage: boolean;
-  deleted?: boolean;
-  statusId: string;
-  propertyCategory?: PropertyCategory;
-}
+

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -17,25 +18,23 @@ export default function Login() {
     setIsMounted(true);
   }, []);
 
+  const loginSchema = z.object({
+    email: z.string().min(1, "Por favor ingresa tu email.").email("Email inválido."),
+    password: z.string().min(1, "Por favor ingresa tu contraseña.")
+  });
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!email) {
-      setErrorMessage("Por favor ingresa tu email.");
+    const resultValidation = loginSchema.safeParse({ email, password });
+    if (!resultValidation.success) {
+      const firstError = resultValidation.error.errors[0]?.message || "Datos inválidos.";
+      setErrorMessage(firstError);
       setSuccessMessage("");
       return;
     }
-
-    if (!password) {
-      setErrorMessage("Por favor ingresa tu contraseña.");
-      setSuccessMessage("");
-      return;
-    }
-
     setErrorMessage("");
     setSuccessMessage("");
     setLoading(true);
-
     try {
       const result = await signIn("credentials", {
         email: email,
@@ -43,17 +42,19 @@ export default function Login() {
         redirect: false,
         callbackUrl: "/",
       });
-
       if (result?.error) {
-        setErrorMessage(result.error);
+        // Si el error es 'CredentialsSignin', mostrar mensaje personalizado
+        if (result.error === "CredentialsSignin") {
+          setErrorMessage("Datos incorrectos. Verifica tu email y contraseña.");
+        } else {
+          setErrorMessage(result.error);
+        }
         setSuccessMessage("");
       } else if (result?.status === 200) {
-        setSuccessMessage("¡Login exitoso!");
+        setSuccessMessage("¡Acceso exitoso!");
         console.log("Login exitoso con:", { email, password });
-
-        // Redirigir a "/" y recargar la página
         if (isMounted) {
-          window.location.href = "/"; // Redirige a "/" antes de recargar
+          window.location.href = "/";
         }
       }
     } catch (error: any) {

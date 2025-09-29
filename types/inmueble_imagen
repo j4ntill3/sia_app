@@ -1,8 +1,0 @@
-type InmuebleImagen = {
-  id: number;
-  id_inmueble: number;
-  ruta_imagen: string | null; // Puede ser null si no se proporciona
-  eliminado: boolean | null; // Puede ser null si no se especifica
-};
-
-export default InmuebleImagen;

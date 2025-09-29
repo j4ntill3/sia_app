@@ -1,29 +1,15 @@
-export interface PropertyStatus {
+import { Inmueble } from "./inmueble";
+
+export interface EstadoInmueble {
   id: string;
-  status: string;
-  property?: Property[];
+  estado: string;
+  inmuebles?: Inmueble[];
 }
 
-export interface PropertyStatusCreate {
-  status: string;
+export interface EstadoInmuebleCreate {
+  estado: string;
 }
 
-export interface PropertyStatusUpdate {
-  status?: string;
-}
-
-export interface Property {
-  id: string;
-  title: string;
-  categoryId: string;
-  locality: string;
-  address: string;
-  neighborhood: string;
-  numBedrooms: number;
-  numBathrooms: number;
-  surface: number;
-  garage: boolean;
-  deleted?: boolean;
-  statusId: string;
-  propertyStatus?: PropertyStatus;
+export interface EstadoInmuebleUpdate {
+  estado?: string;
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth-actions";
 import InmuebleCard from "@/app/components/InmuebleCard";
-import type { Property as Inmueble } from "@/types/inmueble";
+import type { Inmueble } from "@/types/inmueble";
 import InmuebleSearch from "@/app/components/InmuebleSearch";
 import Pagination from "@/app/components/Pagination";
 
@@ -53,9 +53,9 @@ const Inmuebles = () => {
         throw new Error("Error al obtener los inmuebles.");
       }
       const inmueblesData = await response.json();
-      setInmuebles(inmueblesData.data.data || []);
-      setTotalPages(inmueblesData.data.totalPages || 1);
-      setTotalItems(inmueblesData.data.total || 0);
+  setInmuebles(inmueblesData.data || []);
+  setTotalPages(inmueblesData.totalPages || 1);
+  setTotalItems(inmueblesData.total || 0);
     } catch (err) {
       setError("Error al obtener los inmuebles.");
     }
@@ -77,9 +77,9 @@ const Inmuebles = () => {
   const filteredInmuebles = inmuebles.filter((inmueble) => {
     const q = searchQuery.toLowerCase();
     return (
-      inmueble.title?.toLowerCase().includes(q) ||
-      inmueble.neighborhood?.toLowerCase().includes(q) ||
-      inmueble.address?.toLowerCase().includes(q)
+      inmueble.titulo?.toLowerCase().includes(q) ||
+      inmueble.barrio?.toLowerCase().includes(q) ||
+      inmueble.direccion?.toLowerCase().includes(q)
     );
   });
 

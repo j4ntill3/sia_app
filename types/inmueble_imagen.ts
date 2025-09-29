@@ -1,32 +1,18 @@
-export interface PropertyImage {
+import { Inmueble } from "./inmueble";
+
+export interface ImagenInmueble {
   id: string;
-  propertyId: string;
-  imagePath?: string;
-  property?: Property;
+  inmueble_id: string;
+  imagen?: string;
+  inmueble?: Inmueble;
 }
 
-export interface PropertyImageCreate {
-  propertyId: string;
-  imagePath?: string;
+export interface ImagenInmuebleCreate {
+  inmueble_id: string;
+  imagen?: string;
 }
 
-export interface PropertyImageUpdate {
-  propertyId?: string;
-  imagePath?: string;
-}
-
-export interface Property {
-  id: string;
-  title: string;
-  categoryId: string;
-  locality: string;
-  address: string;
-  neighborhood: string;
-  numBedrooms: number;
-  numBathrooms: number;
-  surface: number;
-  garage: boolean;
-  deleted?: boolean;
-  statusId: string;
-  propertyImage?: PropertyImage[];
+export interface ImagenInmuebleUpdate {
+  inmueble_id?: string;
+  imagen?: string;
 }
