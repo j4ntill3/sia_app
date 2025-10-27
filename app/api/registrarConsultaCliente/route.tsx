@@ -23,14 +23,18 @@ export async function POST(request: NextRequest) {
       );
     }
     const data = parse.data;
-    const idAgente = Number(session.user.id);
+    const idAgente = session.user.empleadoId;
+
+    if (!idAgente) {
+      return jsonError("No se encontró el ID del agente", 400);
+    }
 
     // Verificar que el inmueble pertenece al agente
-    const propertyAgent = await prisma.propertyAgent.findFirst({
+    const propertyAgent = await prisma.agente_inmueble.findFirst({
       where: {
-        propertyId: data.id_inmueble,
+        inmuebleId: data.id_inmueble,
         agentId: idAgente,
-        deleted: false,
+        eliminado: false,
       },
     });
     if (!propertyAgent) {
@@ -38,9 +42,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Crear la consulta del cliente
-    const nuevaConsultaDb = await prisma.clientInquiry.create({
+    const nuevaConsultaDb = await prisma.consulta_cliente.create({
       data: {
-        propertyId: data.id_inmueble,
+        inmuebleId: data.id_inmueble,
         agentId: idAgente,
         firstName: data.nombre,
         lastName: data.apellido,
@@ -54,7 +58,7 @@ export async function POST(request: NextRequest) {
     // Mapear a tipo ClientInquiry
     const nuevaConsulta: ClientInquiry = {
       id: nuevaConsultaDb.id,
-      propertyId: nuevaConsultaDb.propertyId,
+      propertyId: nuevaConsultaDb.inmuebleId,
       agentId: nuevaConsultaDb.agentId,
       firstName: nuevaConsultaDb.firstName,
       lastName: nuevaConsultaDb.lastName,

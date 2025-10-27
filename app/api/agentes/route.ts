@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { requireAuth } from "@/lib/api-helpers";
 import { agentSchema } from "@/lib/validation";
+import { generateRandomPassword } from "@/lib/password";
 import type { persona as Person } from "@prisma/client";
 
 // GET: Listar agentes
@@ -18,7 +19,11 @@ export async function GET(request: NextRequest) {
       include: {
         personas_empleado: {
           include: {
-            persona: true,
+            persona: {
+              include: {
+                imagenes: true,
+              },
+            },
           },
         },
       },
@@ -64,14 +69,15 @@ export async function POST(request: NextRequest) {
         correo: data.email,
         dni: data.DNI,
         direccion: data.direccion,
+        fecha_nacimiento: new Date(data.fechaNacimiento + "T00:00:00Z"),
         eliminado: false,
       },
     });
     const employee = await prisma.empleado.create({
       data: {
         cuit: data.cuit,
-        fecha_ingreso: new Date(data.fechaAlta + "T00:00:00Z"),
-        fecha_egreso: data.fechaBaja ? new Date(data.fechaBaja + "T00:00:00Z") : null,
+        fecha_ingreso: new Date(), // Fecha actual como fecha de ingreso
+        fecha_egreso: null,
         tipo_id,
         eliminado: false,
       },
@@ -83,8 +89,12 @@ export async function POST(request: NextRequest) {
         eliminado: false,
       },
     });
+
+    // Generar contraseña aleatoria temporal
+    const temporaryPassword = generateRandomPassword(12);
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash("123456", salt);
+    const hashedPassword = await bcrypt.hash(temporaryPassword, salt);
+
     await prisma.usuario.create({
       data: {
         rol_id,
@@ -93,11 +103,19 @@ export async function POST(request: NextRequest) {
         eliminado: false,
       },
     });
+
     return NextResponse.json({
-      success: true,
-      message: "Agente creado exitosamente",
-      empleado: employee,
-      persona: person,
+      data: {
+        success: true,
+        message: "Agente creado exitosamente",
+        personaId: person.id,
+        empleadoId: employee.id,
+        empleado: employee,
+        persona: person,
+        // IMPORTANTE: La contraseña temporal debe ser comunicada al agente de forma segura
+        temporaryPassword: temporaryPassword,
+        warningMessage: "Por favor, comunique esta contraseña al agente de forma segura. El agente deberá cambiarla en su primer inicio de sesión."
+      }
     }, { status: 201 });
   } catch (error) {
     console.error("Error al crear agente:", error);

@@ -28,10 +28,10 @@ export async function POST(request: NextRequest) {
 
     const imagePath = `/img/${fileName}`;
 
-    const newImageDb = await prisma.personImage.create({
+    const newImageDb = await prisma.imagen_persona.create({
       data: {
-        personId: id_persona,
-        imagePath: imagePath,
+        persona_id: id_persona,
+        imagen: imagePath,
       },
     });
 
@@ -39,8 +39,8 @@ export async function POST(request: NextRequest) {
       url: imagePath,
       image: {
         id: newImageDb.id,
-        personId: newImageDb.personId,
-        imagePath: newImageDb.imagePath || undefined,
+        personId: newImageDb.persona_id,
+        imagePath: newImageDb.imagen || undefined,
       },
     });
   } catch (error) {

@@ -12,8 +12,7 @@ type FormData = {
   direccion: string;
   tipoId: number | string;
   cuit: string;
-  fechaAlta: string;
-  fechaBaja: string;
+  fechaNacimiento: string;
 };
 
 export default function CrearAgente() {
@@ -26,8 +25,7 @@ export default function CrearAgente() {
     direccion: "",
     tipoId: "",
     cuit: "",
-    fechaAlta: "",
-    fechaBaja: "",
+    fechaNacimiento: "",
   });
 
   const [session, setSession] = useState<any>(null);
@@ -93,8 +91,7 @@ export default function CrearAgente() {
       ...formData,
       tipoId: Number(formData.tipoId),
       DNI: Number(formData.DNI),
-      fechaAlta: formData.fechaAlta,
-      fechaBaja: formData.fechaBaja || null,
+      fechaNacimiento: formData.fechaNacimiento,
       eliminado: false,
     };
 
@@ -162,191 +159,187 @@ export default function CrearAgente() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
-      <div className="w-full my-4 max-w-sm px-8 bg-white shadow-md text-[#083C2C] rounded-2xl">
-        <h2 className="text-3xl font-bold pt-4 text-center text-[#083C2C]">
+    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4 md:p-8">
+      <div className="w-full max-w-5xl py-6 px-6 md:px-10 bg-white shadow-md rounded-2xl">
+        <h2 className="text-3xl font-bold text-center mt-2 mb-6 text-[#083C2C]">
           Alta Agente
         </h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="nombre"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
-            >
-              Nombre
-            </label>
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleInputChange}
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-              placeholder="Ingresa el nombre"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            <div className="space-y-4">
+              {/* Columna 1 */}
+              <div>
+                <label
+                  htmlFor="nombre"
+                  className="block text-sm font-sans font-medium text-[#083C2C]"
+                >
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  id="nombre"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleInputChange}
+                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  placeholder="Ingresa el nombre"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="apellido"
+                  className="block text-sm font-sans font-medium text-[#083C2C]"
+                >
+                  Apellido
+                </label>
+                <input
+                  type="text"
+                  id="apellido"
+                  name="apellido"
+                  value={formData.apellido}
+                  onChange={handleInputChange}
+                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  placeholder="Ingresa el apellido"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="telefono"
+                  className="block text-sm font-sans font-medium text-[#083C2C]"
+                >
+                  Teléfono
+                </label>
+                <input
+                  type="text"
+                  id="telefono"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleInputChange}
+                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  placeholder="Ingresa el teléfono"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-sans font-medium text-[#083C2C]"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  placeholder="Ingresa el email"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="DNI"
+                  className="block text-sm font-sans font-medium text-[#083C2C]"
+                >
+                  DNI
+                </label>
+                <input
+                  type="number"
+                  id="DNI"
+                  name="DNI"
+                  value={formData.DNI}
+                  onChange={handleInputChange}
+                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  placeholder="Ingresa el DNI"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Columna 2 */}
+              <div>
+                <label
+                  htmlFor="direccion"
+                  className="block text-sm font-sans font-medium text-[#083C2C]"
+                >
+                  Dirección
+                </label>
+                <input
+                  type="text"
+                  id="direccion"
+                  name="direccion"
+                  value={formData.direccion}
+                  onChange={handleInputChange}
+                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  placeholder="Ingresa la dirección"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="cuit"
+                  className="block text-sm font-sans font-medium text-[#083C2C]"
+                >
+                  CUIT
+                </label>
+                <input
+                  type="text"
+                  id="cuit"
+                  name="cuit"
+                  value={formData.cuit}
+                  onChange={handleInputChange}
+                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  placeholder="Ingresa el CUIT"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="fechaNacimiento"
+                  className="block text-sm font-sans font-medium text-[#083C2C]"
+                >
+                  Fecha de Nacimiento
+                </label>
+                <input
+                  type="date"
+                  id="fechaNacimiento"
+                  name="fechaNacimiento"
+                  value={formData.fechaNacimiento}
+                  onChange={handleInputChange}
+                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-sans font-medium text-[#083C2C]">
+                  Imagen de perfil
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#6FC6D1] file:text-white hover:file:bg-[#5ab5c0]"
+                />
+                {imagePreview && (
+                  <img
+                    src={imagePreview}
+                    alt="Previsualización"
+                    className="mt-2 w-32 h-32 object-cover rounded-full border"
+                  />
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="mb-4">
-            <label
-              htmlFor="apellido"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
-            >
-              Apellido
-            </label>
-            <input
-              type="text"
-              id="apellido"
-              name="apellido"
-              value={formData.apellido}
-              onChange={handleInputChange}
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-              placeholder="Ingresa el apellido"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="telefono"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
-            >
-              Teléfono
-            </label>
-            <input
-              type="text"
-              id="telefono"
-              name="telefono"
-              value={formData.telefono}
-              onChange={handleInputChange}
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-              placeholder="Ingresa el teléfono"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-              placeholder="Ingresa el email"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="DNI"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
-            >
-              DNI
-            </label>
-            <input
-              type="number"
-              id="DNI"
-              name="DNI"
-              value={formData.DNI}
-              onChange={handleInputChange}
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-              placeholder="Ingresa el DNI"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="direccion"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
-            >
-              Dirección
-            </label>
-            <input
-              type="text"
-              id="direccion"
-              name="direccion"
-              value={formData.direccion}
-              onChange={handleInputChange}
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-              placeholder="Ingresa la dirección"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="cuit"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
-            >
-              CUIT
-            </label>
-            <input
-              type="text"
-              id="cuit"
-              name="cuit"
-              value={formData.cuit}
-              onChange={handleInputChange}
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-              placeholder="Ingresa el CUIT"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="fechaAlta"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
-            >
-              Fecha de Alta
-            </label>
-            <input
-              type="date"
-              id="fechaAlta"
-              name="fechaAlta"
-              value={formData.fechaAlta}
-              onChange={handleInputChange}
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="fechaBaja"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
-            >
-              Fecha de Baja (opcional)
-            </label>
-            <input
-              type="date"
-              id="fechaBaja"
-              name="fechaBaja"
-              value={formData.fechaBaja}
-              onChange={handleInputChange}
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-sans font-medium text-[#083C2C]">
-              Imagen de perfil
-            </label>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Previsualización"
-                className="mt-2 w-32 h-32 object-cover rounded-full border"
-              />
-            )}
-          </div>
-
-          <div className="pb-4">
+          <div className="mt-6 space-y-3">
             <button
               type="submit"
-              className="w-full bg-[#083C2C] text-white rounded-full py-2 hover:bg-[#0A4A35] transition-colors"
+              className="w-full bg-[#6FC6D1] text-white py-3 px-4 rounded-full text-sm font-sans hover:bg-[#5ab5c0] transition-colors"
             >
               Crear Agente
             </button>

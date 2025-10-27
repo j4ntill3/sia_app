@@ -7,10 +7,25 @@ export async function GET(request: NextRequest) {
   const { session, error, status } = await requireAuth(request, "agente");
   if (error) return jsonError(error, status);
   try {
-    const agentIdNumber = Number(session.user.id);
-    const clientQueriesDb = await prisma.clientInquiry.findMany({
+    const agentId = session.user.empleadoId;
+    if (!agentId) {
+      return jsonError("No se encontró el ID del agente", 400);
+    }
+    const clientQueriesDb = await prisma.consulta_cliente.findMany({
       where: {
-        agentId: agentIdNumber,
+        agentId: agentId,
+      },
+      include: {
+        inmueble: true,
+        empleado: {
+          include: {
+            personas_empleado: {
+              include: {
+                persona: true
+              }
+            }
+          }
+        }
       },
       orderBy: {
         date: "desc",
@@ -19,7 +34,7 @@ export async function GET(request: NextRequest) {
     // Mapear a tipo ClientInquiry
     const clientQueries: ClientInquiry[] = clientQueriesDb.map((c) => ({
       id: c.id,
-      propertyId: c.propertyId,
+      propertyId: c.inmuebleId,
       agentId: c.agentId,
       firstName: c.firstName,
       lastName: c.lastName,

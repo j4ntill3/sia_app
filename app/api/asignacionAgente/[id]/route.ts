@@ -10,44 +10,52 @@ export async function PUT(
     const { agentId } = await request.json();
 
     // Verificamos si el inmueble existe
-    const property = await prisma.property.findUnique({
-      where: { id: Number(id) },
+    const inmueble = await prisma.inmueble.findUnique({
+      where: { id: id },
     });
-    if (!property) {
+    if (!inmueble) {
       return jsonError("Inmueble no encontrado", 404);
     }
 
+    // Verificamos si el agente (empleado) existe
+    const agente = await prisma.empleado.findUnique({
+      where: { id: agentId },
+    });
+    if (!agente) {
+      return jsonError("Agente no encontrado", 404);
+    }
+
     // Verificamos si ya existe un agente asignado al inmueble
-    const existingAgent = await prisma.propertyAgent.findFirst({
+    const existingAgent = await prisma.agente_inmueble.findFirst({
       where: {
-        propertyId: Number(id),
-        deleted: false,
+        inmuebleId: id,
+        eliminado: false,
       },
     });
     if (existingAgent) {
       // Si ya existe un agente asignado, lo marcamos como eliminado
-      await prisma.propertyAgent.update({
+      await prisma.agente_inmueble.update({
         where: { id: existingAgent.id },
-        data: { deleted: true },
+        data: { eliminado: true },
       });
     }
 
     // Insertamos el nuevo registro de agente
-    const newPropertyAgent = await prisma.propertyAgent.create({
+    const newPropertyAgent = await prisma.agente_inmueble.create({
       data: {
-        propertyId: Number(id),
+        inmuebleId: id,
         agentId: agentId,
-        deleted: false,
+        eliminado: false,
       },
     });
 
     return jsonSuccess({
       message: "Agente asignado correctamente",
       data: {
-        id: newPropertyAgent.id.toString(),
-        propertyId: newPropertyAgent.propertyId,
+        id: newPropertyAgent.id,
+        inmuebleId: newPropertyAgent.inmuebleId,
         agentId: newPropertyAgent.agentId,
-        deleted: newPropertyAgent.deleted,
+        eliminado: newPropertyAgent.eliminado,
       },
     });
   } catch (error) {

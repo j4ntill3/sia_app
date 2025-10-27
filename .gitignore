@@ -38,3 +38,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code instructions
+CLAUDE.md
+
+# uploaded images
+/public/img/
+
+# Windows reserved filenames
+nul
+
+# API keys and sensitive files
+*_key*.txt

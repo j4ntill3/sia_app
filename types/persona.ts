@@ -1,3 +1,9 @@
+export interface PersonaImage {
+  id: string;
+  persona_id: string;
+  imagen: string | null;
+}
+
 export interface Persona {
   id: string;
   nombre: string;
@@ -10,6 +16,7 @@ export interface Persona {
   creado_en: Date;
   empleados?: PersonaEmpleado[];
   usuarios?: Usuario[];
+  imagenes?: PersonaImage[];
 }
 
 export interface PersonaCreate {

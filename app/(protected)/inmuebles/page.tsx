@@ -6,6 +6,7 @@ import InmuebleCard from "@/app/components/InmuebleCard";
 import type { Inmueble } from "@/types/inmueble";
 import InmuebleSearch from "@/app/components/InmuebleSearch";
 import Pagination from "@/app/components/Pagination";
+import { downloadCSV } from "@/lib/csv-export";
 
 const Inmuebles = () => {
   const [session, setSession] = useState<any>(null);
@@ -77,11 +78,34 @@ const Inmuebles = () => {
   const filteredInmuebles = inmuebles.filter((inmueble) => {
     const q = searchQuery.toLowerCase();
     return (
-      inmueble.titulo?.toLowerCase().includes(q) ||
-      inmueble.barrio?.toLowerCase().includes(q) ||
-      inmueble.direccion?.toLowerCase().includes(q)
+      inmueble.direccion?.toLowerCase().includes(q) ||
+      inmueble.barrio?.nombre?.toLowerCase().includes(q) ||
+      inmueble.zona?.nombre?.toLowerCase().includes(q) ||
+      inmueble.localidad?.nombre?.toLowerCase().includes(q) ||
+      inmueble.categoria?.categoria?.toLowerCase().includes(q)
     );
   });
+
+  const handleDownloadCSV = () => {
+    downloadCSV(
+      inmuebles,
+      ["ID", "Dirección", "Categoría", "Localidad", "Zona", "Barrio", "Dormitorios", "Baños", "Superficie", "Cochera", "Estado"],
+      "inmuebles.csv",
+      (inmueble) => [
+        inmueble.id,
+        inmueble.direccion,
+        inmueble.categoria?.categoria || "",
+        inmueble.localidad?.nombre || "",
+        inmueble.zona?.nombre || "",
+        inmueble.barrio?.nombre || "",
+        inmueble.dormitorios,
+        inmueble.banos,
+        inmueble.superficie,
+        inmueble.cochera ? "Sí" : "No",
+        inmueble.estado?.estado || ""
+      ]
+    );
+  };
 
   // Mostrar un mensaje de carga mientras se resuelve la sesión y los datos
   if (isLoading) {
@@ -115,7 +139,20 @@ const Inmuebles = () => {
   // Renderizar los inmuebles
   return (
     <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
-      <InmuebleSearch onSearch={setSearchQuery} />
+      <div className="w-full max-w-7xl mb-4 flex justify-between items-center">
+        <InmuebleSearch onSearch={setSearchQuery} />
+        {session?.user?.role === "administrador" && (
+          <button
+            onClick={handleDownloadCSV}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+            Exportar CSV
+          </button>
+        )}
+      </div>
       <div className="flex flex-wrap justify-center gap-6 w-full">
         {filteredInmuebles.length === 0 ? (
           <p>No se encontraron inmuebles disponibles.</p>

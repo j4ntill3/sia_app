@@ -16,8 +16,17 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
   const { empleado, persona } = agente;
   const router = useRouter();
 
+  const profileImage = (persona as any).imagenes?.[0]?.imagen || "/img/no-image.webp";
+
   return (
     <tr className="border-b font-sans hover:bg-gray-50">
+      <td className="px-4 py-2">
+        <img
+          src={profileImage}
+          alt={`${persona.firstName} ${persona.lastName}`}
+          className="w-10 h-10 rounded-full object-cover border-2 border-gray-300"
+        />
+      </td>
       <td className="px-4 py-2 text-gray-900">{empleado.id}</td>
       <td className="px-4 py-2 text-gray-900">
         {persona.firstName} {persona.lastName}

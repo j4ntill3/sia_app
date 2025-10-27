@@ -15,25 +15,39 @@ const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble }) => {
     router.push(`/inmuebles/${inmueble.id}`); // Redirige a la página de detalles
   };
 
+  // Obtener la imagen principal o la primera imagen disponible
+  const getDisplayImage = () => {
+    if (!inmueble.imagenes || !Array.isArray(inmueble.imagenes) || inmueble.imagenes.length === 0) {
+      return "/img/no-image.webp";
+    }
+
+    // Buscar la imagen marcada como principal
+    const principalImage = inmueble.imagenes.find((img) => img.es_principal);
+    if (principalImage?.imagen) {
+      return principalImage.imagen;
+    }
+
+    // Si no hay imagen principal, usar la primera
+    return inmueble.imagenes[0]?.imagen || "/img/no-image.webp";
+  };
+
   return (
     <div className="w-full max-w-sm p-6 bg-white shadow-md flex flex-col rounded-2xl">
-      <img
-        src={
-          inmueble.imagenes && Array.isArray(inmueble.imagenes) && inmueble.imagenes.length > 0 && inmueble.imagenes[0].imagen
-            ? inmueble.imagenes[0].imagen
-            : "/img/no-image.webp"
-        }
-        alt={inmueble.titulo}
-        className="w-full h-48 object-cover mb-4 rounded"
-      />
+      <div className="relative">
+        <img
+          src={getDisplayImage()}
+          alt={`${inmueble.categoria?.categoria || 'Inmueble'} en ${inmueble.direccion}`}
+          className="w-full h-48 object-cover mb-4 rounded"
+        />
+      </div>
       <h3 className="text-xl font-semibold text-[#083C2C] mb-2">
-        {inmueble.titulo}
+        {inmueble.categoria?.categoria || 'Inmueble'}
       </h3>
       <p className="text-[#083C2C] text-sm mb-2">
         <strong>Dirección:</strong> {inmueble.direccion}
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
-        <strong>Barrio:</strong> {inmueble.barrio}
+        <strong>Barrio:</strong> {inmueble.barrio?.nombre || 'N/A'}
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
         <strong>Habitaciones:</strong> {inmueble.dormitorios} - <strong>Baños:</strong> {inmueble.banos}

@@ -36,18 +36,18 @@ export async function GET(
     // Mapear a tipo Inmueble
     const inmueble: Inmueble = {
       id: inmuebleDb.id,
-      titulo: inmuebleDb.titulo,
       categoria_id: inmuebleDb.categoria_id,
       localidad_id: inmuebleDb.localidad_id,
       zona_id: inmuebleDb.zona_id,
+      barrio_id: inmuebleDb.barrio_id,
       direccion: inmuebleDb.direccion,
-      barrio: inmuebleDb.barrio,
       dormitorios: inmuebleDb.dormitorios,
       banos: inmuebleDb.banos,
       superficie: inmuebleDb.superficie,
       cochera: inmuebleDb.cochera,
       eliminado: inmuebleDb.eliminado ?? false,
       estado_id: inmuebleDb.estado_id,
+      descripcion: inmuebleDb.descripcion,
       categoria: inmuebleDb.categoria ? {
         id: inmuebleDb.categoria.id,
         categoria: inmuebleDb.categoria.categoria,
@@ -56,10 +56,11 @@ export async function GET(
         id: inmuebleDb.estado.id,
         estado: inmuebleDb.estado.estado,
       } : undefined,
-      imagenes: inmuebleDb.imagenes?.map((img: ImagenInmueble) => ({
+      imagenes: inmuebleDb.imagenes?.map((img: any) => ({
         id: img.id,
         inmueble_id: img.inmueble_id,
         imagen: img.imagen || undefined,
+        es_principal: img.es_principal || false,
       })) || [],
     };
     return NextResponse.json(inmueble);
@@ -84,23 +85,23 @@ export async function PUT(
   return NextResponse.json({ error: "ID de propiedad inválido" }, { status: 400 });
     }
     const body = await request.json();
-    // Validar datos con zod (parcial)
+    // Validar datos con zod (parcial) - titulo es opcional
   const parse = inmuebleSchema.partial().safeParse({
-      ...body,
-      titulo: body.titulo,
       categoria_id: body.categoria_id,
       localidad_id: body.localidad_id,
       zona_id: body.zona_id,
+      barrio_id: body.barrio_id,
       direccion: body.direccion,
-      barrio: body.barrio,
-      dormitorios: body.dormitorios !== undefined ? Number(body.dormitorios) : undefined,
-      banos: body.banos !== undefined ? Number(body.banos) : undefined,
-      superficie: body.superficie !== undefined ? Number(body.superficie) : undefined,
+      dormitorios: body.dormitorios,
+      banos: body.banos,
+      superficie: body.superficie,
       cochera: body.cochera !== undefined ? Boolean(body.cochera) : undefined,
       estado_id: body.estado_id,
+      descripcion: body.descripcion,
       imagen: body.imagen,
     });
     if (!parse.success) {
+      console.error("Error de validación:", parse.error.issues);
       return NextResponse.json({ error: "Datos inválidos", detalles: parse.error.issues }, { status: 400 });
     }
     const updateData = parse.data;
@@ -125,36 +126,84 @@ export async function PUT(
         },
       },
     });
+
+    // Guardar nuevas imágenes si existen
+    if (body.imagenes && Array.isArray(body.imagenes) && body.imagenes.length > 0) {
+      // Verificar si existe imagen por defecto y eliminarla antes de agregar imágenes reales
+      const imagenPorDefecto = await prisma.imagen_inmueble.findFirst({
+        where: {
+          inmueble_id: id,
+          imagen: '/img/no-image.webp',
+        },
+      });
+
+      if (imagenPorDefecto) {
+        await prisma.imagen_inmueble.delete({
+          where: { id: imagenPorDefecto.id },
+        });
+      }
+
+      // Crear las nuevas imágenes
+      await Promise.all(
+        body.imagenes.map((imagenBase64: string, index: number) =>
+          prisma.imagen_inmueble.create({
+            data: {
+              inmueble_id: id,
+              imagen: imagenBase64,
+              es_principal: index === 0, // Primera imagen como principal
+            },
+          })
+        )
+      );
+    }
+
+    // Volver a cargar el inmueble con las imágenes actualizadas
+    const inmuebleConImagenes = await prisma.inmueble.findFirst({
+      where: { id: id },
+      include: {
+        estado: true,
+        categoria: true,
+        imagenes: {
+          orderBy: { id: "desc" },
+        },
+      },
+    });
+
+    if (!inmuebleConImagenes) {
+      return NextResponse.json({ error: "Error al cargar inmueble actualizado" }, { status: 500 });
+    }
+
     // Mapear a tipo Inmueble
     const inmueble: Inmueble = {
-      id: inmuebleActualizado.id,
-      titulo: inmuebleActualizado.titulo,
-      categoria_id: inmuebleActualizado.categoria_id,
-      localidad_id: inmuebleActualizado.localidad_id,
-      zona_id: inmuebleActualizado.zona_id,
-      direccion: inmuebleActualizado.direccion,
-      barrio: inmuebleActualizado.barrio,
-      dormitorios: inmuebleActualizado.dormitorios,
-      banos: inmuebleActualizado.banos,
-      superficie: inmuebleActualizado.superficie,
-      cochera: inmuebleActualizado.cochera,
-      eliminado: inmuebleActualizado.eliminado ?? false,
-      estado_id: inmuebleActualizado.estado_id,
-      categoria: inmuebleActualizado.categoria ? {
-        id: inmuebleActualizado.categoria.id,
-        categoria: inmuebleActualizado.categoria.categoria,
+      id: inmuebleConImagenes.id,
+      categoria_id: inmuebleConImagenes.categoria_id,
+      localidad_id: inmuebleConImagenes.localidad_id,
+      zona_id: inmuebleConImagenes.zona_id,
+      barrio_id: inmuebleConImagenes.barrio_id,
+      direccion: inmuebleConImagenes.direccion,
+      dormitorios: inmuebleConImagenes.dormitorios,
+      banos: inmuebleConImagenes.banos,
+      superficie: inmuebleConImagenes.superficie,
+      cochera: inmuebleConImagenes.cochera,
+      eliminado: inmuebleConImagenes.eliminado ?? false,
+      estado_id: inmuebleConImagenes.estado_id,
+      descripcion: inmuebleConImagenes.descripcion,
+      categoria: inmuebleConImagenes.categoria ? {
+        id: inmuebleConImagenes.categoria.id,
+        categoria: inmuebleConImagenes.categoria.categoria,
       } : undefined,
-      estado: inmuebleActualizado.estado ? {
-        id: inmuebleActualizado.estado.id,
-        estado: inmuebleActualizado.estado.estado,
+      estado: inmuebleConImagenes.estado ? {
+        id: inmuebleConImagenes.estado.id,
+        estado: inmuebleConImagenes.estado.estado,
       } : undefined,
-      imagenes: inmuebleActualizado.imagenes?.map((img: ImagenInmueble) => ({
+      imagenes: inmuebleConImagenes.imagenes?.map((img: any) => ({
         id: img.id,
         inmueble_id: img.inmueble_id,
         imagen: img.imagen || undefined,
+        es_principal: img.es_principal || false,
       })) || [],
     };
-    return NextResponse.json(inmueble);
+    return NextResponse.json({ data: inmueble });
   } catch (error) {
     console.error("Error al actualizar propiedad:", error);
   return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });

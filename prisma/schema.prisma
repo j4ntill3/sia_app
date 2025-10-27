@@ -9,17 +9,16 @@ datasource db {
 
 model inmueble {
   id                 String             @id @default(uuid()) @db.Uuid
-  titulo             String             @map("title")
   categoria_id       String             @map("categoryId") @db.Uuid
   localidad_id       String             @map("localidadId") @db.Uuid
   zona_id            String             @map("zonaId") @db.Uuid
+  barrio_id          String             @map("barrioId") @db.Uuid
   direccion          String             @map("address")
-  barrio             String             @map("neighborhood")
-  dormitorios        Int                @map("numBedrooms")
-  banos              Int                @map("numBathrooms")
-  superficie         Float              @map("surface")
+  dormitorios        String             @map("numBedrooms")
+  banos              String             @map("numBathrooms")
+  superficie         String             @map("surface")
   cochera            Boolean            @map("garage")
-  eliminado          Boolean?           @default(false) @map("deleted")
+  eliminado          Boolean            @default(false) @map("deleted")
   estado_id          String             @map("statusId") @db.Uuid
   agentes            agente_inmueble[]
   consultas_clientes consulta_cliente[]
@@ -28,11 +27,14 @@ model inmueble {
   localidad          localidad          @relation(fields: [localidad_id], references: [id], onDelete: NoAction)
   estado             estado_inmueble    @relation(fields: [estado_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   zona               zona               @relation(fields: [zona_id], references: [id], onDelete: NoAction)
+  barrio             barrio             @relation(fields: [barrio_id], references: [id], onDelete: NoAction)
+  descripcion        String?
 
   @@index([estado_id])
   @@index([categoria_id])
   @@index([localidad_id])
   @@index([zona_id])
+  @@index([barrio_id])
   @@map("inmuebles")
 }
 
@@ -40,31 +42,48 @@ model localidad {
   id        String     @id @default(uuid()) @db.Uuid
   nombre    String
   inmuebles inmueble[]
+  zonas     zona[]
+  barrios   barrio[]
 
   @@map("localidad")
 }
 
 model zona {
-  id        String     @id @default(uuid()) @db.Uuid
-  nombre    String
-  inmuebles inmueble[]
+  id           String     @id @default(uuid()) @db.Uuid
+  nombre       String
+  localidad_id String     @db.Uuid
+  inmuebles    inmueble[]
+  localidad    localidad  @relation(fields: [localidad_id], references: [id], onDelete: NoAction)
 
+  @@index([localidad_id])
   @@map("zona")
 }
 
+model barrio {
+  id           String     @id @default(uuid()) @db.Uuid
+  nombre       String
+  localidad_id String     @db.Uuid
+  inmuebles    inmueble[]
+  localidad    localidad  @relation(fields: [localidad_id], references: [id], onDelete: NoAction)
+
+  @@index([localidad_id])
+  @@map("barrio")
+}
+
 model persona {
-  id        String             @id @default(uuid()) @db.Uuid
-  telefono  String?
-  apellido  String
-  direccion String?
-  correo    String             @unique
-  creado_en DateTime           @default(now())
-  nombre    String
-  dni       Int?               @unique
-  eliminado Boolean
-  imagenes  imagen_persona[]
-  empleados persona_empleado[]
-  usuarios  usuario[]
+  id                String             @id @default(uuid()) @db.Uuid
+  telefono          String?
+  apellido          String
+  direccion         String?
+  correo            String             @unique
+  creado_en         DateTime           @default(now())
+  nombre            String
+  dni               Int?               @unique
+  fecha_nacimiento  DateTime?          @db.Date
+  eliminado         Boolean
+  imagenes          imagen_persona[]
+  empleados         persona_empleado[]
+  usuarios          usuario[]
 }
 
 model session {
@@ -102,7 +121,7 @@ model empleado {
   cuit               String             @unique
   fecha_ingreso      DateTime           @map("hireDate") @db.Date
   fecha_egreso       DateTime?          @map("terminationDate") @db.Date
-  tipo_id            Int                @map("typeId")
+  tipo_id            String             @map("typeId") @db.Text
   eliminado          Boolean            @map("deleted")
   inmuebles_agente   agente_inmueble[]
   consultas_clientes consulta_cliente[]
@@ -114,7 +133,7 @@ model empleado {
 }
 
 model tipo_empleado {
-  id        Int        @id @default(autoincrement())
+  id        String     @id @default(uuid()) @db.Text
   tipo      String     @unique @map("type")
   empleados empleado[]
 
@@ -159,10 +178,11 @@ model categoria_inmueble {
 }
 
 model imagen_inmueble {
-  id          String   @id @default(uuid()) @db.Uuid
-  inmueble_id String   @map("inmuebleId") @db.Uuid
-  imagen      String?  @map("imagePath")
-  inmueble    inmueble @relation(fields: [inmueble_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id           String   @id @default(uuid()) @db.Uuid
+  inmueble_id  String   @map("inmuebleId") @db.Uuid
+  imagen       String?  @map("imagePath")
+  es_principal Boolean? @default(false) @map("isPrincipal")
+  inmueble     inmueble @relation(fields: [inmueble_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([inmueble_id])
   @@map("imagenes_inmuebles")

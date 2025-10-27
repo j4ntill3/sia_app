@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth-actions";
 import ConsultaClienteItem from "@/app/components/ConsultaClienteItem";
 import { useRouter } from "next/navigation";
-import ConsultaCliente from "@/types/consulta_cliente";
+import { ConsultaCliente } from "@/types/consulta_cliente";
+import { downloadCSV, formatDateForCSV } from "@/lib/csv-export";
 
 const Clientes = () => {
   const [session, setSession] = useState<any>(null);
@@ -71,27 +72,22 @@ const Clientes = () => {
     }
   };
 
-  const downloadCSV = () => {
-    const csvHeader =
-      "Nombre,Teléfono,Email,Fecha,Descripción,ID Inmueble,ID Agente\n";
-    const csvRows = clientes.map(
-      (cliente) =>
-        `${cliente.nombre},${cliente.telefono},${cliente.email},${
-          cliente.fecha
-        },${cliente.descripcion},${cliente.id_inmueble},${
-          cliente.id_agente || ""
-        }`
+  const handleDownloadCSV = () => {
+    downloadCSV(
+      clientes,
+      ["Nombre", "Apellido", "Teléfono", "Email", "Fecha", "Descripción", "ID Inmueble", "ID Agente"],
+      "consultas-clientes.csv",
+      (cliente) => [
+        cliente.nombre,
+        cliente.apellido,
+        cliente.telefono,
+        cliente.correo,
+        formatDateForCSV(cliente.fecha),
+        cliente.descripcion || "",
+        cliente.inmueble_id,
+        cliente.agente_id || ""
+      ]
     );
-
-    const csvContent = csvHeader + csvRows.join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "clientes.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
   };
 
   if (error) {
@@ -170,9 +166,15 @@ const Clientes = () => {
             </tbody>
           </table>
         </div>
-        <div className="flex w-full justify-end">
-          <button onClick={downloadCSV}>
-            <img src="/icons8-csv-50.png" alt="CSV Icon" className="w-6 h-6" />
+        <div className="flex w-full justify-end mt-4">
+          <button
+            onClick={handleDownloadCSV}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+            Exportar CSV
           </button>
         </div>
       </div>

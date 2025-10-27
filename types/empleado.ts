@@ -9,48 +9,48 @@ export interface Empleado {
   personas_empleado?: PersonaEmpleado[];
 }
 
-export interface EmployeeCreate {
+export type EmpleadoCreate = {
   cuit: string;
-  hireDate: Date;
-  terminationDate?: Date;
-  typeId: string;
-  deleted?: boolean;
-  personId: string;
+  fecha_ingreso: Date;
+  fecha_egreso?: Date;
+  tipo_id: string;
+  eliminado?: boolean;
+  persona_id: string;
 }
 
-export interface EmployeeUpdate {
+export type EmpleadoUpdate = {
   cuit?: string;
-  hireDate?: Date;
-  terminationDate?: Date;
-  typeId?: string;
-  deleted?: boolean;
-  personId?: string;
+  fecha_ingreso?: Date;
+  fecha_egreso?: Date;
+  tipo_id?: string;
+  eliminado?: boolean;
+  persona_id?: string;
 }
 
-export interface EmployeeType {
+export interface TipoEmpleado {
   id: string;
-  type: string;
-  employee?: Employee[];
+  tipo: string;
+  empleados?: Empleado[];
 }
 
-export interface PersonEmployee {
+export interface PersonaEmpleado {
   id: string;
-  personId: string;
-  employeeId: string;
-  createdAt: Date;
-  deleted: boolean;
-  person?: Person;
-  employee?: Employee;
+  persona_id: string;
+  empleado_id: string;
+  creado_en: Date;
+  eliminado: boolean;
+  persona?: Persona;
+  empleado?: Empleado;
 }
 
-export interface Person {
+export interface Persona {
   id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  address?: string;
+  nombre: string;
+  apellido: string;
+  correo: string;
+  telefono?: string;
+  direccion?: string;
   dni?: number;
-  deleted: boolean;
-  createdAt: Date;
+  eliminado: boolean;
+  creado_en: Date;
 }

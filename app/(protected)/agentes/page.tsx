@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth-actions";
 import AgenteItem from "@/app/components/AgenteItem";
+import { downloadCSV, formatDateForCSV } from "@/lib/csv-export";
 
 const Agentes = () => {
   const [session, setSession] = useState<any>(null);
@@ -61,6 +62,26 @@ const Agentes = () => {
     init();
   }, []);
 
+  const handleDownloadCSV = () => {
+    downloadCSV(
+      agentes,
+      ["ID", "Nombre", "Apellido", "DNI", "CUIT", "Correo", "Teléfono", "Fecha de Alta", "Fecha de Baja", "Estado"],
+      "agentes.csv",
+      (agente) => [
+        agente.empleado?.id || "",
+        agente.persona?.nombre || "",
+        agente.persona?.apellido || "",
+        agente.persona?.dni || "",
+        agente.empleado?.cuit || "",
+        agente.persona?.correo || "",
+        agente.persona?.telefono || "",
+        formatDateForCSV(agente.empleado?.fecha_ingreso),
+        formatDateForCSV(agente.empleado?.fecha_egreso),
+        agente.empleado?.eliminado ? "Inactivo" : "Activo"
+      ]
+    );
+  };
+
   // Mostrar un mensaje de carga mientras se resuelve la sesión y los datos
   if (isLoading) {
     return (
@@ -102,6 +123,9 @@ const Agentes = () => {
             <thead>
               <tr className="bg-gray-200">
                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
+                  Foto
+                </th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
                   ID
                 </th>
                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border border-gray-300">
@@ -131,6 +155,17 @@ const Agentes = () => {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="flex w-full justify-end mt-4">
+          <button
+            onClick={handleDownloadCSV}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+            Exportar CSV
+          </button>
         </div>
       </div>
     </div>

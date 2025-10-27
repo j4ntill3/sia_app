@@ -4,17 +4,17 @@ import { z } from "zod";
  * Esquema de validación para propiedades (inmuebles)
  */
 export const inmuebleSchema = z.object({
-  titulo: z.string().min(1),
   categoria_id: z.string().uuid(),
   localidad_id: z.string().uuid(),
   zona_id: z.string().uuid(),
+  barrio_id: z.string().uuid(),
   direccion: z.string().min(1),
-  barrio: z.string().min(1),
-  dormitorios: z.number().int(),
-  banos: z.number().int(),
-  superficie: z.number(),
+  dormitorios: z.string(),
+  banos: z.string(),
+  superficie: z.string(),
   cochera: z.boolean(),
   estado_id: z.string().uuid(),
+  descripcion: z.string().optional(),
   imagen: z.string().optional(),
 });
 export type InmuebleInput = z.infer<typeof inmuebleSchema>;
@@ -31,8 +31,7 @@ export const agentSchema = z.object({
   direccion: z.string().min(1),
   tipoId: z.string().uuid(),
   cuit: z.string().min(1),
-  fechaAlta: z.string().min(1),
-  fechaBaja: z.string().optional(),
+  fechaNacimiento: z.string().min(1),
 });
 export type AgentInput = z.infer<typeof agentSchema>;
 

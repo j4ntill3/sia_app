@@ -1,34 +1,126 @@
-import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAuth, jsonError, jsonSuccess } from "@/lib/api-helpers";
+import { NextRequest, NextResponse } from "next/server";
+import { requireAuth } from "@/lib/api-helpers";
 
+// GET: Obtener un agente por ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
-    if (!id) {
+    const empleado = await prisma.empleado.findUnique({
+      where: { id },
+      include: {
+        personas_empleado: {
+          include: {
+            persona: {
+              include: {
+                imagenes: true,
+              },
+            },
+          },
+        },
+        tipo: true,
+      },
+    });
+
+    if (!empleado) {
       return NextResponse.json(
-        { error: "ID de agente inválido" },
-        { status: 400 }
+        { error: "Agente no encontrado" },
+        { status: 404 }
       );
     }
 
-    // Obtener el UUID del tipo "agente"
-    const tipoAgente = await prisma.tipo_empleado.findFirst({
-      where: { tipo: "agente" },
-    });
-    if (!tipoAgente) {
-      return NextResponse.json({ error: "Tipo de agente no encontrado" }, { status: 500 });
-    }
-    const empleado = await prisma.empleado.findFirst({
-      where: {
-        id: id,
-        eliminado: false,
-        tipo_id: tipoAgente.id,
+    const persona = empleado.personas_empleado[0]?.persona;
+
+    return NextResponse.json({
+      data: {
+        empleado,
+        persona,
       },
+    });
+  } catch (error) {
+    console.error("Error al obtener agente:", error);
+    return NextResponse.json(
+      { error: "Error al obtener agente" },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT: Actualizar agente
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { error, status } = await requireAuth(request, "administrador");
+  if (error) return NextResponse.json({ error }, { status });
+
+  try {
+    const { id } = await params;
+    const body = await request.json();
+
+    // Obtener el empleado y persona actual
+    const empleado = await prisma.empleado.findUnique({
+      where: { id },
+      include: {
+        personas_empleado: {
+          include: {
+            persona: true,
+          },
+        },
+      },
+    });
+
+    if (!empleado) {
+      return NextResponse.json(
+        { error: "Agente no encontrado" },
+        { status: 404 }
+      );
+    }
+
+    const personaId = empleado.personas_empleado[0]?.persona.id;
+
+    if (!personaId) {
+      return NextResponse.json(
+        { error: "No se encontró la persona asociada" },
+        { status: 404 }
+      );
+    }
+
+    // Actualizar persona
+    if (body.nombre || body.apellido || body.telefono || body.email || body.direccion || body.DNI || body.fechaNacimiento) {
+      await prisma.persona.update({
+        where: { id: personaId },
+        data: {
+          ...(body.nombre && { nombre: body.nombre }),
+          ...(body.apellido && { apellido: body.apellido }),
+          ...(body.telefono && { telefono: body.telefono }),
+          ...(body.email && { correo: body.email }),
+          ...(body.direccion && { direccion: body.direccion }),
+          ...(body.DNI && { dni: Number(body.DNI) }),
+          ...(body.fechaNacimiento && {
+            fecha_nacimiento: new Date(body.fechaNacimiento + "T00:00:00Z"),
+          }),
+        },
+      });
+    }
+
+    // Actualizar empleado
+    if (body.cuit) {
+      await prisma.empleado.update({
+        where: { id },
+        data: {
+          cuit: body.cuit,
+        },
+      });
+    }
+
+    // Obtener datos actualizados
+    const updatedEmpleado = await prisma.empleado.findUnique({
+      where: { id },
       include: {
         personas_empleado: {
           include: {
@@ -42,104 +134,46 @@ export async function GET(
       },
     });
 
-    if (!empleado) {
-      return NextResponse.json(
-        { error: "Agente no encontrado" },
-        { status: 404 }
-      );
-    }
-
-    const persona = empleado.personas_empleado[0]?.persona;
-
-    if (!persona) {
-      return NextResponse.json(
-        { error: "Información de persona no encontrada" },
-        { status: 404 }
-      );
-    }
-
-    // Buscar imagen de persona
-    const imagen_persona = persona.imagenes?.[0]?.imagen || null;
-
-    // Mapear a los nombres esperados por el frontend
-    const personaResult = {
-      nombre: persona.nombre,
-      apellido: persona.apellido,
-      correo: persona.correo,
-      telefono: persona.telefono,
-      direccion: persona.direccion,
-      dni: persona.dni,
-      imagen: imagen_persona,
-    };
-    const empleadoResult = {
-      cuit: empleado.cuit,
-      fecha_ingreso: empleado.fecha_ingreso,
-      fecha_egreso: empleado.fecha_egreso,
-    };
-
-    return NextResponse.json({ persona: personaResult, empleado: empleadoResult });
+    return NextResponse.json({
+      data: {
+        empleado: updatedEmpleado,
+        persona: updatedEmpleado?.personas_empleado[0]?.persona,
+      },
+      message: "Agente actualizado exitosamente",
+    });
   } catch (error) {
-    console.error("Error al obtener agente:", error);
+    console.error("Error al actualizar agente:", error);
     return NextResponse.json(
-      { error: "Error interno del servidor" },
+      { error: "Error al actualizar agente" },
       { status: 500 }
     );
   }
 }
 
-export async function PUT(
+// DELETE: Soft delete agente
+export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  // Solo administradores o el propio agente pueden editar
-  const { session, error, status } = await requireAuth(request);
-  if (error) return jsonError(error, status);
-  const id = params.id;
-  if (!id) return jsonError("ID de agente inválido", 400);
+  const { error, status } = await requireAuth(request, "administrador");
+  if (error) return NextResponse.json({ error }, { status });
+
   try {
-    const body = await request.json();
-    const { field, value } = body;
-    // Buscar el empleado y la persona asociada
-    const employee = await prisma.employee.findFirst({
-      where: { id, deleted: false, typeId: "2" },
-      include: { personEmployee: { include: { person: true } } },
+    const { id } = await params;
+
+    await prisma.empleado.update({
+      where: { id },
+      data: { eliminado: true },
     });
-    if (!employee) return jsonError("Agente no encontrado", 404);
-    const person = employee.personEmployee[0]?.person;
-    if (!person) return jsonError("Persona no encontrada", 404);
-    // Permitir solo si admin o el propio agente
-    if (
-      session.user.role !== "administrador" &&
-      session.user.email !== person.email
-    ) {
-      return jsonError("No autorizado", 403);
-    }
-    // Campos permitidos
-    const allowedFields = [
-      "nombre",
-      "apellido",
-      "email",
-      "telefono",
-      "direccion",
-    ];
-    if (!allowedFields.includes(field))
-      return jsonError("Campo no editable", 400);
-    // Mapear a campos reales
-    const fieldMap: any = {
-      nombre: "firstName",
-      apellido: "lastName",
-      email: "email",
-      telefono: "phone",
-      direccion: "address",
-    };
-    const updateData: any = {};
-    updateData[fieldMap[field]] = value;
-    await prisma.person.update({
-      where: { id: person.id },
-      data: updateData,
+
+    return NextResponse.json({
+      message: "Agente eliminado exitosamente",
     });
-    return jsonSuccess({ success: true });
-  } catch (err: any) {
-    return jsonError(err.message || "Error al actualizar", 500);
+  } catch (error) {
+    console.error("Error al eliminar agente:", error);
+    return NextResponse.json(
+      { error: "Error al eliminar agente" },
+      { status: 500 }
+    );
   }
 }
