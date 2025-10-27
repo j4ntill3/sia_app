@@ -229,7 +229,7 @@ const Navbar = () => {
                   <div className="mt-4 border-t border-gray-200 pt-4">
                     <button
                       onClick={toggleAdminMenu}
-                      className="mb-2 w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-gradient-to-r from-[#083C2C] to-[#0a4a37] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                      className="mb-2 w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                     >
                       <div className="flex items-center">
                         <Settings
@@ -239,42 +239,42 @@ const Navbar = () => {
                         <span className="font-medium">Datos Maestros</span>
                       </div>
                       {isAdminMenuOpen ? (
-                        <ChevronUp size={18} />
+                        <ChevronUp size={18} className="group-hover:scale-110 transition-transform duration-200" />
                       ) : (
-                        <ChevronDown size={18} />
+                        <ChevronDown size={18} className="group-hover:scale-110 transition-transform duration-200" />
                       )}
                     </button>
 
                     {/* Submenú de administración */}
                     {isAdminMenuOpen && (
-                      <div className="ml-4 mt-2 space-y-2 pl-2 border-l-2 border-[#6FC6D1]">
+                      <div className="mt-2 space-y-2 pl-6">
                         <Link href="/admin/rubros" onClick={closeSidebar}>
-                          <button className="w-full flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-left text-sm text-gray-700 hover:bg-[#6FC6D1] hover:text-white">
-                            <span>• Rubros</span>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Rubros</span>
                           </button>
                         </Link>
 
                         <Link href="/admin/estados" onClick={closeSidebar}>
-                          <button className="w-full flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-left text-sm text-gray-700 hover:bg-[#6FC6D1] hover:text-white">
-                            <span>• Estados</span>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Estados</span>
                           </button>
                         </Link>
 
                         <Link href="/admin/localidades" onClick={closeSidebar}>
-                          <button className="w-full flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-left text-sm text-gray-700 hover:bg-[#6FC6D1] hover:text-white">
-                            <span>• Localidades</span>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Localidades</span>
                           </button>
                         </Link>
 
                         <Link href="/admin/zonas" onClick={closeSidebar}>
-                          <button className="w-full flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-left text-sm text-gray-700 hover:bg-[#6FC6D1] hover:text-white">
-                            <span>• Zonas</span>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Zonas</span>
                           </button>
                         </Link>
 
                         <Link href="/admin/barrios" onClick={closeSidebar}>
-                          <button className="w-full flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-left text-sm text-gray-700 hover:bg-[#6FC6D1] hover:text-white">
-                            <span>• Barrios</span>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Barrios</span>
                           </button>
                         </Link>
                       </div>
