@@ -14,7 +14,6 @@ import {
   PlusCircle,
   LogOut,
   User,
-  Settings,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
@@ -23,7 +22,9 @@ import { signOut } from "next-auth/react";
 const Navbar = () => {
   const { session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
-  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
+  const [isInmueblesMenuOpen, setIsInmueblesMenuOpen] = useState(false);
+  const [isAgentesMenuOpen, setIsAgentesMenuOpen] = useState(false);
+  const [isConsultasMenuOpen, setIsConsultasMenuOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -31,11 +32,21 @@ const Navbar = () => {
 
   const closeSidebar = () => {
     setIsOpen(false);
-    setIsAdminMenuOpen(false);
+    setIsInmueblesMenuOpen(false);
+    setIsAgentesMenuOpen(false);
+    setIsConsultasMenuOpen(false);
   };
 
-  const toggleAdminMenu = () => {
-    setIsAdminMenuOpen(!isAdminMenuOpen);
+  const toggleInmueblesMenu = () => {
+    setIsInmueblesMenuOpen(!isInmueblesMenuOpen);
+  };
+
+  const toggleAgentesMenu = () => {
+    setIsAgentesMenuOpen(!isAgentesMenuOpen);
+  };
+
+  const toggleConsultasMenu = () => {
+    setIsConsultasMenuOpen(!isConsultasMenuOpen);
   };
 
   const handleLogout = async () => {
@@ -129,156 +140,208 @@ const Navbar = () => {
           {/* Menú de navegación */}
           <nav className="flex-1 px-6 py-4 overflow-y-auto">
             <div className="space-y-2">
-              {/* Inmuebles - Para administrador y agente */}
-              {(session.user.role === "administrador" ||
-                session.user.role === "agente") && (
-                <Link href="/inmuebles" onClick={closeSidebar}>
-                  <button className="mb-2 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                    <Building2
-                      size={20}
-                      className="mr-3 group-hover:scale-110 transition-transform duration-200"
-                    />
-                    <span className="font-medium">Inmuebles</span>
-                  </button>
-                </Link>
-              )}
-
-              {/* Opciones para agente */}
+              {/* Menú para AGENTE */}
               {session.user.role === "agente" && (
                 <>
-                  <Link href="/misInmuebles" onClick={closeSidebar}>
-                    <button className="mb-2 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                      <Home
-                        size={20}
-                        className="mr-3 group-hover:scale-110 transition-transform duration-200"
-                      />
-                      <span className="font-medium">Mis Inmuebles</span>
-                    </button>
-                  </Link>
-
-                  <Link href="/misConsultasClientes" onClick={closeSidebar}>
-                    <button className="mb-2 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                      <MessageSquare
-                        size={20}
-                        className="mr-3 group-hover:scale-110 transition-transform duration-200"
-                      />
-                      <span className="font-medium">
-                        Mis Clientes/Consultas
-                      </span>
-                    </button>
-                  </Link>
-
-                  <Link href="/registrarConsultaCliente" onClick={closeSidebar}>
-                    <button className="mb-2 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                      <PlusCircle
-                        size={20}
-                        className="mr-3 group-hover:scale-110 transition-transform duration-200"
-                      />
-                      <span className="font-medium">
-                        Registrar Cliente/Consulta
-                      </span>
-                    </button>
-                  </Link>
-                </>
-              )}
-
-              {/* Opciones para administrador */}
-              {session.user.role === "administrador" && (
-                <>
-                  <Link href="/altaInmueble" onClick={closeSidebar}>
-                    <button className="mb-3 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                      <PlusCircle
-                        size={20}
-                        className="mr-3 group-hover:scale-110 transition-transform duration-200"
-                      />
-                      <span className="font-medium">Alta Inmuebles</span>
-                    </button>
-                  </Link>
-
-                  <Link href="/agentes" onClick={closeSidebar}>
-                    <button className="mb-3 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                      <Users
-                        size={20}
-                        className="mr-3 group-hover:scale-110 transition-transform duration-200"
-                      />
-                      <span className="font-medium">Agentes</span>
-                    </button>
-                  </Link>
-
-                  <Link href="/altaAgente" onClick={closeSidebar}>
-                    <button className="mb-3 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                      <UserPlus
-                        size={20}
-                        className="mr-3 group-hover:scale-110 transition-transform duration-200"
-                      />
-                      <span className="font-medium">Alta Agente</span>
-                    </button>
-                  </Link>
-
-                  <Link href="/consultasClientes" onClick={closeSidebar}>
-                    <button className="mb-3 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                      <MessageSquare
-                        size={20}
-                        className="mr-3 group-hover:scale-110 transition-transform duration-200"
-                      />
-                      <span className="font-medium">Consultas Clientes</span>
-                    </button>
-                  </Link>
-
-                  {/* Menú desplegable de Administración */}
-                  <div className="mt-4 border-t border-gray-200 pt-4">
+                  {/* Sección Inmuebles para Agente */}
+                  <div>
                     <button
-                      onClick={toggleAdminMenu}
+                      onClick={toggleInmueblesMenu}
                       className="mb-2 w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                     >
                       <div className="flex items-center">
-                        <Settings
+                        <Building2
                           size={20}
                           className="mr-3 group-hover:scale-110 transition-transform duration-200"
                         />
-                        <span className="font-medium">Datos Maestros</span>
+                        <span className="font-medium">Inmuebles</span>
                       </div>
-                      {isAdminMenuOpen ? (
+                      {isInmueblesMenuOpen ? (
                         <ChevronUp size={18} className="group-hover:scale-110 transition-transform duration-200" />
                       ) : (
                         <ChevronDown size={18} className="group-hover:scale-110 transition-transform duration-200" />
                       )}
                     </button>
 
-                    {/* Submenú de administración */}
-                    {isAdminMenuOpen && (
+                    {isInmueblesMenuOpen && (
                       <div className="mt-2 space-y-2 pl-6">
-                        <Link href="/admin/rubros" onClick={closeSidebar}>
+                        <Link href="/inmuebles" onClick={closeSidebar}>
                           <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                            <span className="text-sm font-medium">Rubros</span>
+                            <span className="text-sm font-medium">Ver Todos</span>
                           </button>
                         </Link>
 
-                        <Link href="/admin/estados" onClick={closeSidebar}>
+                        <Link href="/misInmuebles" onClick={closeSidebar}>
                           <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                            <span className="text-sm font-medium">Estados</span>
-                          </button>
-                        </Link>
-
-                        <Link href="/admin/localidades" onClick={closeSidebar}>
-                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                            <span className="text-sm font-medium">Localidades</span>
-                          </button>
-                        </Link>
-
-                        <Link href="/admin/zonas" onClick={closeSidebar}>
-                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                            <span className="text-sm font-medium">Zonas</span>
-                          </button>
-                        </Link>
-
-                        <Link href="/admin/barrios" onClick={closeSidebar}>
-                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                            <span className="text-sm font-medium">Barrios</span>
+                            <span className="text-sm font-medium">Mis Inmuebles</span>
                           </button>
                         </Link>
                       </div>
                     )}
+                  </div>
+
+                  {/* Sección Consultas para Agente */}
+                  <div>
+                    <button
+                      onClick={toggleConsultasMenu}
+                      className="mb-2 w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                    >
+                      <div className="flex items-center">
+                        <MessageSquare
+                          size={20}
+                          className="mr-3 group-hover:scale-110 transition-transform duration-200"
+                        />
+                        <span className="font-medium">Consultas</span>
+                      </div>
+                      {isConsultasMenuOpen ? (
+                        <ChevronUp size={18} className="group-hover:scale-110 transition-transform duration-200" />
+                      ) : (
+                        <ChevronDown size={18} className="group-hover:scale-110 transition-transform duration-200" />
+                      )}
+                    </button>
+
+                    {isConsultasMenuOpen && (
+                      <div className="mt-2 space-y-2 pl-6">
+                        <Link href="/misConsultasClientes" onClick={closeSidebar}>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Mis Consultas</span>
+                          </button>
+                        </Link>
+
+                        <Link href="/registrarConsultaCliente" onClick={closeSidebar}>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Registrar Nueva</span>
+                          </button>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Menú para ADMINISTRADOR */}
+              {session.user.role === "administrador" && (
+                <>
+                  {/* Sección Inmuebles para Admin */}
+                  <div>
+                    <button
+                      onClick={toggleInmueblesMenu}
+                      className="mb-2 w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                    >
+                      <div className="flex items-center">
+                        <Building2
+                          size={20}
+                          className="mr-3 group-hover:scale-110 transition-transform duration-200"
+                        />
+                        <span className="font-medium">Inmuebles</span>
+                      </div>
+                      {isInmueblesMenuOpen ? (
+                        <ChevronUp size={18} className="group-hover:scale-110 transition-transform duration-200" />
+                      ) : (
+                        <ChevronDown size={18} className="group-hover:scale-110 transition-transform duration-200" />
+                      )}
+                    </button>
+
+                    {isInmueblesMenuOpen && (
+                      <div className="mt-2 space-y-2 pl-6">
+                        <Link href="/inmuebles" onClick={closeSidebar}>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Ver Todos</span>
+                          </button>
+                        </Link>
+
+                        <Link href="/altaInmueble" onClick={closeSidebar}>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Alta Inmueble</span>
+                          </button>
+                        </Link>
+
+                        {/* Separador para Datos Maestros */}
+                        <div className="border-t border-gray-200 pt-2 mt-3">
+                          <p className="text-xs font-semibold text-gray-500 px-4 pb-2">DATOS MAESTROS</p>
+
+                          <Link href="/admin/rubros" onClick={closeSidebar}>
+                            <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                              <span className="text-sm font-medium">Rubros</span>
+                            </button>
+                          </Link>
+
+                          <Link href="/admin/estados" onClick={closeSidebar}>
+                            <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                              <span className="text-sm font-medium">Estados</span>
+                            </button>
+                          </Link>
+
+                          <Link href="/admin/localidades" onClick={closeSidebar}>
+                            <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                              <span className="text-sm font-medium">Localidades</span>
+                            </button>
+                          </Link>
+
+                          <Link href="/admin/zonas" onClick={closeSidebar}>
+                            <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                              <span className="text-sm font-medium">Zonas</span>
+                            </button>
+                          </Link>
+
+                          <Link href="/admin/barrios" onClick={closeSidebar}>
+                            <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                              <span className="text-sm font-medium">Barrios</span>
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Sección Agentes para Admin */}
+                  <div>
+                    <button
+                      onClick={toggleAgentesMenu}
+                      className="mb-2 w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                    >
+                      <div className="flex items-center">
+                        <Users
+                          size={20}
+                          className="mr-3 group-hover:scale-110 transition-transform duration-200"
+                        />
+                        <span className="font-medium">Agentes</span>
+                      </div>
+                      {isAgentesMenuOpen ? (
+                        <ChevronUp size={18} className="group-hover:scale-110 transition-transform duration-200" />
+                      ) : (
+                        <ChevronDown size={18} className="group-hover:scale-110 transition-transform duration-200" />
+                      )}
+                    </button>
+
+                    {isAgentesMenuOpen && (
+                      <div className="mt-2 space-y-2 pl-6">
+                        <Link href="/agentes" onClick={closeSidebar}>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Ver Todos</span>
+                          </button>
+                        </Link>
+
+                        <Link href="/altaAgente" onClick={closeSidebar}>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Alta Agente</span>
+                          </button>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Sección Consultas para Admin */}
+                  <div>
+                    <Link href="/consultasClientes" onClick={closeSidebar}>
+                      <button className="mb-2 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                        <MessageSquare
+                          size={20}
+                          className="mr-3 group-hover:scale-110 transition-transform duration-200"
+                        />
+                        <span className="font-medium">Consultas Clientes</span>
+                      </button>
+                    </Link>
                   </div>
                 </>
               )}

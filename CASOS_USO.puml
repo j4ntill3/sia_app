@@ -1,0 +1,748 @@
+@startuml CASOS_USO_SIA_COMPLETO
+
+' ====================================================================================
+' DIAGRAMA DE CASOS DE USO COMPLETO - SIA APP
+' Sistema de Gestión Inmobiliaria Argentino
+' ====================================================================================
+'
+' INSTRUCCIONES:
+' Este archivo contiene diagramas de casos de uso en formato PlantUML.
+' Para visualizarlos, puedes usar las siguientes herramientas gratuitas online:
+'
+' 1. PlantUML Online Server: http://www.plantuml.com/plantuml/
+'    - Copia y pega el código completo
+'    - El diagrama se genera automáticamente
+'
+' 2. PlantUML Editor: https://plantuml-editor.kkeisuke.com/
+'    - Interfaz más amigable con vista previa en tiempo real
+'
+' 3. VS Code Extension: "PlantUML" by jebbs
+'    - Instala la extensión
+'    - Abre este archivo
+'    - Alt+D para vista previa
+'
+' ESTRUCTURA:
+' - Diagrama 1: Vista general del sistema
+' - Diagrama 2: Casos de uso para Usuario Público
+' - Diagrama 3: Casos de uso para Agente Inmobiliario
+' - Diagrama 4: Casos de uso para Administrador (Gestión de Inmuebles)
+' - Diagrama 5: Casos de uso para Administrador (Gestión de Agentes)
+' - Diagrama 6: Casos de uso para Administrador (Datos Maestros)
+'
+' ====================================================================================
+
+title Diagrama de Casos de Uso - SIA App (Vista General)
+
+' Actores
+actor "Usuario Público" as Public
+actor "Agente Inmobiliario" as Agent
+actor "Administrador" as Admin
+
+' Herencia de actores
+Agent -up-|> Public
+Admin -up-|> Agent
+
+' Sistema
+rectangle "Sistema SIA App" {
+
+  ' Casos de uso públicos
+  usecase "Ver Listado de Propiedades" as UC_ViewProperties
+  usecase "Ver Detalle de Propiedad" as UC_ViewPropertyDetail
+  usecase "Enviar Consulta sobre Propiedad" as UC_SendInquiry
+  usecase "Filtrar Propiedades" as UC_FilterProperties
+
+  ' Casos de uso de agente
+  usecase "Iniciar Sesión" as UC_Login
+  usecase "Ver Mis Propiedades Asignadas" as UC_ViewMyProperties
+  usecase "Ver Mis Consultas de Clientes" as UC_ViewMyInquiries
+  usecase "Registrar Consulta Manual" as UC_RegisterInquiry
+
+  ' Casos de uso de administrador - Inmuebles
+  usecase "Gestionar Propiedades" as UC_ManageProperties
+  usecase "Gestionar Imágenes de Propiedades" as UC_ManagePropertyImages
+  usecase "Asignar Agente a Propiedad" as UC_AssignAgent
+
+  ' Casos de uso de administrador - Agentes
+  usecase "Gestionar Agentes" as UC_ManageAgents
+  usecase "Ver Todas las Consultas" as UC_ViewAllInquiries
+
+  ' Casos de uso de administrador - Datos Maestros
+  usecase "Gestionar Categorías de Inmuebles" as UC_ManageCategories
+  usecase "Gestionar Estados de Inmuebles" as UC_ManageStatuses
+  usecase "Gestionar Localidades" as UC_ManageLocations
+  usecase "Gestionar Zonas" as UC_ManageZones
+  usecase "Gestionar Barrios" as UC_ManageNeighborhoods
+
+  ' Casos de uso transversales
+  usecase "Exportar Datos a CSV" as UC_ExportCSV
+
+}
+
+' Relaciones Usuario Público
+Public --> UC_ViewProperties
+Public --> UC_ViewPropertyDetail
+Public --> UC_SendInquiry
+Public --> UC_FilterProperties
+
+' Relaciones Agente
+Agent --> UC_Login
+Agent --> UC_ViewMyProperties
+Agent --> UC_ViewMyInquiries
+Agent --> UC_RegisterInquiry
+
+' Relaciones Administrador - Inmuebles
+Admin --> UC_ManageProperties
+Admin --> UC_ManagePropertyImages
+Admin --> UC_AssignAgent
+
+' Relaciones Administrador - Agentes
+Admin --> UC_ManageAgents
+Admin --> UC_ViewAllInquiries
+
+' Relaciones Administrador - Datos Maestros
+Admin --> UC_ManageCategories
+Admin --> UC_ManageStatuses
+Admin --> UC_ManageLocations
+Admin --> UC_ManageZones
+Admin --> UC_ManageNeighborhoods
+
+' Relaciones transversales
+Admin --> UC_ExportCSV
+
+' Include y Extend
+UC_ViewProperties ..> UC_FilterProperties : <<include>>
+UC_ViewPropertyDetail ..> UC_SendInquiry : <<extend>>
+UC_ManageProperties ..> UC_ManagePropertyImages : <<include>>
+
+@enduml
+
+' ====================================================================================
+' DIAGRAMA 2: CASOS DE USO - USUARIO PÚBLICO
+' ====================================================================================
+
+@startuml CASOS_USO_USUARIO_PUBLICO
+
+title Casos de Uso - Usuario Público (No Autenticado)
+
+actor "Usuario Público" as Public
+actor "Sistema de Notificaciones" as NotifSystem
+
+rectangle "Sistema SIA App - Módulo Público" {
+
+  ' Casos de uso principales
+  usecase "Ver Listado de Propiedades" as UC_ViewList
+  usecase "Ver Detalle de Propiedad" as UC_ViewDetail
+  usecase "Enviar Consulta sobre Propiedad" as UC_SendInquiry
+
+  ' Casos de uso secundarios
+  usecase "Filtrar Propiedades" as UC_Filter
+  usecase "Navegar entre Páginas" as UC_Paginate
+  usecase "Ver Galería de Imágenes" as UC_ViewGallery
+  usecase "Validar Datos de Consulta" as UC_ValidateInquiry
+  usecase "Asignar Consulta a Agente" as UC_AssignInquiry
+
+}
+
+' Relaciones principales
+Public --> UC_ViewList
+Public --> UC_ViewDetail
+Public --> UC_SendInquiry
+
+' Relaciones include
+UC_ViewList ..> UC_Filter : <<include>>
+UC_ViewList ..> UC_Paginate : <<include>>
+UC_ViewDetail ..> UC_ViewGallery : <<include>>
+UC_SendInquiry ..> UC_ValidateInquiry : <<include>>
+UC_SendInquiry ..> UC_AssignInquiry : <<include>>
+
+' Relaciones extend
+UC_ViewDetail ..> UC_SendInquiry : <<extend>>
+
+' Relación con sistema externo
+UC_AssignInquiry --> NotifSystem : notificar agente
+
+note right of UC_ViewList
+  Muestra 5 propiedades por página
+  Solo propiedades no eliminadas
+  Información: dirección, barrio,
+  zona, categoría, estado, etc.
+end note
+
+note right of UC_SendInquiry
+  Campos requeridos:
+  - Nombre, Apellido
+  - Teléfono, Email
+  - Descripción/Mensaje
+
+  Se asigna al agente del inmueble
+  o al primer agente disponible
+end note
+
+@enduml
+
+' ====================================================================================
+' DIAGRAMA 3: CASOS DE USO - AGENTE INMOBILIARIO
+' ====================================================================================
+
+@startuml CASOS_USO_AGENTE
+
+title Casos de Uso - Agente Inmobiliario
+
+actor "Agente Inmobiliario" as Agent
+actor "Sistema de Autenticación" as AuthSystem
+
+rectangle "Sistema SIA App - Módulo Agente" {
+
+  ' Autenticación
+  usecase "Iniciar Sesión" as UC_Login
+  usecase "Cerrar Sesión" as UC_Logout
+
+  ' Gestión de propiedades
+  usecase "Ver Mis Propiedades Asignadas" as UC_MyProperties
+  usecase "Buscar en Mis Propiedades" as UC_SearchMyProperties
+  usecase "Ver Detalle de Mi Propiedad" as UC_ViewMyPropertyDetail
+
+  ' Gestión de consultas
+  usecase "Ver Mis Consultas de Clientes" as UC_MyInquiries
+  usecase "Registrar Consulta Manual" as UC_RegisterManual
+  usecase "Exportar Mis Consultas a CSV" as UC_ExportMyInquiries
+
+  ' Visualización general
+  usecase "Ver Todas las Propiedades" as UC_ViewAllProperties
+
+  ' Casos de uso secundarios
+  usecase "Validar Credenciales" as UC_ValidateCredentials
+  usecase "Crear Sesión" as UC_CreateSession
+  usecase "Validar Datos de Consulta" as UC_ValidateInquiryData
+
+}
+
+' Relaciones de autenticación
+Agent --> UC_Login
+Agent --> UC_Logout
+UC_Login ..> UC_ValidateCredentials : <<include>>
+UC_ValidateCredentials --> AuthSystem
+UC_Login ..> UC_CreateSession : <<include>>
+
+' Relaciones de propiedades
+Agent --> UC_MyProperties
+Agent --> UC_ViewAllProperties
+UC_MyProperties ..> UC_SearchMyProperties : <<include>>
+UC_MyProperties ..> UC_ViewMyPropertyDetail : <<extend>>
+
+' Relaciones de consultas
+Agent --> UC_MyInquiries
+Agent --> UC_RegisterManual
+UC_MyInquiries ..> UC_ExportMyInquiries : <<extend>>
+UC_RegisterManual ..> UC_ValidateInquiryData : <<include>>
+
+note right of UC_MyProperties
+  Solo propiedades asignadas
+  al agente autenticado
+
+  Paginación: 5 por página
+  Búsqueda por: dirección,
+  barrio, zona, localidad
+end note
+
+note right of UC_RegisterManual
+  Para registrar consultas
+  recibidas por teléfono
+  o en persona
+
+  Se valida que el inmueble
+  esté asignado al agente
+end note
+
+note right of UC_ViewAllProperties
+  Modo solo lectura
+  No puede crear/editar/eliminar
+
+  Para conocer toda
+  la oferta disponible
+end note
+
+@enduml
+
+' ====================================================================================
+' DIAGRAMA 4: CASOS DE USO - ADMINISTRADOR (Gestión de Inmuebles)
+' ====================================================================================
+
+@startuml CASOS_USO_ADMIN_INMUEBLES
+
+title Casos de Uso - Administrador (Gestión de Inmuebles)
+
+actor "Administrador" as Admin
+actor "Sistema de Archivos" as FileSystem
+
+rectangle "Sistema SIA App - Módulo Administrador (Inmuebles)" {
+
+  ' CRUD Inmuebles
+  usecase "Crear Nueva Propiedad" as UC_CreateProperty
+  usecase "Editar Propiedad" as UC_UpdateProperty
+  usecase "Eliminar Propiedad" as UC_DeleteProperty
+  usecase "Ver Listado de Propiedades" as UC_ListProperties
+  usecase "Ver Detalle de Propiedad" as UC_ViewProperty
+
+  ' Gestión de imágenes
+  usecase "Subir Imagen de Propiedad" as UC_UploadImage
+  usecase "Eliminar Imagen de Propiedad" as UC_DeleteImage
+  usecase "Marcar Imagen como Principal" as UC_SetMainImage
+
+  ' Asignación de agentes
+  usecase "Asignar Agente a Propiedad" as UC_AssignAgent
+  usecase "Reasignar Agente de Propiedad" as UC_ReassignAgent
+
+  ' Exportación
+  usecase "Exportar Propiedades a CSV" as UC_ExportProperties
+
+  ' Casos de uso secundarios
+  usecase "Validar Datos de Propiedad" as UC_ValidateProperty
+  usecase "Cargar Datos Maestros" as UC_LoadMasterData
+  usecase "Soft Delete" as UC_SoftDelete
+  usecase "Almacenar Imagen en Servidor" as UC_StoreImage
+  usecase "Eliminar Imagen Anterior" as UC_RemovePreviousImage
+  usecase "Validar Imagen Principal" as UC_ValidateMainImage
+  usecase "Desmarcar Otras Imágenes" as UC_UnmarkOthers
+
+}
+
+' Relaciones CRUD
+Admin --> UC_CreateProperty
+Admin --> UC_UpdateProperty
+Admin --> UC_DeleteProperty
+Admin --> UC_ListProperties
+Admin --> UC_ViewProperty
+
+' Includes para crear
+UC_CreateProperty ..> UC_ValidateProperty : <<include>>
+UC_CreateProperty ..> UC_LoadMasterData : <<include>>
+UC_CreateProperty ..> UC_UploadImage : <<include>>
+
+' Includes para actualizar
+UC_UpdateProperty ..> UC_ValidateProperty : <<include>>
+UC_UpdateProperty ..> UC_LoadMasterData : <<include>>
+
+' Includes para eliminar
+UC_DeleteProperty ..> UC_SoftDelete : <<include>>
+
+' Relaciones de imágenes
+Admin --> UC_UploadImage
+Admin --> UC_DeleteImage
+Admin --> UC_SetMainImage
+
+UC_UploadImage ..> UC_StoreImage : <<include>>
+UC_StoreImage --> FileSystem
+
+UC_DeleteImage ..> UC_RemovePreviousImage : <<include>>
+UC_RemovePreviousImage --> FileSystem
+
+UC_SetMainImage ..> UC_ValidateMainImage : <<include>>
+UC_SetMainImage ..> UC_UnmarkOthers : <<include>>
+
+' Relaciones de asignación
+Admin --> UC_AssignAgent
+UC_AssignAgent ..> UC_ReassignAgent : <<extend>>
+
+' Extends para listado
+UC_ListProperties ..> UC_ExportProperties : <<extend>>
+
+note right of UC_CreateProperty
+  Campos requeridos:
+  - Categoría, Estado
+  - Localidad, Zona, Barrio
+  - Dirección
+  - Dormitorios, Baños
+  - Superficie, Cochera
+  - Descripción
+
+  Imágenes: múltiples permitidas
+  Primera imagen = principal
+end note
+
+note right of UC_DeleteProperty
+  Eliminación LÓGICA (soft delete)
+  No se borra físicamente
+  Campo eliminado = true
+
+  Mantiene trazabilidad
+  y permite auditoría
+end note
+
+note right of UC_AssignAgent
+  Una propiedad solo puede
+  tener un agente asignado
+
+  Si ya existe asignación:
+  - Se elimina la anterior
+  - Se crea la nueva
+end note
+
+@enduml
+
+' ====================================================================================
+' DIAGRAMA 5: CASOS DE USO - ADMINISTRADOR (Gestión de Agentes)
+' ====================================================================================
+
+@startuml CASOS_USO_ADMIN_AGENTES
+
+title Casos de Uso - Administrador (Gestión de Agentes)
+
+actor "Administrador" as Admin
+actor "Sistema de Autenticación" as AuthSystem
+actor "Sistema de Archivos" as FileSystem
+
+rectangle "Sistema SIA App - Módulo Administrador (Agentes)" {
+
+  ' CRUD Agentes
+  usecase "Crear Nuevo Agente" as UC_CreateAgent
+  usecase "Editar Agente" as UC_UpdateAgent
+  usecase "Eliminar Agente" as UC_DeleteAgent
+  usecase "Ver Listado de Agentes" as UC_ListAgents
+  usecase "Ver Detalle de Agente" as UC_ViewAgent
+
+  ' Gestión de foto de perfil
+  usecase "Subir Foto de Perfil" as UC_UploadPhoto
+  usecase "Reemplazar Foto de Perfil" as UC_ReplacePhoto
+
+  ' Gestión de consultas
+  usecase "Ver Todas las Consultas" as UC_ViewAllInquiries
+  usecase "Ver Consultas por Agente" as UC_ViewInquiriesByAgent
+
+  ' Exportación
+  usecase "Exportar Agentes a CSV" as UC_ExportAgents
+  usecase "Exportar Consultas a CSV" as UC_ExportInquiries
+
+  ' Casos de uso secundarios
+  usecase "Validar Datos de Agente" as UC_ValidateAgent
+  usecase "Verificar DNI Único" as UC_ValidateDNI
+  usecase "Verificar Email Único" as UC_ValidateEmail
+  usecase "Verificar CUIT Único" as UC_ValidateCUIT
+  usecase "Crear Registro Persona" as UC_CreatePerson
+  usecase "Crear Registro Empleado" as UC_CreateEmployee
+  usecase "Crear Usuario y Contraseña" as UC_CreateUser
+  usecase "Generar Contraseña Temporal" as UC_GeneratePassword
+  usecase "Asignar Rol de Agente" as UC_AssignRole
+  usecase "Soft Delete Agente" as UC_SoftDeleteAgent
+
+}
+
+' Relaciones CRUD
+Admin --> UC_CreateAgent
+Admin --> UC_UpdateAgent
+Admin --> UC_DeleteAgent
+Admin --> UC_ListAgents
+Admin --> UC_ViewAgent
+
+' Includes para crear agente
+UC_CreateAgent ..> UC_ValidateAgent : <<include>>
+UC_ValidateAgent ..> UC_ValidateDNI : <<include>>
+UC_ValidateAgent ..> UC_ValidateEmail : <<include>>
+UC_ValidateAgent ..> UC_ValidateCUIT : <<include>>
+
+UC_CreateAgent ..> UC_CreatePerson : <<include>>
+UC_CreateAgent ..> UC_CreateEmployee : <<include>>
+UC_CreateAgent ..> UC_CreateUser : <<include>>
+UC_CreateUser ..> UC_GeneratePassword : <<include>>
+UC_CreateAgent ..> UC_AssignRole : <<include>>
+
+UC_CreateUser --> AuthSystem
+UC_AssignRole --> AuthSystem
+
+' Includes para actualizar
+UC_UpdateAgent ..> UC_ValidateAgent : <<include>>
+
+' Includes para eliminar
+UC_DeleteAgent ..> UC_SoftDeleteAgent : <<include>>
+
+' Extends para listado
+UC_ListAgents ..> UC_ExportAgents : <<extend>>
+
+' Relaciones de foto de perfil
+Admin --> UC_UploadPhoto
+UC_UploadPhoto ..> UC_ReplacePhoto : <<extend>>
+UC_UploadPhoto --> FileSystem
+
+' Relaciones de consultas
+Admin --> UC_ViewAllInquiries
+UC_ViewAllInquiries ..> UC_ViewInquiriesByAgent : <<extend>>
+UC_ViewAllInquiries ..> UC_ExportInquiries : <<extend>>
+
+note right of UC_CreateAgent
+  Datos Personales:
+  - Nombre, Apellido, DNI
+  - Email, Teléfono
+  - Dirección, Fecha Nacimiento
+
+  Datos Laborales:
+  - CUIT
+
+  Foto: opcional
+
+  Proceso automático:
+  1. Crear persona
+  2. Crear empleado (tipo agente)
+  3. Crear usuario + contraseña
+  4. Asignar rol de agente
+
+  Contraseña temporal se muestra
+  una sola vez al administrador
+end note
+
+note right of UC_DeleteAgent
+  Eliminación LÓGICA
+  eliminado = true
+
+  El agente no puede
+  iniciar sesión después
+
+  Datos históricos
+  se conservan
+end note
+
+note right of UC_ViewAllInquiries
+  Supervisa consultas
+  de todos los agentes
+
+  Para monitorear flujo
+  de leads y desempeño
+  del equipo
+end note
+
+@enduml
+
+' ====================================================================================
+' DIAGRAMA 6: CASOS DE USO - ADMINISTRADOR (Datos Maestros)
+' ====================================================================================
+
+@startuml CASOS_USO_ADMIN_DATOS_MAESTROS
+
+title Casos de Uso - Administrador (Gestión de Datos Maestros)
+
+actor "Administrador" as Admin
+
+rectangle "Sistema SIA App - Módulo Administrador (Datos Maestros)" {
+
+  ' Categorías de Inmuebles (Rubros)
+  package "Categorías de Inmuebles" {
+    usecase "Listar Categorías" as UC_ListCategories
+    usecase "Crear Categoría" as UC_CreateCategory
+    usecase "Editar Categoría" as UC_UpdateCategory
+    usecase "Eliminar Categoría" as UC_DeleteCategory
+  }
+
+  ' Estados de Inmuebles
+  package "Estados de Inmuebles" {
+    usecase "Listar Estados" as UC_ListStatuses
+    usecase "Crear Estado" as UC_CreateStatus
+    usecase "Editar Estado" as UC_UpdateStatus
+    usecase "Eliminar Estado" as UC_DeleteStatus
+  }
+
+  ' Localidades
+  package "Localidades" {
+    usecase "Listar Localidades" as UC_ListLocations
+    usecase "Crear Localidad" as UC_CreateLocation
+    usecase "Editar Localidad" as UC_UpdateLocation
+    usecase "Eliminar Localidad" as UC_DeleteLocation
+  }
+
+  ' Zonas
+  package "Zonas" {
+    usecase "Listar Zonas" as UC_ListZones
+    usecase "Crear Zona" as UC_CreateZone
+    usecase "Editar Zona" as UC_UpdateZone
+    usecase "Eliminar Zona" as UC_DeleteZone
+  }
+
+  ' Barrios
+  package "Barrios" {
+    usecase "Barrios" as UC_ListNeighborhoods
+    usecase "Crear Barrio" as UC_CreateNeighborhood
+    usecase "Editar Barrio" as UC_UpdateNeighborhood
+    usecase "Eliminar Barrio" as UC_DeleteNeighborhood
+  }
+
+  ' Casos de uso transversales
+  usecase "Validar Nombre Único" as UC_ValidateUniqueName
+  usecase "Validar No Está en Uso" as UC_ValidateNotInUse
+  usecase "Validar Localidad Existe" as UC_ValidateLocationExists
+  usecase "Filtrar por Localidad" as UC_FilterByLocation
+
+}
+
+' Relaciones Categorías
+Admin --> UC_ListCategories
+Admin --> UC_CreateCategory
+Admin --> UC_UpdateCategory
+Admin --> UC_DeleteCategory
+
+UC_CreateCategory ..> UC_ValidateUniqueName : <<include>>
+UC_UpdateCategory ..> UC_ValidateUniqueName : <<include>>
+UC_DeleteCategory ..> UC_ValidateNotInUse : <<include>>
+
+' Relaciones Estados
+Admin --> UC_ListStatuses
+Admin --> UC_CreateStatus
+Admin --> UC_UpdateStatus
+Admin --> UC_DeleteStatus
+
+UC_CreateStatus ..> UC_ValidateUniqueName : <<include>>
+UC_UpdateStatus ..> UC_ValidateUniqueName : <<include>>
+UC_DeleteStatus ..> UC_ValidateNotInUse : <<include>>
+
+' Relaciones Localidades
+Admin --> UC_ListLocations
+Admin --> UC_CreateLocation
+Admin --> UC_UpdateLocation
+Admin --> UC_DeleteLocation
+
+UC_CreateLocation ..> UC_ValidateUniqueName : <<include>>
+UC_UpdateLocation ..> UC_ValidateUniqueName : <<include>>
+UC_DeleteLocation ..> UC_ValidateNotInUse : <<include>>
+
+' Relaciones Zonas
+Admin --> UC_ListZones
+Admin --> UC_CreateZone
+Admin --> UC_UpdateZone
+Admin --> UC_DeleteZone
+
+UC_ListZones ..> UC_FilterByLocation : <<extend>>
+UC_CreateZone ..> UC_ValidateLocationExists : <<include>>
+UC_CreateZone ..> UC_ValidateUniqueName : <<include>>
+UC_DeleteZone ..> UC_ValidateNotInUse : <<include>>
+
+' Relaciones Barrios
+Admin --> UC_ListNeighborhoods
+Admin --> UC_CreateNeighborhood
+Admin --> UC_UpdateNeighborhood
+Admin --> UC_DeleteNeighborhood
+
+UC_ListNeighborhoods ..> UC_FilterByLocation : <<extend>>
+UC_CreateNeighborhood ..> UC_ValidateLocationExists : <<include>>
+UC_CreateNeighborhood ..> UC_ValidateUniqueName : <<include>>
+UC_DeleteNeighborhood ..> UC_ValidateNotInUse : <<include>>
+
+note right of UC_ListCategories
+  Ejemplos de Categorías:
+  - Casa
+  - Departamento
+  - Terreno
+  - Local Comercial
+  - Oficina
+  - Galpón/Depósito
+end note
+
+note right of UC_ListStatuses
+  Ejemplos de Estados:
+  - Disponible
+  - Vendido
+  - Alquilado
+  - Reservado
+  - En Trámite
+end note
+
+note right of UC_CreateZone
+  Las zonas pertenecen
+  a una localidad
+
+  Ejemplo:
+  Localidad: Rosario
+  Zonas: Norte, Sur,
+         Centro, Oeste
+end note
+
+note right of UC_CreateNeighborhood
+  Los barrios pertenecen
+  a una localidad
+
+  Ejemplo:
+  Localidad: Rosario
+  Barrios: Fisherton,
+           Pichincha,
+           Alberdi, etc.
+end note
+
+note bottom of UC_ValidateNotInUse
+  Antes de eliminar un
+  dato maestro, se valida
+  que no esté siendo usado
+  por ningún inmueble
+end note
+
+@enduml
+
+' ====================================================================================
+' DIAGRAMA 7: RELACIONES ENTRE CASOS DE USO (Vista de Dependencias)
+' ====================================================================================
+
+@startuml CASOS_USO_DEPENDENCIAS
+
+title Relaciones entre Casos de Uso - Vista de Dependencias
+
+rectangle "Gestión de Datos Maestros" as MasterData {
+  usecase "Gestionar Categorías" as UC_Categories
+  usecase "Gestionar Estados" as UC_Statuses
+  usecase "Gestionar Localidades" as UC_Locations
+  usecase "Gestionar Zonas" as UC_Zones
+  usecase "Gestionar Barrios" as UC_Neighborhoods
+}
+
+rectangle "Gestión de Agentes" as AgentManagement {
+  usecase "Crear Agente" as UC_CreateAgent
+  usecase "Gestionar Agentes" as UC_ManageAgents
+}
+
+rectangle "Gestión de Inmuebles" as PropertyManagement {
+  usecase "Crear Propiedad" as UC_CreateProperty
+  usecase "Asignar Agente a Propiedad" as UC_AssignAgent
+  usecase "Gestionar Propiedades" as UC_ManageProperties
+}
+
+rectangle "Gestión de Consultas" as InquiryManagement {
+  usecase "Enviar Consulta Pública" as UC_PublicInquiry
+  usecase "Registrar Consulta Manual" as UC_ManualInquiry
+  usecase "Ver Consultas de Agente" as UC_AgentInquiries
+  usecase "Ver Todas las Consultas" as UC_AllInquiries
+}
+
+' Dependencias de Datos Maestros
+UC_CreateProperty ..> UC_Categories : <<depends>>
+UC_CreateProperty ..> UC_Statuses : <<depends>>
+UC_CreateProperty ..> UC_Locations : <<depends>>
+UC_CreateProperty ..> UC_Zones : <<depends>>
+UC_CreateProperty ..> UC_Neighborhoods : <<depends>>
+
+' Dependencias de Agentes
+UC_AssignAgent ..> UC_CreateAgent : <<depends>>
+
+' Dependencias de Propiedades
+UC_PublicInquiry ..> UC_CreateProperty : <<depends>>
+UC_ManualInquiry ..> UC_CreateProperty : <<depends>>
+UC_ManualInquiry ..> UC_AssignAgent : <<depends>>
+
+' Dependencias de Asignación
+UC_AssignAgent ..> UC_ManageProperties : <<depends>>
+UC_AssignAgent ..> UC_ManageAgents : <<depends>>
+
+' Dependencias de Consultas
+UC_AgentInquiries ..> UC_PublicInquiry : <<depends>>
+UC_AgentInquiries ..> UC_ManualInquiry : <<depends>>
+UC_AllInquiries ..> UC_PublicInquiry : <<depends>>
+UC_AllInquiries ..> UC_ManualInquiry : <<depends>>
+
+note as N1
+  **Orden de Implementación Recomendado:**
+
+  1. Datos Maestros (base del sistema)
+  2. Gestión de Agentes
+  3. Gestión de Inmuebles
+  4. Asignación Agente-Inmueble
+  5. Gestión de Consultas
+end note
+
+@enduml
+
+' ====================================================================================
+' FIN DE LOS DIAGRAMAS DE CASOS DE USO
+' ====================================================================================

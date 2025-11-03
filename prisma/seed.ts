@@ -474,6 +474,83 @@ async function main() {
     });
   }
 
+  // Crear consultas de clientes
+  console.log("📧 Creando consultas de clientes...");
+  await Promise.all([
+    prisma.consulta_cliente.create({
+      data: {
+        inmueble_id: inmuebles[0].id, // Casa en Palermo
+        agente_id: empleados[1].id, // Agente Carlos López
+        nombre: "Laura",
+        apellido: "Fernández",
+        correo: "laura.fernandez@ejemplo.com",
+        telefono: "333333333",
+        descripcion: "Me interesa conocer más detalles sobre esta propiedad. ¿Está disponible para visitar este fin de semana?",
+        fecha: new Date("2024-10-15T10:30:00"),
+      },
+    }),
+    prisma.consulta_cliente.create({
+      data: {
+        inmueble_id: inmuebles[4].id, // Penthouse en Puerto Madero
+        agente_id: empleados[1].id, // Agente Carlos López
+        nombre: "Roberto",
+        apellido: "Sánchez",
+        correo: "roberto.sanchez@ejemplo.com",
+        telefono: "444444444",
+        descripcion: "Estoy buscando un departamento de lujo. ¿Cuál es el precio de venta? ¿Acepta permuta?",
+        fecha: new Date("2024-10-18T14:20:00"),
+      },
+    }),
+    prisma.consulta_cliente.create({
+      data: {
+        inmueble_id: inmuebles[2].id, // Casa quinta en San Isidro
+        agente_id: empleados[2].id, // Agente María Rodríguez
+        nombre: "Sofía",
+        apellido: "González",
+        correo: "sofia.gonzalez@ejemplo.com",
+        telefono: "666666666",
+        descripcion: "¿La casa tiene piscina? ¿Está cerca de colegios?",
+        fecha: new Date("2024-10-20T09:15:00"),
+      },
+    }),
+    prisma.consulta_cliente.create({
+      data: {
+        inmueble_id: inmuebles[3].id, // Local comercial en Recoleta
+        agente_id: empleados[3].id, // Agente Juan Martínez
+        nombre: "Diego",
+        apellido: "Pérez",
+        correo: "diego.perez@ejemplo.com",
+        telefono: "777777777",
+        descripcion: "Quiero abrir una cafetería. ¿El local tiene habilitación comercial? ¿Cuál es el precio de alquiler mensual?",
+        fecha: new Date("2024-10-22T16:45:00"),
+      },
+    }),
+    prisma.consulta_cliente.create({
+      data: {
+        inmueble_id: inmuebles[7].id, // Casa en Belgrano
+        agente_id: empleados[2].id, // Agente María Rodríguez
+        nombre: "Laura",
+        apellido: "Fernández",
+        correo: "laura.fernandez@ejemplo.com",
+        telefono: "333333333",
+        descripcion: "¿Esta propiedad tiene jardín? ¿Admite mascotas?",
+        fecha: new Date("2024-10-23T11:00:00"),
+      },
+    }),
+    prisma.consulta_cliente.create({
+      data: {
+        inmueble_id: inmuebles[10].id, // Departamento en Rosario
+        agente_id: empleados[3].id, // Agente Juan Martínez
+        nombre: "Sofía",
+        apellido: "González",
+        correo: "sofia.gonzalez@ejemplo.com",
+        telefono: "666666666",
+        descripcion: "Vivo en Buenos Aires pero quiero mudarme a Rosario. ¿Se puede financiar?",
+        fecha: new Date("2024-10-24T13:30:00"),
+      },
+    }),
+  ]);
+
   console.log("✅ Seed completado exitosamente!");
 }
 

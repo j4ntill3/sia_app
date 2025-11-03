@@ -48,15 +48,54 @@ export async function POST(request: NextRequest) {
   if (error) return NextResponse.json({ error }, { status });
   try {
     const body = await request.json();
+    // No incluimos tipoId en la validación porque siempre será "agente"
     const parse = agentSchema.safeParse({
-      ...body,
-      tipoId: body.tipoId,
-      DNI: Number(body.DNI),
+      nombre: body.nombre,
+      apellido: body.apellido,
+      telefono: body.telefono,
+      email: body.email,
+      DNI: String(body.DNI),
+      direccion: body.direccion,
+      cuit: body.cuit,
+      fechaNacimiento: body.fechaNacimiento,
     });
     if (!parse.success || !parse.data) {
       return NextResponse.json({ error: "Datos inválidos", detalles: parse.error ? parse.error.flatten().fieldErrors : {} }, { status: 400 });
     }
     const data = parse.data;
+
+    // Verificar DNI duplicado
+    const existingDNI = await prisma.persona.findFirst({
+      where: {
+        dni: Number(data.DNI),
+        eliminado: false,
+      },
+    });
+    if (existingDNI) {
+      return NextResponse.json({ error: "Ya existe una persona con este DNI" }, { status: 409 });
+    }
+
+    // Verificar email duplicado
+    const existingEmail = await prisma.persona.findFirst({
+      where: {
+        correo: data.email,
+        eliminado: false,
+      },
+    });
+    if (existingEmail) {
+      return NextResponse.json({ error: "Ya existe una persona con este email" }, { status: 409 });
+    }
+
+    // Verificar CUIT duplicado
+    const existingCUIT = await prisma.empleado.findFirst({
+      where: {
+        cuit: data.cuit,
+        eliminado: false,
+      },
+    });
+    if (existingCUIT) {
+      return NextResponse.json({ error: "Ya existe un empleado con este CUIT" }, { status: 409 });
+    }
     const tipoEmpleado = await prisma.tipo_empleado.findFirst({ where: { tipo: "agente" } });
     const tipo_id = tipoEmpleado?.id ?? "";
     const rolUsuario = await prisma.rol_usuario.findFirst({ where: { tipo_rol: "agente" } });
@@ -67,7 +106,7 @@ export async function POST(request: NextRequest) {
         apellido: data.apellido,
         telefono: data.telefono,
         correo: data.email,
-        dni: data.DNI,
+        dni: Number(data.DNI),
         direccion: data.direccion,
         fecha_nacimiento: new Date(data.fechaNacimiento + "T00:00:00Z"),
         eliminado: false,

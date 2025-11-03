@@ -92,6 +92,29 @@ export async function PUT(
 
     // Actualizar persona
     if (body.nombre || body.apellido || body.telefono || body.email || body.direccion || body.DNI || body.fechaNacimiento) {
+      // Validar DNI si se proporciona
+      if (body.DNI) {
+        const dniString = String(body.DNI);
+        if (!/^\d{7,8}$/.test(dniString)) {
+          return NextResponse.json(
+            { error: "El DNI debe contener 7 u 8 dígitos" },
+            { status: 400 }
+          );
+        }
+
+        // Verificar si el DNI ya existe en otra persona
+        const existingDNI = await prisma.persona.findFirst({
+          where: {
+            dni: Number(dniString),
+            eliminado: false,
+            NOT: { id: personaId }
+          },
+        });
+        if (existingDNI) {
+          return NextResponse.json({ error: "Ya existe otra persona con este DNI" }, { status: 409 });
+        }
+      }
+
       await prisma.persona.update({
         where: { id: personaId },
         data: {
@@ -100,7 +123,7 @@ export async function PUT(
           ...(body.telefono && { telefono: body.telefono }),
           ...(body.email && { correo: body.email }),
           ...(body.direccion && { direccion: body.direccion }),
-          ...(body.DNI && { dni: Number(body.DNI) }),
+          ...(body.DNI && { dni: Number(String(body.DNI)) }),
           ...(body.fechaNacimiento && {
             fecha_nacimiento: new Date(body.fechaNacimiento + "T00:00:00Z"),
           }),

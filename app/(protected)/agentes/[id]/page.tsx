@@ -9,7 +9,7 @@ type FormData = {
   apellido: string;
   telefono: string;
   email: string;
-  DNI: number;
+  DNI: string;
   direccion: string;
   cuit: string;
   fechaNacimiento: string;
@@ -23,7 +23,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
     apellido: "",
     telefono: "",
     email: "",
-    DNI: 0,
+    DNI: "",
     direccion: "",
     cuit: "",
     fechaNacimiento: "",
@@ -37,6 +37,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [existingImage, setExistingImage] = useState<string | null>(null);
   const [personaId, setPersonaId] = useState<string>("");
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
         apellido: persona.apellido || "",
         telefono: persona.telefono || "",
         email: persona.correo || "",
-        DNI: persona.dni || 0,
+        DNI: persona.dni ? String(persona.dni) : "",
         direccion: persona.direccion || "",
         cuit: empleado.cuit || "",
         fechaNacimiento: persona.fecha_nacimiento
@@ -143,10 +144,11 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setValidationErrors({});
 
     const agenteData = {
       ...formData,
-      DNI: Number(formData.DNI),
+      DNI: formData.DNI,
     };
 
     try {
@@ -180,7 +182,31 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
         }
         router.push("/agentes");
       } else {
-        alert(data.error || "Error desconocido.");
+        // Manejar errores de validación del backend
+        if (data.detalles) {
+          setValidationErrors(data.detalles);
+
+          // Construir mensaje detallado con los campos con error
+          const camposConError = Object.keys(data.detalles).map(campo => {
+            const mensajesError = data.detalles[campo];
+            const nombreCampo = {
+              nombre: "Nombre",
+              apellido: "Apellido",
+              telefono: "Teléfono",
+              email: "Email",
+              DNI: "DNI",
+              direccion: "Dirección",
+              cuit: "CUIT",
+              fechaNacimiento: "Fecha de Nacimiento"
+            }[campo] || campo;
+
+            return `• ${nombreCampo}: ${mensajesError[0]}`;
+          }).join('\n');
+
+          alert(`Hay errores en el formulario:\n\n${camposConError}`);
+        } else {
+          alert(data.error || "Error desconocido.");
+        }
         setSaving(false);
       }
     } catch (error) {
@@ -262,6 +288,9 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   placeholder="Ingresa el nombre"
                   required
                 />
+                {validationErrors.nombre && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.nombre[0]}</p>
+                )}
               </div>
 
               <div>
@@ -281,6 +310,9 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   placeholder="Ingresa el apellido"
                   required
                 />
+                {validationErrors.apellido && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.apellido[0]}</p>
+                )}
               </div>
 
               <div>
@@ -300,6 +332,9 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   placeholder="Ingresa el teléfono"
                   required
                 />
+                {validationErrors.telefono && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.telefono[0]}</p>
+                )}
               </div>
 
               <div>
@@ -319,6 +354,9 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   placeholder="Ingresa el email"
                   required
                 />
+                {validationErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.email[0]}</p>
+                )}
               </div>
 
               <div>
@@ -329,15 +367,22 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   DNI
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   id="DNI"
                   name="DNI"
                   value={formData.DNI}
                   onChange={handleInputChange}
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-                  placeholder="Ingresa el DNI"
+                  placeholder="Ej: 12345678"
                   required
+                  pattern="\d{7,8}"
+                  minLength={7}
+                  maxLength={8}
+                  title="El DNI debe tener 7 u 8 dígitos"
                 />
+                {validationErrors.DNI && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.DNI[0]}</p>
+                )}
               </div>
             </div>
 
@@ -360,6 +405,9 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   placeholder="Ingresa la dirección"
                   required
                 />
+                {validationErrors.direccion && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.direccion[0]}</p>
+                )}
               </div>
 
               <div>
@@ -379,6 +427,9 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   placeholder="Ingresa el CUIT"
                   required
                 />
+                {validationErrors.cuit && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.cuit[0]}</p>
+                )}
               </div>
 
               <div>
@@ -397,6 +448,9 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
                   required
                 />
+                {validationErrors.fechaNacimiento && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.fechaNacimiento[0]}</p>
+                )}
               </div>
 
               <div>

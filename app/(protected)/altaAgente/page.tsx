@@ -8,9 +8,8 @@ type FormData = {
   apellido: string;
   telefono: string;
   email: string;
-  DNI: number;
+  DNI: string;
   direccion: string;
-  tipoId: number | string;
   cuit: string;
   fechaNacimiento: string;
 };
@@ -21,9 +20,8 @@ export default function CrearAgente() {
     apellido: "",
     telefono: "",
     email: "",
-    DNI: 0,
+    DNI: "",
     direccion: "",
-    tipoId: "",
     cuit: "",
     fechaNacimiento: "",
   });
@@ -33,6 +31,7 @@ export default function CrearAgente() {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   // Función de autenticación
   const authenticateUser = async () => {
@@ -84,15 +83,37 @@ export default function CrearAgente() {
     }
   };
 
+  // Función para formatear CUIT automáticamente
+  const formatCUIT = (value: string) => {
+    // Remover todos los caracteres que no sean dígitos
+    const digits = value.replace(/\D/g, '');
+
+    // Formatear como XX-XXXXXXXX-X
+    if (digits.length <= 2) {
+      return digits;
+    } else if (digits.length <= 10) {
+      return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+    } else {
+      return `${digits.slice(0, 2)}-${digits.slice(2, 10)}-${digits.slice(10, 11)}`;
+    }
+  };
+
+  const handleCUITChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCUIT(e.target.value);
+    setFormData((prev) => ({
+      ...prev,
+      cuit: formatted,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationErrors({});
 
     const agenteData = {
       ...formData,
-      tipoId: Number(formData.tipoId),
-      DNI: Number(formData.DNI),
+      DNI: formData.DNI,
       fechaNacimiento: formData.fechaNacimiento,
-      eliminado: false,
     };
 
     try {
@@ -118,15 +139,53 @@ export default function CrearAgente() {
           });
           const imgData = await imgRes.json();
           if (imgRes.ok && imgData.data?.image?.imagePath) {
-            alert("Agente creado con imagen.");
+            alert(`Agente creado con éxito.\n\nContraseña temporal: ${data.data.temporaryPassword}\n\nPor favor, comunique esta contraseña al agente de forma segura.`);
           } else {
-            alert("Agente creado, pero la imagen no se pudo guardar.");
+            alert(`Agente creado, pero la imagen no se pudo guardar.\n\nContraseña temporal: ${data.data.temporaryPassword}`);
           }
         } else {
-          alert("Agente creado con éxito.");
+          alert(`Agente creado con éxito.\n\nContraseña temporal: ${data.data.temporaryPassword}\n\nPor favor, comunique esta contraseña al agente de forma segura.`);
         }
+
+        // Limpiar formulario
+        setFormData({
+          nombre: "",
+          apellido: "",
+          telefono: "",
+          email: "",
+          DNI: "",
+          direccion: "",
+          cuit: "",
+          fechaNacimiento: "",
+        });
+        setSelectedImage(null);
+        setImagePreview(null);
       } else {
-        alert(data.error || "Error desconocido.");
+        // Manejar errores de validación del backend
+        if (data.detalles) {
+          setValidationErrors(data.detalles);
+
+          // Construir mensaje detallado con los campos con error
+          const camposConError = Object.keys(data.detalles).map(campo => {
+            const mensajesError = data.detalles[campo];
+            const nombreCampo = {
+              nombre: "Nombre",
+              apellido: "Apellido",
+              telefono: "Teléfono",
+              email: "Email",
+              DNI: "DNI",
+              direccion: "Dirección",
+              cuit: "CUIT",
+              fechaNacimiento: "Fecha de Nacimiento"
+            }[campo] || campo;
+
+            return `• ${nombreCampo}: ${mensajesError[0]}`;
+          }).join('\n');
+
+          alert(`Hay errores en el formulario:\n\n${camposConError}`);
+        } else {
+          alert(data.error || "Error desconocido.");
+        }
       }
     } catch (error) {
       console.error("Error de conexión:", error);
@@ -173,7 +232,7 @@ export default function CrearAgente() {
                   htmlFor="nombre"
                   className="block text-sm font-sans font-medium text-[#083C2C]"
                 >
-                  Nombre
+                  Nombre *
                 </label>
                 <input
                   type="text"
@@ -183,7 +242,13 @@ export default function CrearAgente() {
                   onChange={handleInputChange}
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
                   placeholder="Ingresa el nombre"
+                  required
+                  minLength={2}
+                  maxLength={100}
                 />
+                {validationErrors.nombre && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.nombre[0]}</p>
+                )}
               </div>
 
               <div>
@@ -191,7 +256,7 @@ export default function CrearAgente() {
                   htmlFor="apellido"
                   className="block text-sm font-sans font-medium text-[#083C2C]"
                 >
-                  Apellido
+                  Apellido *
                 </label>
                 <input
                   type="text"
@@ -201,7 +266,13 @@ export default function CrearAgente() {
                   onChange={handleInputChange}
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
                   placeholder="Ingresa el apellido"
+                  required
+                  minLength={2}
+                  maxLength={100}
                 />
+                {validationErrors.apellido && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.apellido[0]}</p>
+                )}
               </div>
 
               <div>
@@ -209,7 +280,7 @@ export default function CrearAgente() {
                   htmlFor="telefono"
                   className="block text-sm font-sans font-medium text-[#083C2C]"
                 >
-                  Teléfono
+                  Teléfono *
                 </label>
                 <input
                   type="text"
@@ -218,8 +289,16 @@ export default function CrearAgente() {
                   value={formData.telefono}
                   onChange={handleInputChange}
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-                  placeholder="Ingresa el teléfono"
+                  placeholder="Ej: +54 11 1234-5678"
+                  required
+                  minLength={8}
+                  maxLength={20}
+                  pattern="[0-9+\-\s()]+"
+                  title="Solo números, +, -, espacios y paréntesis"
                 />
+                {validationErrors.telefono && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.telefono[0]}</p>
+                )}
               </div>
 
               <div>
@@ -227,7 +306,7 @@ export default function CrearAgente() {
                   htmlFor="email"
                   className="block text-sm font-sans font-medium text-[#083C2C]"
                 >
-                  Email
+                  Email *
                 </label>
                 <input
                   type="email"
@@ -236,8 +315,13 @@ export default function CrearAgente() {
                   value={formData.email}
                   onChange={handleInputChange}
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-                  placeholder="Ingresa el email"
+                  placeholder="ejemplo@correo.com"
+                  required
+                  maxLength={100}
                 />
+                {validationErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.email[0]}</p>
+                )}
               </div>
 
               <div>
@@ -245,17 +329,25 @@ export default function CrearAgente() {
                   htmlFor="DNI"
                   className="block text-sm font-sans font-medium text-[#083C2C]"
                 >
-                  DNI
+                  DNI *
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   id="DNI"
                   name="DNI"
                   value={formData.DNI}
                   onChange={handleInputChange}
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-                  placeholder="Ingresa el DNI"
+                  placeholder="Ej: 12345678"
+                  required
+                  pattern="\d{7,8}"
+                  minLength={7}
+                  maxLength={8}
+                  title="El DNI debe tener 7 u 8 dígitos"
                 />
+                {validationErrors.DNI && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.DNI[0]}</p>
+                )}
               </div>
             </div>
 
@@ -266,7 +358,7 @@ export default function CrearAgente() {
                   htmlFor="direccion"
                   className="block text-sm font-sans font-medium text-[#083C2C]"
                 >
-                  Dirección
+                  Dirección *
                 </label>
                 <input
                   type="text"
@@ -275,8 +367,14 @@ export default function CrearAgente() {
                   value={formData.direccion}
                   onChange={handleInputChange}
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-                  placeholder="Ingresa la dirección"
+                  placeholder="Ej: Av. Corrientes 1234"
+                  required
+                  minLength={5}
+                  maxLength={200}
                 />
+                {validationErrors.direccion && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.direccion[0]}</p>
+                )}
               </div>
 
               <div>
@@ -284,17 +382,24 @@ export default function CrearAgente() {
                   htmlFor="cuit"
                   className="block text-sm font-sans font-medium text-[#083C2C]"
                 >
-                  CUIT
+                  CUIT *
                 </label>
                 <input
                   type="text"
                   id="cuit"
                   name="cuit"
                   value={formData.cuit}
-                  onChange={handleInputChange}
+                  onChange={handleCUITChange}
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
-                  placeholder="Ingresa el CUIT"
+                  placeholder="Ej: 20-12345678-9"
+                  required
+                  pattern="\d{2}-\d{8}-\d{1}"
+                  maxLength={13}
+                  title="Formato: XX-XXXXXXXX-X"
                 />
+                {validationErrors.cuit && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.cuit[0]}</p>
+                )}
               </div>
 
               <div>
@@ -302,7 +407,7 @@ export default function CrearAgente() {
                   htmlFor="fechaNacimiento"
                   className="block text-sm font-sans font-medium text-[#083C2C]"
                 >
-                  Fecha de Nacimiento
+                  Fecha de Nacimiento *
                 </label>
                 <input
                   type="date"
@@ -312,7 +417,12 @@ export default function CrearAgente() {
                   onChange={handleInputChange}
                   className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
                   required
+                  max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+                  min={new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split('T')[0]}
                 />
+                {validationErrors.fechaNacimiento && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.fechaNacimiento[0]}</p>
+                )}
               </div>
 
               <div>
