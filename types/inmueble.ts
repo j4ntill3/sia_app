@@ -27,6 +27,12 @@ export type Barrio = {
   localidad_id: string;
 };
 
+export type AgenteAsignado = {
+  id: string;
+  nombre: string;
+  apellido: string;
+};
+
 export type Inmueble = {
   id: string;
   categoria_id: string;
@@ -47,6 +53,7 @@ export type Inmueble = {
   barrio?: Barrio;
   descripcion?: string | null;
   imagenes?: ImagenInmueble[];
+  agenteAsignado?: AgenteAsignado;
 };
 
 export type InmuebleCreate = {

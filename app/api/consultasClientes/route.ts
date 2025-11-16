@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       }
     });
     // Mapear a tipo ConsultaCliente
-    const consultasClientes: ConsultaCliente[] = consultasDb.map((c) => ({
+    const consultas: ConsultaCliente[] = consultasDb.map((c) => ({
       id: c.id,
       inmueble_id: c.inmueble_id,
       agente_id: c.agente_id,
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
       fecha: c.fecha,
       descripcion: c.descripcion || undefined,
     }));
-    return jsonSuccess<ConsultaCliente[]>(consultasClientes);
+    return jsonSuccess<ConsultaCliente[]>(consultas);
   } catch (error) {
     console.error("Error al obtener consultas de clientes:", error);
     return jsonError("Error al obtener consultas de clientes", 500);

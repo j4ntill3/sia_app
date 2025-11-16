@@ -132,13 +132,28 @@ export async function PUT(
     }
 
     // Actualizar empleado
-    if (body.cuit) {
+    if (body.cuit !== undefined || body.activo !== undefined) {
+      console.log("=".repeat(50));
+      console.log("PUT /api/agentes/[id] - ACTUALIZANDO EMPLEADO");
+      console.log("body.activo:", body.activo);
+      console.log("fecha_egreso que se guardará:", body.activo ? null : new Date());
+      console.log("body.eliminado:", body.eliminado);
+      console.log("=".repeat(50));
+
+      const updateData: any = {};
+      if (body.cuit) updateData.cuit = body.cuit;
+      if (body.activo !== undefined) {
+        updateData.fecha_egreso = body.activo ? null : new Date();
+      }
+
+      console.log("Datos que se actualizarán:", JSON.stringify(updateData, null, 2));
+
       await prisma.empleado.update({
         where: { id },
-        data: {
-          cuit: body.cuit,
-        },
+        data: updateData,
       });
+
+      console.log("Empleado actualizado exitosamente");
     }
 
     // Obtener datos actualizados

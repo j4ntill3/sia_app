@@ -9,9 +9,15 @@ export const inmuebleSchema = z.object({
   zona_id: z.string().uuid(),
   barrio_id: z.string().uuid(),
   direccion: z.string().min(1),
-  dormitorios: z.string(),
-  banos: z.string(),
-  superficie: z.string(),
+  dormitorios: z.string()
+    .min(1, "El número de dormitorios es requerido")
+    .regex(/^\d+$/, "El número de dormitorios debe ser un número entero"),
+  banos: z.string()
+    .min(1, "El número de baños es requerido")
+    .regex(/^\d+$/, "El número de baños debe ser un número entero"),
+  superficie: z.string()
+    .min(1, "La superficie es requerida")
+    .regex(/^\d+(\.\d+)?$/, "La superficie debe ser un número válido (puede incluir decimales)"),
   cochera: z.boolean(),
   estado_id: z.string().uuid(),
   descripcion: z.string().optional(),
@@ -53,12 +59,15 @@ export type AgentInput = z.infer<typeof agentSchema>;
 /**
  * Esquema de validación para consultas de cliente
  */
-export const clientInquirySchema = z.object({
+export const consultaClienteSchema = z.object({
   id_inmueble: z.string().uuid(),
   nombre: z.string().min(1),
   apellido: z.string().min(1),
-  telefono: z.string().min(1),
-  email: z.string().email(),
+  telefono: z.string()
+    .min(8, "El teléfono debe tener al menos 8 dígitos")
+    .max(20, "El teléfono no puede exceder 20 dígitos")
+    .regex(/^\d+$/, "El teléfono solo puede contener números"),
+  correo: z.string().email(),
   descripcion: z.string().optional(),
 });
-export type ClientInquiryInput = z.infer<typeof clientInquirySchema>;
+export type ConsultaClienteInput = z.infer<typeof consultaClienteSchema>;

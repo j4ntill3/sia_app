@@ -77,7 +77,7 @@ const Agentes = () => {
         agente.persona?.telefono || "",
         formatDateForCSV(agente.empleado?.fecha_ingreso),
         formatDateForCSV(agente.empleado?.fecha_egreso),
-        agente.empleado?.eliminado ? "Inactivo" : "Activo"
+        agente.empleado?.fecha_egreso ? "Inactivo" : "Activo"
       ]
     );
   };
@@ -113,8 +113,8 @@ const Agentes = () => {
 
   // Renderizar la tabla de agentes
   return (
-    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
-      <div className="w-full max-w-4xl bg-white p-6 shadow-lg rounded-lg">
+    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col bg-gray-100 p-4">
+      <div className="w-full bg-white p-6 shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-4 text-gray-900">
           Lista de Agentes
         </h2>

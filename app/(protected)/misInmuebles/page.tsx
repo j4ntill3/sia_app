@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth-actions";
 import InmuebleCard from "@/app/components/InmuebleCard";
-import type { Property as Inmueble } from "@/types/inmueble";
+import type { Inmueble } from "@/types/inmueble";
 import InmuebleSearch from "@/app/components/InmuebleSearch";
 import Pagination from "@/app/components/Pagination";
 
@@ -49,9 +49,15 @@ const misInmuebles = () => {
         throw new Error("Error al obtener los inmuebles.");
       }
       const inmueblesData = await response.json();
-      setInmuebles(inmueblesData.data.data || []);
-      setTotalPages(inmueblesData.data.totalPages || 1);
-      setTotalItems(inmueblesData.data.totalCount || 0);
+      console.log("Datos recibidos:", inmueblesData);
+      const inmuebles = inmueblesData.data.data || [];
+      const totalPages = inmueblesData.data.totalPages || 0;
+      const totalCount = inmueblesData.data.totalCount || 0;
+      console.log("Inmuebles:", inmuebles, "Length:", inmuebles.length);
+      console.log("TotalPages:", totalPages, "TotalCount:", totalCount);
+      setInmuebles(inmuebles);
+      setTotalPages(totalPages);
+      setTotalItems(totalCount);
     } catch (err) {
       setError("Error al obtener los inmuebles.");
     }
@@ -73,9 +79,9 @@ const misInmuebles = () => {
   const filteredInmuebles = inmuebles.filter((inmueble) => {
     const q = searchQuery.toLowerCase();
     return (
-      inmueble.title?.toLowerCase().includes(q) ||
-      inmueble.neighborhood?.toLowerCase().includes(q) ||
-      inmueble.address?.toLowerCase().includes(q)
+      inmueble.categoria?.categoria?.toLowerCase().includes(q) ||
+      inmueble.barrio?.nombre?.toLowerCase().includes(q) ||
+      inmueble.direccion?.toLowerCase().includes(q)
     );
   });
 
@@ -111,24 +117,31 @@ const misInmuebles = () => {
   // Renderizar los inmuebles
   return (
     <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
-      <InmuebleSearch onSearch={setSearchQuery} />
+      {/* Solo mostrar el buscador si hay inmuebles registrados */}
+      {inmuebles.length > 0 && <InmuebleSearch onSearch={setSearchQuery} />}
+
       <div className="flex flex-wrap justify-center gap-6 w-full">
-        {filteredInmuebles.length === 0 ? (
-          <p>No se encontraron inmuebles disponibles.</p>
+        {inmuebles.length === 0 ? (
+          <p className="text-gray-600 mt-8">No hay inmuebles registrados.</p>
+        ) : filteredInmuebles.length === 0 ? (
+          <p className="text-gray-600 mt-8">No se encontraron inmuebles que coincidan con la búsqueda.</p>
         ) : (
           filteredInmuebles.map((inmueble) => (
             <InmuebleCard key={inmueble.id} inmueble={inmueble} />
           ))
         )}
       </div>
-      {/* Paginación */}
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        onChange={setPage}
-        totalItems={totalItems}
-        pageSize={5}
-      />
+
+      {/* Solo mostrar la paginación si hay inmuebles registrados */}
+      {inmuebles.length > 0 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onChange={setPage}
+          totalItems={totalItems}
+          pageSize={5}
+        />
+      )}
     </div>
   );
 };

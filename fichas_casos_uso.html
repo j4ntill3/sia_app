@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fichas de Casos de Uso - SIA App</title>
+    <style>
+        @media print {
+            @page {
+                margin: 2cm;
+                size: A4;
+            }
+            body {
+                margin: 0;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+            header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 30px;
+                border-bottom: 1px solid #333;
+                padding: 5px 10px;
+                font-size: 10pt;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+        }
+
+        header {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 2px solid #4682b4;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10pt;
+        }
+
+        .cover-page {
+            text-align: center;
+            padding: 100px 40px;
+            min-height: 80vh;
+        }
+
+        .cover-page h1 {
+            font-size: 36pt;
+            color: #4682b4;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .cover-page h2 {
+            font-size: 24pt;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .cover-page .info {
+            font-size: 14pt;
+            margin: 10px 0;
+            color: #555;
+        }
+
+        .cover-page .note {
+            font-style: italic;
+            margin-top: 60px;
+            color: #777;
+            font-size: 12pt;
+        }
+
+        h2 {
+            color: #4682b4;
+            font-size: 18pt;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #4682b4;
+        }
+
+        h3 {
+            color: #4682b4;
+            font-size: 16pt;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        h4 {
+            color: #5a9bd4;
+            font-size: 14pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        table td, table th {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        table th {
+            background-color: #4682b4;
+            color: white;
+            font-weight: bold;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .field-label {
+            font-weight: bold;
+            color: #333;
+            min-width: 150px;
+            display: inline-block;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 10pt;
+        }
+
+        .section-header {
+            background: #4682b4;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 12pt;
+        }
+
+        .page-break {
+            margin-top: 40px;
+        }
+
+        .toc {
+            margin: 30px 0;
+        }
+
+        .toc h2 {
+            margin-bottom: 20px;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .toc li {
+            margin: 8px 0;
+            padding-left: 10px;
+        }
+
+        .toc a {
+            color: #4682b4;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #777;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <span>Fichas de Casos de Uso - SIA App</span>
+        <span>Sistema de Información de Agentes</span>
+    </header>
+
+    <!-- PORTADA -->
+    <div class="cover-page page-break">
+        <h1>FICHAS DE CASOS DE USO</h1>
+        <h2>Sistema de Información de Agentes</h2>
+        <h2>SIA App</h2>
+        <div class="info" style="margin-top: 60px;">
+            <div>43 Casos de Uso Implementados</div>
+            <div>Versión 1.0</div>
+            <div>11 de Noviembre de 2025</div>
+        </div>
+        <div class="note">
+            Este documento describe únicamente las interacciones entre usuarios y el sistema.<br>
+            Los procesos internos están documentados dentro de los flujos de cada caso de uso.
+        </div>
+    </div>
+
+    <!-- TABLA DE CONTENIDOS -->
+    <div class="toc page-break">
+        <h2>Tabla de Contenidos</h2>
+        <ul>
+            <li><a href="#agente">1. Casos de Uso - Agente Inmobiliario</a></li>
+            <li><a href="#admin-inmuebles">2. Casos de Uso - Administrador (Inmuebles)</a></li>
+            <li><a href="#admin-agentes">3. Casos de Uso - Administrador (Agentes)</a></li>
+            <li><a href="#admin-datos">4. Casos de Uso - Administrador (Datos Maestros)</a></li>
+            <li><a href="#publico">5. Casos de Uso - Cliente Público</a></li>
+            <li><a href="#resumen">6. Resumen de Casos de Uso Implementados</a></li>
+        </ul>
+    </div>
+
+    <!-- CASOS DE USO - AGENTE INMOBILIARIO -->
+    <section id="agente">
+        <h2>1. Casos de Uso - Agente Inmobiliario</h2>
+
+        <h3>[CU-AGE-01] Iniciar Sesión</h3>
+        <table>
+            <tr>
+                <td class="field-label">Actor Principal</td>
+                <td>Agente Inmobiliario / Administrador</td>
+            </tr>
+            <tr>
+                <td class="field-label">Precondiciones</td>
+                <td>
+                    - El usuario debe tener credenciales válidas (correo electrónico y contraseña)<br>
+                    - El usuario debe estar registrado en el sistema
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El usuario accede a la página de login (/login)</li>
+                        <li>El sistema muestra el formulario de autenticación</li>
+                        <li>El usuario ingresa su correo electrónico y contraseña</li>
+                        <li>El sistema valida las credenciales usando NextAuth</li>
+                        <li>El sistema verifica que el usuario no esté eliminado (eliminado: false)</li>
+                        <li>El sistema crea una sesión con la información del usuario: ID del usuario, Rol del usuario (administrador/agente), ID del empleado (si aplica)</li>
+                        <li>El sistema redirige según el rol: Administrador → /inmuebles, Agente → /misInmuebles</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Postcondiciones</td>
+                <td>
+                    - El usuario queda autenticado<br>
+                    - Se crea una sesión activa<br>
+                    - El usuario es redirigido a su dashboard correspondiente
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujos Alternativos</td>
+                <td>
+                    <strong>FA1 - Credenciales inválidas:</strong><br>
+                    1. El sistema muestra mensaje de error "Credenciales inválidas"<br>
+                    2. El usuario permanece en la página de login
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td>
+                    <strong>Backend:</strong> <code>auth.config.ts</code>, <code>actions/auth-actions.ts</code><br>
+                    <strong>Frontend:</strong> <code>app/(auth)/login/page.tsx</code><br>
+                    <strong>Middleware:</strong> <code>middleware.ts</code> (protección de rutas)
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-AGE-02] Ver Mis Inmuebles Asignados</h3>
+        <table>
+            <tr>
+                <td class="field-label">Actor Principal</td>
+                <td>Agente Inmobiliario</td>
+            </tr>
+            <tr>
+                <td class="field-label">Precondiciones</td>
+                <td>
+                    - El usuario debe estar autenticado como agente<br>
+                    - El agente debe tener un empleadoId válido en la sesión
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El agente accede a la página "Mis Inmuebles" (/misInmuebles)</li>
+                        <li>El sistema autentica y verifica que el rol sea "agente"</li>
+                        <li>El sistema obtiene el empleadoId de la sesión</li>
+                        <li>El sistema consulta los inmuebles asignados al agente vía GET /api/misInmuebles</li>
+                        <li>El sistema muestra la lista paginada de inmuebles con imagen principal, dirección, categoría, estado, características, ubicación</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Postcondiciones</td>
+                <td>
+                    - El agente visualiza todos sus inmuebles asignados<br>
+                    - Los datos se muestran paginados
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td>
+                    <strong>Backend:</strong> <code>app/api/misInmuebles/route.ts</code> (GET)<br>
+                    <strong>Frontend:</strong> <code>app/(protected)/misInmuebles/page.tsx</code><br>
+                    <strong>Autenticación:</strong> <code>requireAuth(request, "agente")</code>
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-AGE-03] Ver Mis Consultas de Clientes</h3>
+        <table>
+            <tr>
+                <td class="field-label">Actor Principal</td>
+                <td>Agente Inmobiliario</td>
+            </tr>
+            <tr>
+                <td class="field-label">Precondiciones</td>
+                <td>
+                    - El usuario debe estar autenticado como agente<br>
+                    - El agente debe tener un empleadoId válido en la sesión
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El agente accede a la página "Mis Consultas" (/misConsultasClientes)</li>
+                        <li>El sistema autentica y verifica que el rol sea "agente"</li>
+                        <li>El sistema obtiene el empleadoId de la sesión</li>
+                        <li>El sistema consulta las consultas del agente vía GET /api/misConsultasClientes</li>
+                        <li>El sistema muestra la lista con nombre y apellido del cliente, teléfono, correo, fecha, descripción, información del inmueble</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Postcondiciones</td>
+                <td>- El agente visualiza todas sus consultas de clientes</td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td>
+                    <strong>Backend:</strong> <code>app/api/misConsultasClientes/route.ts</code> (GET)<br>
+                    <strong>Frontend:</strong> <code>app/(protected)/misConsultasClientes/page.tsx</code>
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- CASOS DE USO - ADMINISTRADOR (INMUEBLES) -->
+    <section id="admin-inmuebles" class="page-break">
+        <h2>2. Casos de Uso - Administrador (Inmuebles)</h2>
+
+        <h3>[CU-ADM-INM-04] Crear Nuevo Inmueble</h3>
+        <table>
+            <tr>
+                <td class="field-label">Actor Principal</td>
+                <td>Administrador</td>
+            </tr>
+            <tr>
+                <td class="field-label">Precondiciones</td>
+                <td>
+                    - El usuario debe estar autenticado como administrador<br>
+                    - Deben existir datos maestros: categorías, estados, localidades, zonas, barrios
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador accede a "Alta de Inmueble" (/altaInmueble)</li>
+                        <li>El sistema carga los datos maestros necesarios</li>
+                        <li>El administrador completa el formulario (categoría, estado, localidad, zona, barrio, dirección, dormitorios, baños, superficie)</li>
+                        <li>El administrador puede subir múltiples imágenes</li>
+                        <li>El administrador envía el formulario</li>
+                        <li>El sistema valida, crea el registro, procesa y almacena las imágenes</li>
+                        <li>El sistema muestra mensaje de éxito y redirige a la lista</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Postcondiciones</td>
+                <td>
+                    - El inmueble queda registrado en el sistema<br>
+                    - Las imágenes quedan almacenadas en el servidor<br>
+                    - La primera imagen se marca como principal
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td>
+                    <strong>Backend:</strong> <code>app/api/inmuebles/route.ts</code> (POST)<br>
+                    <strong>Frontend:</strong> <code>app/(protected)/altaInmueble/page.tsx</code>
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-INM-05] Editar Inmueble</h3>
+        <table>
+            <tr>
+                <td class="field-label">Actor Principal</td>
+                <td>Administrador</td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador selecciona un inmueble de la lista</li>
+                        <li>El sistema carga los datos del inmueble vía GET /api/inmuebles/[id]</li>
+                        <li>El sistema muestra el formulario prellenado</li>
+                        <li>El administrador modifica los campos deseados</li>
+                        <li>El sistema valida y actualiza los datos</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td><strong>Backend:</strong> <code>app/api/inmuebles/[id]/route.ts</code> (GET, PUT)</td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-INM-06] Eliminar Inmueble (Soft Delete)</h3>
+        <table>
+            <tr>
+                <td class="field-label">Actor Principal</td>
+                <td>Administrador</td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador selecciona un inmueble y hace clic en "Eliminar"</li>
+                        <li>El sistema solicita confirmación</li>
+                        <li>El administrador confirma la eliminación</li>
+                        <li>El sistema marca el inmueble como eliminado (soft delete)</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Notas Técnicas</td>
+                <td>
+                    - Eliminación lógica (campo eliminado: true)<br>
+                    - El registro permanece en la base de datos
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-INM-07] Ver Listado de Inmuebles</h3>
+        <table>
+            <tr>
+                <td class="field-label">Actor Principal</td>
+                <td>Administrador / Agente</td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El usuario accede a la página de inmuebles (/inmuebles)</li>
+                        <li>El sistema consulta los inmuebles vía GET /api/inmuebles</li>
+                        <li>El sistema muestra la lista con tarjetas de inmueble</li>
+                        <li>El usuario puede buscar, paginar y ver detalles</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td>
+                    <strong>Backend:</strong> <code>app/api/inmuebles/route.ts</code> (GET)<br>
+                    <strong>Frontend:</strong> <code>app/(protected)/inmuebles/page.tsx</code>
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-INM-08] Ver Detalle de Inmueble</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El usuario selecciona un inmueble</li>
+                        <li>El sistema consulta el inmueble vía GET /api/inmuebles/[id]</li>
+                        <li>El sistema muestra carrusel de imágenes e información completa</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td>
+                    <strong>Backend:</strong> <code>app/api/inmuebles/[id]/route.ts</code> (GET)<br>
+                    <strong>Componente:</strong> ImageCarousel
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-INM-09] Subir Imágenes de Inmueble</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador selecciona archivos de imagen</li>
+                        <li>El sistema procesa las imágenes</li>
+                        <li>Las imágenes se incluyen al crear/editar el inmueble</li>
+                        <li>La primera imagen queda marcada como principal</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Notas Técnicas</td>
+                <td>
+                    - Procesamiento: conversión Base64 → archivo<br>
+                    - Almacenamiento: /public/img con nombres únicos
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-INM-10] Eliminar Imagen de Inmueble</h3>
+        <table>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td><strong>Backend:</strong> <code>app/api/imagenes/[id]/route.ts</code> (DELETE)</td>
+            </tr>
+            <tr>
+                <td class="field-label">Notas Técnicas</td>
+                <td>
+                    - Garantiza que un inmueble siempre tenga al menos una imagen<br>
+                    - Imagen por defecto: /img/no-image.webp
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-INM-11] Marcar Imagen como Principal</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador selecciona "Marcar como principal" en una imagen</li>
+                        <li>El sistema desmarca todas las demás imágenes</li>
+                        <li>El sistema marca la imagen seleccionada como principal</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td><strong>Backend:</strong> <code>app/api/imagenes/[id]/route.ts</code> (PATCH)</td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-INM-03] Asignar/Cambiar Agente de Inmueble</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador accede a la vista de asignación de agente</li>
+                        <li>El sistema muestra información del inmueble y lista de agentes</li>
+                        <li>El administrador selecciona y confirma un agente</li>
+                        <li>El sistema verifica existencia, marca asignación previa como inactiva y crea la nueva</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td><strong>Backend:</strong> <code>app/api/asignacionAgente/[id]/route.ts</code> (PUT)</td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-INM-13] Exportar Inmuebles a CSV</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador hace clic en "Exportar a CSV"</li>
+                        <li>El sistema recopila los datos de inmuebles</li>
+                        <li>El sistema genera archivo CSV</li>
+                        <li>El navegador descarga el archivo</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td><strong>Utilidad:</strong> <code>lib/csv-export.ts</code> (downloadCSV)</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- CASOS DE USO - ADMINISTRADOR (AGENTES) -->
+    <section id="admin-agentes" class="page-break">
+        <h2>3. Casos de Uso - Administrador (Agentes)</h2>
+
+        <h3>[CU-ADM-AGT-03] Crear Nuevo Agente</h3>
+        <table>
+            <tr>
+                <td class="field-label">Actor Principal</td>
+                <td>Administrador</td>
+            </tr>
+            <tr>
+                <td class="field-label">Precondiciones</td>
+                <td>
+                    - El usuario debe estar autenticado como administrador<br>
+                    - DNI, email y CUIT deben ser únicos en el sistema
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador accede a "Alta de Agente" (/altaAgente)</li>
+                        <li>El administrador completa el formulario (nombre, apellido, DNI, email, teléfono, dirección, CUIT, fecha de nacimiento)</li>
+                        <li>El sistema valida y verifica datos únicos</li>
+                        <li>El sistema crea persona, empleado, genera contraseña temporal, crea usuario y asigna rol</li>
+                        <li>El sistema muestra mensaje de éxito con la contraseña temporal</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Postcondiciones</td>
+                <td>
+                    - El agente queda registrado completamente<br>
+                    - El agente puede iniciar sesión con la contraseña temporal
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Notas Técnicas</td>
+                <td>
+                    - Contraseña: 12 caracteres aleatorios + bcrypt hash<br>
+                    - Transacción completa: persona → empleado → usuario → rol
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td>
+                    <strong>Backend:</strong> <code>app/api/agentes/route.ts</code> (POST)<br>
+                    <strong>Frontend:</strong> <code>app/(protected)/altaAgente/page.tsx</code>
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-AGT-04] Editar Agente</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador selecciona un agente</li>
+                        <li>El sistema carga los datos vía GET /api/agentes/[id]</li>
+                        <li>El administrador modifica los campos deseados</li>
+                        <li>El sistema valida y actualiza los datos</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td><strong>Backend:</strong> <code>app/api/agentes/[id]/route.ts</code> (GET, PUT)</td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-AGT-05] Eliminar Agente (Soft Delete)</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador selecciona un agente y hace clic en "Eliminar"</li>
+                        <li>El sistema solicita confirmación</li>
+                        <li>El sistema marca el agente como eliminado</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Notas Técnicas</td>
+                <td>- Eliminación lógica (soft delete) - NO elimina físicamente registros</td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-AGT-06] Ver Listado de Agentes</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador accede a la página de agentes (/agentes)</li>
+                        <li>El sistema consulta los agentes vía GET /api/agentes</li>
+                        <li>El sistema muestra la lista con foto, nombre, DNI, correo, teléfono, CUIT</li>
+                    </ol>
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-AGT-07] Ver Detalle de Agente</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador selecciona un agente</li>
+                        <li>El sistema consulta los datos vía GET /api/agentes/[id]</li>
+                        <li>El sistema muestra información personal completa, información laboral, fecha de ingreso, foto</li>
+                    </ol>
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-AGT-02] Ver Todas las Consultas</h3>
+        <table>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El administrador accede a "Consultas de Clientes" (/consultasClientes)</li>
+                        <li>El sistema consulta todas las consultas vía GET /api/consultasClientes</li>
+                        <li>El sistema muestra la lista completa de consultas</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td>
+                    <strong>Backend:</strong> <code>app/api/consultasClientes/route.ts</code> (GET)<br>
+                    <strong>Autenticación:</strong> <code>requireAuth(request, "administrador")</code>
+                </td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-AGT-11] Exportar Agentes a CSV</h3>
+        <table>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td><strong>Utilidad:</strong> <code>lib/csv-export.ts</code> (downloadCSV, formatDateForCSV)</td>
+            </tr>
+        </table>
+
+        <h3>[CU-ADM-AGT-12] Exportar Consultas a CSV</h3>
+        <table>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td><strong>Utilidad:</strong> <code>lib/csv-export.ts</code></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- CASOS DE USO - ADMINISTRADOR (DATOS MAESTROS) -->
+    <section id="admin-datos" class="page-break">
+        <h2>4. Casos de Uso - Administrador (Datos Maestros)</h2>
+
+        <h4>Nota sobre Datos Maestros</h4>
+        <p>Los casos de uso de datos maestros siguen un patrón CRUD (Create, Read, Update, Delete) consistente.</p>
+
+        <h3>Patrón CRUD de Datos Maestros</h3>
+        <table>
+            <tr>
+                <td class="field-label">Entidades</td>
+                <td>
+                    - Rubros de Inmuebles (categoria_inmueble)<br>
+                    - Estados de Inmuebles (estado_inmueble)<br>
+                    - Localidades (localidad)<br>
+                    - Zonas (zona - con relación a localidad)<br>
+                    - Barrios (barrio - con relación a localidad)
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Operaciones</td>
+                <td>
+                    <strong>Listar:</strong> GET /api/[entidad] - Acceso público<br>
+                    <strong>Crear:</strong> POST /api/[entidad] - Requiere autenticación de administrador<br>
+                    <strong>Editar:</strong> PUT /api/[entidad]/[id] - Requiere autenticación de administrador<br>
+                    <strong>Eliminar:</strong> DELETE /api/[entidad]/[id] - Requiere autenticación de administrador (eliminación física)
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Componente Frontend</td>
+                <td>
+                    <strong>AdminEntityManager</strong> (genérico y reutilizable)<br>
+                    Props: entityName, displayName, apiEndpoint, fields<br>
+                    Ubicación: <code>app/(protected)/admin/[entidad]/page.tsx</code>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Características Técnicas</td>
+                <td>
+                    - Validación en backend con Zod<br>
+                    - Eliminación física (no soft delete en datos maestros)<br>
+                    - Interfaz consistente para todas las entidades<br>
+                    - Carga dinámica de selectores dependientes
+                </td>
+            </tr>
+        </table>
+
+        <h3>Códigos de Casos de Uso por Entidad</h3>
+
+        <h4>RUBROS DE INMUEBLES (Categorías)</h4>
+        <table>
+            <tr>
+                <td><strong>[CU-ADM-DM-06]</strong> Listar Rubros</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-07]</strong> Crear Rubro</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-08]</strong> Editar Rubro</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-09]</strong> Eliminar Rubro</td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+            </tr>
+            <tr>
+                <td>
+                    Backend: <code>app/api/inmuebleRubros/route.ts</code>, <code>app/api/inmuebleRubros/[id]/route.ts</code><br>
+                    Frontend: <code>app/(protected)/admin/rubros/page.tsx</code><br>
+                    Campo principal: categoria (string)
+                </td>
+            </tr>
+        </table>
+
+        <h4>ESTADOS DE INMUEBLES</h4>
+        <table>
+            <tr>
+                <td><strong>[CU-ADM-DM-10]</strong> Listar Estados</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-11]</strong> Crear Estado</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-12]</strong> Editar Estado</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-13]</strong> Eliminar Estado</td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+            </tr>
+            <tr>
+                <td>
+                    Backend: <code>app/api/inmuebleEstados/route.ts</code>, <code>app/api/inmuebleEstados/[id]/route.ts</code><br>
+                    Frontend: <code>app/(protected)/admin/estados/page.tsx</code><br>
+                    Campo principal: estado (string)
+                </td>
+            </tr>
+        </table>
+
+        <h4>LOCALIDADES</h4>
+        <table>
+            <tr>
+                <td><strong>[CU-ADM-DM-14]</strong> Listar Localidades</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-15]</strong> Crear Localidad</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-16]</strong> Editar Localidad</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-17]</strong> Eliminar Localidad</td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+            </tr>
+            <tr>
+                <td>
+                    Backend: <code>app/api/localidades/route.ts</code>, <code>app/api/localidades/[id]/route.ts</code><br>
+                    Frontend: <code>app/(protected)/admin/localidades/page.tsx</code><br>
+                    Campo principal: nombre (string)
+                </td>
+            </tr>
+        </table>
+
+        <h4>ZONAS</h4>
+        <table>
+            <tr>
+                <td><strong>[CU-ADM-DM-18]</strong> Listar Zonas</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-19]</strong> Crear Zona</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-20]</strong> Editar Zona</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-21]</strong> Eliminar Zona</td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+            </tr>
+            <tr>
+                <td>
+                    Backend: <code>app/api/zonas/route.ts</code>, <code>app/api/zonas/[id]/route.ts</code><br>
+                    Frontend: <code>app/(protected)/admin/zonas/page.tsx</code><br>
+                    Campos: nombre (string), localidad_id (FK)<br>
+                    Filtro: <code>GET /api/zonas?localidadId=[id]</code>
+                </td>
+            </tr>
+        </table>
+
+        <h4>BARRIOS</h4>
+        <table>
+            <tr>
+                <td><strong>[CU-ADM-DM-22]</strong> Listar Barrios</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-23]</strong> Crear Barrio</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-24]</strong> Editar Barrio</td>
+            </tr>
+            <tr>
+                <td><strong>[CU-ADM-DM-25]</strong> Eliminar Barrio</td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+            </tr>
+            <tr>
+                <td>
+                    Backend: <code>app/api/barrios/route.ts</code>, <code>app/api/barrios/[id]/route.ts</code><br>
+                    Frontend: <code>app/(protected)/admin/barrios/page.tsx</code><br>
+                    Campos: nombre (string), localidad_id (FK)<br>
+                    Filtro: <code>GET /api/barrios?localidadId=[id]</code>
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- CASOS DE USO - CLIENTE PÚBLICO -->
+    <section id="publico" class="page-break">
+        <h2>5. Casos de Uso - Cliente Público</h2>
+
+        <h3>[CU-PUB-01] Registrar Consulta Pública</h3>
+        <table>
+            <tr>
+                <td class="field-label">Actor Principal</td>
+                <td>Cliente Público (sin autenticación)</td>
+            </tr>
+            <tr>
+                <td class="field-label">Precondiciones</td>
+                <td>- El inmueble consultado debe existir y no estar eliminado</td>
+            </tr>
+            <tr>
+                <td class="field-label">Flujo Principal</td>
+                <td>
+                    <ol>
+                        <li>El cliente accede a un inmueble desde la vista pública</li>
+                        <li>El cliente completa el formulario (nombre, apellido, teléfono, correo, inmueble_id, descripción opcional)</li>
+                        <li>El cliente envía la consulta</li>
+                        <li>El sistema valida los campos</li>
+                        <li>El sistema busca un agente asignado o disponible</li>
+                        <li>El sistema crea la consulta vía POST /api/consultas</li>
+                        <li>El sistema retorna mensaje de éxito</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Postcondiciones</td>
+                <td>
+                    - La consulta queda registrada en el sistema<br>
+                    - Un agente queda asignado para responder<br>
+                    - El agente puede ver la consulta en su panel
+                </td>
+            </tr>
+            <tr>
+                <td class="field-label">Implementación</td>
+                <td>
+                    <strong>Backend:</strong> <code>app/api/consultas/route.ts</code> (POST)<br>
+                    <strong>Frontend:</strong> Componente ConsultaForm (público)<br>
+                    <strong>Lógica:</strong> Asignación automática de agente
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- RESUMEN -->
+    <section id="resumen" class="page-break">
+        <h2>6. Resumen de Casos de Uso Implementados</h2>
+
+        <h3>Por Actor</h3>
+        <table>
+            <tr>
+                <th>Actor</th>
+                <th>Casos de Uso</th>
+            </tr>
+            <tr>
+                <td><strong>Agente Inmobiliario</strong></td>
+                <td>
+                    <strong>3 casos de uso</strong><br>
+                    - Iniciar sesión<br>
+                    - Ver mis inmuebles asignados<br>
+                    - Ver mis consultas de clientes
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Administrador (Inmuebles)</strong></td>
+                <td>
+                    <strong>11 casos de uso</strong><br>
+                    - Crear, editar, eliminar, listar y ver detalle de inmuebles<br>
+                    - Subir, eliminar y marcar como principal imágenes<br>
+                    - Asignar/cambiar agente<br>
+                    - Exportar inmuebles a CSV
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Administrador (Agentes)</strong></td>
+                <td>
+                    <strong>8 casos de uso</strong><br>
+                    - Crear, editar, eliminar, listar y ver detalle de agentes<br>
+                    - Ver todas las consultas<br>
+                    - Exportar agentes y consultas a CSV
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Administrador (Datos Maestros)</strong></td>
+                <td>
+                    <strong>20 casos de uso</strong><br>
+                    - CRUD completo para: Rubros (4), Estados (4), Localidades (4), Zonas (4), Barrios (4)
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Cliente Público</strong></td>
+                <td>
+                    <strong>1 caso de uso</strong><br>
+                    - Registrar consulta sobre inmueble
+                </td>
+            </tr>
+            <tr class="section-header">
+                <td colspan="2"><strong>TOTAL: 43 CASOS DE USO IMPLEMENTADOS</strong></td>
+            </tr>
+        </table>
+
+        <h3>Características Técnicas del Sistema</h3>
+        <table>
+            <tr>
+                <th>Aspecto</th>
+                <th>Detalles</th>
+            </tr>
+            <tr>
+                <td><strong>Autenticación</strong></td>
+                <td>
+                    - NextAuth v5 con provider de credenciales<br>
+                    - Roles: administrador y agente<br>
+                    - Sesiones con información de usuario y empleado<br>
+                    - Middleware para protección de rutas
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Validación de Datos</strong></td>
+                <td>
+                    - Zod schemas para validación<br>
+                    - Validación en backend antes de persistir<br>
+                    - Verificación de unicidad: DNI, email, CUIT<br>
+                    - Validación parcial en actualizaciones
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Base de Datos</strong></td>
+                <td>
+                    - Eliminación lógica (soft delete) en entidades principales<br>
+                    - Preservación de historial<br>
+                    - Prisma ORM con mapeo bilingüe español/inglés<br>
+                    - Transacciones para operaciones multi-tabla
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Seguridad</strong></td>
+                <td>
+                    - Contraseñas hasheadas con bcrypt<br>
+                    - Generación automática de contraseñas temporales<br>
+                    - Autenticación requerida en endpoints protegidos<br>
+                    - Verificación de roles antes de operaciones
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Gestión de Imágenes</strong></td>
+                <td>
+                    - Procesamiento Base64 → archivo<br>
+                    - Almacenamiento en /public/img<br>
+                    - Nombres únicos generados<br>
+                    - Imagen por defecto automática<br>
+                    - Una imagen siempre marcada como principal
+                </td>
+            </tr>
+            <tr>
+                <td><strong>APIs REST</strong></td>
+                <td>
+                    - Respuestas estandarizadas: {data?, error?, message?}<br>
+                    - Status codes HTTP estándar<br>
+                    - Paginación en listados<br>
+                    - Filtrado por parámetros query
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    <footer>
+        <hr style="margin-bottom: 15px;">
+        Última actualización: 11 de Noviembre de 2025<br>
+        Documentación: Solo casos de uso con interacción usuario-sistema
+    </footer>
+</body>
+</html>

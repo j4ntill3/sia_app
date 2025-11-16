@@ -75,7 +75,7 @@ const Clientes = () => {
   const handleDownloadCSV = () => {
     downloadCSV(
       clientes,
-      ["Nombre", "Apellido", "Teléfono", "Email", "Fecha", "Descripción", "ID Inmueble", "ID Agente"],
+      ["Nombre", "Apellido", "Teléfono", "Correo", "Fecha", "Descripción", "ID Inmueble", "ID Agente"],
       "consultas-clientes.csv",
       (cliente) => [
         cliente.nombre,
@@ -108,8 +108,8 @@ const Clientes = () => {
     );
   }
 
-  const handleView = (id: number) => {
-    router.push(`/clientes/${id}`);
+  const handleView = (id: string) => {
+    router.push(`/consulta/${id}`);
   };
 
   if (isLoading) {
@@ -153,6 +153,9 @@ const Clientes = () => {
                     ID Agente
                   </th>
                 )}
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody>

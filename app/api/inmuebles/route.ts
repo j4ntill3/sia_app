@@ -20,6 +20,20 @@ export async function GET(request: NextRequest) {
           localidad: true,
           zona: true,
           barrio: true,
+          agentes: {
+            where: { eliminado: false },
+            include: {
+              empleado: {
+                include: {
+                  personas_empleado: {
+                    include: {
+                      persona: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         skip,
         take: pageSize,
@@ -27,49 +41,59 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    const inmueblesConImagen: Inmueble[] = inmuebles.map((inmueble: any) => ({
-      id: inmueble.id,
-      categoria_id: inmueble.categoria_id,
-      localidad_id: inmueble.localidad_id,
-      zona_id: inmueble.zona_id,
-      barrio_id: inmueble.barrio_id,
-      direccion: inmueble.direccion,
-      dormitorios: inmueble.dormitorios,
-      banos: inmueble.banos,
-      superficie: inmueble.superficie,
-      cochera: inmueble.cochera,
-      eliminado: inmueble.eliminado,
-      estado_id: inmueble.estado_id,
-      descripcion: inmueble.descripcion || undefined,
-      categoria: inmueble.categoria ? {
-        id: inmueble.categoria.id,
-        categoria: inmueble.categoria.categoria
-      } : undefined,
-      estado: inmueble.estado ? {
-        id: inmueble.estado.id,
-        estado: inmueble.estado.estado
-      } : undefined,
-      localidad: inmueble.localidad ? {
-        id: inmueble.localidad.id,
-        nombre: inmueble.localidad.nombre
-      } : undefined,
-      zona: inmueble.zona ? {
-        id: inmueble.zona.id,
-        nombre: inmueble.zona.nombre,
-        localidad_id: inmueble.zona.localidad_id
-      } : undefined,
-      barrio: inmueble.barrio ? {
-        id: inmueble.barrio.id,
-        nombre: inmueble.barrio.nombre,
-        localidad_id: inmueble.barrio.localidad_id
-      } : undefined,
-      imagenes: inmueble.imagenes?.map((img: any) => ({
-        id: img.id,
-        inmueble_id: img.inmueble_id,
-        imagen: img.imagen || undefined,
-        es_principal: img.es_principal || false,
-      })) || [],
-    }));
+    const inmueblesConImagen = inmuebles.map((inmueble: any) => {
+      const agenteAsignado = inmueble.agentes?.[0];
+      const persona = agenteAsignado?.empleado?.personas_empleado?.[0]?.persona;
+
+      return {
+        id: inmueble.id,
+        categoria_id: inmueble.categoria_id,
+        localidad_id: inmueble.localidad_id,
+        zona_id: inmueble.zona_id,
+        barrio_id: inmueble.barrio_id,
+        direccion: inmueble.direccion,
+        dormitorios: inmueble.dormitorios,
+        banos: inmueble.banos,
+        superficie: inmueble.superficie,
+        cochera: inmueble.cochera,
+        eliminado: inmueble.eliminado,
+        estado_id: inmueble.estado_id,
+        descripcion: inmueble.descripcion || undefined,
+        categoria: inmueble.categoria ? {
+          id: inmueble.categoria.id,
+          categoria: inmueble.categoria.categoria
+        } : undefined,
+        estado: inmueble.estado ? {
+          id: inmueble.estado.id,
+          estado: inmueble.estado.estado
+        } : undefined,
+        localidad: inmueble.localidad ? {
+          id: inmueble.localidad.id,
+          nombre: inmueble.localidad.nombre
+        } : undefined,
+        zona: inmueble.zona ? {
+          id: inmueble.zona.id,
+          nombre: inmueble.zona.nombre,
+          localidad_id: inmueble.zona.localidad_id
+        } : undefined,
+        barrio: inmueble.barrio ? {
+          id: inmueble.barrio.id,
+          nombre: inmueble.barrio.nombre,
+          localidad_id: inmueble.barrio.localidad_id
+        } : undefined,
+        imagenes: inmueble.imagenes?.map((img: any) => ({
+          id: img.id,
+          inmueble_id: img.inmueble_id,
+          imagen: img.imagen || undefined,
+          es_principal: img.es_principal || false,
+        })) || [],
+        agenteAsignado: persona ? {
+          id: agenteAsignado.agente_id,
+          nombre: persona.nombre,
+          apellido: persona.apellido,
+        } : undefined,
+      };
+    });
 
     const totalPages = Math.ceil(total / pageSize);
 

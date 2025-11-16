@@ -24,13 +24,13 @@ export async function GET(request: NextRequest) {
         eliminado: false,
         agentes: {
           some: {
-            agentId: agentId,
+            agente_id: agentId,
             eliminado: false,
           },
         },
       },
     });
-    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    const totalPages = totalCount === 0 ? 0 : Math.ceil(totalCount / pageSize);
 
     // Obtener inmuebles paginados
     const inmueblesDb = await prisma.inmueble.findMany({
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         eliminado: false,
         agentes: {
           some: {
-            agentId: agentId,
+            agente_id: agentId,
             eliminado: false,
           },
         },
@@ -50,6 +50,20 @@ export async function GET(request: NextRequest) {
         localidad: true,
         zona: true,
         barrio: true,
+        agentes: {
+          where: { eliminado: false },
+          include: {
+            empleado: {
+              include: {
+                personas_empleado: {
+                  include: {
+                    persona: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       skip,
       take: pageSize,
@@ -57,51 +71,61 @@ export async function GET(request: NextRequest) {
     });
 
     // Mapear a tipo Inmueble
-    const inmuebles: Inmueble[] = inmueblesDb.map((inmueble) => ({
-      id: inmueble.id,
-      categoria_id: inmueble.categoryId,
-      localidad_id: inmueble.localidadId,
-      zona_id: inmueble.zonaId,
-      barrio_id: inmueble.barrioId,
-      direccion: inmueble.address,
-      dormitorios: inmueble.numBedrooms,
-      banos: inmueble.numBathrooms,
-      superficie: inmueble.surface,
-      cochera: inmueble.garage,
-      eliminado: inmueble.deleted,
-      estado_id: inmueble.statusId,
-      descripcion: inmueble.descripcion || undefined,
-      categoria: inmueble.categoria ? {
-        id: inmueble.categoria.id,
-        categoria: inmueble.categoria.categoria
-      } : undefined,
-      estado: inmueble.estado ? {
-        id: inmueble.estado.id,
-        estado: inmueble.estado.estado
-      } : undefined,
-      localidad: inmueble.localidad ? {
-        id: inmueble.localidad.id,
-        nombre: inmueble.localidad.nombre
-      } : undefined,
-      zona: inmueble.zona ? {
-        id: inmueble.zona.id,
-        nombre: inmueble.zona.nombre,
-        localidad_id: inmueble.zona.localidad_id
-      } : undefined,
-      barrio: inmueble.barrio ? {
-        id: inmueble.barrio.id,
-        nombre: inmueble.barrio.nombre,
-        localidad_id: inmueble.barrio.localidad_id
-      } : undefined,
-      imagenes: inmueble.imagenes?.map((img) => ({
-        id: img.id,
-        inmueble_id: img.inmuebleId,
-        imagen: img.imagePath || undefined,
-        es_principal: img.isPrincipal || undefined,
-      })) || [],
-    }));
+    const inmuebles = inmueblesDb.map((inmueble: any) => {
+      const agenteAsignado = inmueble.agentes?.[0];
+      const persona = agenteAsignado?.empleado?.personas_empleado?.[0]?.persona;
 
-    return jsonSuccess({ data: inmuebles, totalPages });
+      return {
+        id: inmueble.id,
+        categoria_id: inmueble.categoria_id,
+        localidad_id: inmueble.localidad_id,
+        zona_id: inmueble.zona_id,
+        barrio_id: inmueble.barrio_id,
+        direccion: inmueble.direccion,
+        dormitorios: inmueble.dormitorios,
+        banos: inmueble.banos,
+        superficie: inmueble.superficie,
+        cochera: inmueble.cochera,
+        eliminado: inmueble.eliminado,
+        estado_id: inmueble.estado_id,
+        descripcion: inmueble.descripcion || undefined,
+        categoria: inmueble.categoria ? {
+          id: inmueble.categoria.id,
+          categoria: inmueble.categoria.categoria
+        } : undefined,
+        estado: inmueble.estado ? {
+          id: inmueble.estado.id,
+          estado: inmueble.estado.estado
+        } : undefined,
+        localidad: inmueble.localidad ? {
+          id: inmueble.localidad.id,
+          nombre: inmueble.localidad.nombre
+        } : undefined,
+        zona: inmueble.zona ? {
+          id: inmueble.zona.id,
+          nombre: inmueble.zona.nombre,
+          localidad_id: inmueble.zona.localidad_id
+        } : undefined,
+        barrio: inmueble.barrio ? {
+          id: inmueble.barrio.id,
+          nombre: inmueble.barrio.nombre,
+          localidad_id: inmueble.barrio.localidad_id
+        } : undefined,
+        imagenes: inmueble.imagenes?.map((img: any) => ({
+          id: img.id,
+          inmueble_id: img.inmueble_id,
+          imagen: img.imagen || undefined,
+          es_principal: img.es_principal || undefined,
+        })) || [],
+        agenteAsignado: persona ? {
+          id: agenteAsignado.agente_id,
+          nombre: persona.nombre,
+          apellido: persona.apellido,
+        } : undefined,
+      };
+    });
+
+    return jsonSuccess({ data: inmuebles, totalPages, totalCount });
   } catch (error) {
     console.error("Error al obtener mis propiedades:", error);
     return jsonError("Error interno del servidor", 500);

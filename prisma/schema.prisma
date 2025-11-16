@@ -9,17 +9,17 @@ datasource db {
 
 model inmueble {
   id                 String             @id @default(uuid()) @db.Uuid
-  categoria_id       String             @map("categoryId") @db.Uuid
-  localidad_id       String             @map("localidadId") @db.Uuid
-  zona_id            String             @map("zonaId") @db.Uuid
-  barrio_id          String             @map("barrioId") @db.Uuid
-  direccion          String             @map("address")
-  dormitorios        String             @map("numBedrooms")
-  banos              String             @map("numBathrooms")
-  superficie         String             @map("surface")
-  cochera            Boolean            @map("garage")
-  eliminado          Boolean            @default(false) @map("deleted")
-  estado_id          String             @map("statusId") @db.Uuid
+  categoria_id       String             @db.Uuid
+  localidad_id       String             @db.Uuid
+  zona_id            String             @db.Uuid
+  barrio_id          String             @db.Uuid
+  direccion          String
+  dormitorios        String
+  banos              String
+  superficie         String
+  cochera            Boolean
+  eliminado          Boolean            @default(false)
+  estado_id          String             @db.Uuid
   agentes            agente_inmueble[]
   consultas_clientes consulta_cliente[]
   imagenes           imagen_inmueble[]
@@ -119,10 +119,10 @@ model usuario {
 model empleado {
   id                 String             @id @default(uuid()) @db.Uuid
   cuit               String             @unique
-  fecha_ingreso      DateTime           @map("hireDate") @db.Date
-  fecha_egreso       DateTime?          @map("terminationDate") @db.Date
-  tipo_id            String             @map("typeId") @db.Text
-  eliminado          Boolean            @map("deleted")
+  fecha_ingreso      DateTime           @db.Date
+  fecha_egreso       DateTime?          @db.Date
+  tipo_id            String             @db.Text
+  eliminado          Boolean
   inmuebles_agente   agente_inmueble[]
   consultas_clientes consulta_cliente[]
   tipo               tipo_empleado      @relation(fields: [tipo_id], references: [id])
@@ -134,7 +134,7 @@ model empleado {
 
 model tipo_empleado {
   id        String     @id @default(uuid()) @db.Text
-  tipo      String     @unique @map("type")
+  tipo      String     @unique
   empleados empleado[]
 
   @@map("tipos_empleados")
@@ -142,10 +142,10 @@ model tipo_empleado {
 
 model persona_empleado {
   id          String   @id @default(uuid()) @db.Uuid
-  persona_id  String   @map("personId") @db.Uuid
-  empleado_id String   @map("employeeId") @db.Uuid
-  creado_en   DateTime @default(now()) @map("createdAt") @db.Timestamp(6)
-  eliminado   Boolean  @default(false) @map("deleted")
+  persona_id  String   @db.Uuid
+  empleado_id String   @db.Uuid
+  creado_en   DateTime @default(now()) @db.Timestamp(6)
+  eliminado   Boolean  @default(false)
   empleado    empleado @relation(fields: [empleado_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   persona     persona  @relation(fields: [persona_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -179,9 +179,9 @@ model categoria_inmueble {
 
 model imagen_inmueble {
   id           String   @id @default(uuid()) @db.Uuid
-  inmueble_id  String   @map("inmuebleId") @db.Uuid
-  imagen       String?  @map("imagePath")
-  es_principal Boolean? @default(false) @map("isPrincipal")
+  inmueble_id  String   @db.Uuid
+  imagen       String?
+  es_principal Boolean? @default(false)
   inmueble     inmueble @relation(fields: [inmueble_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([inmueble_id])
@@ -243,9 +243,9 @@ model verificationtoken {
 
 model agente_inmueble {
   id          String   @id @default(uuid()) @db.Uuid
-  inmueble_id String   @map("inmuebleId") @db.Uuid
-  agente_id   String   @map("agentId") @db.Uuid
-  eliminado   Boolean? @default(false) @map("deleted")
+  inmueble_id String   @db.Uuid
+  agente_id   String   @db.Uuid
+  eliminado   Boolean? @default(false)
   empleado    empleado @relation(fields: [agente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   inmueble    inmueble @relation(fields: [inmueble_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -256,14 +256,14 @@ model agente_inmueble {
 
 model consulta_cliente {
   id          String   @id @default(uuid()) @db.Uuid
-  agente_id   String   @map("agentId") @db.Uuid
-  nombre      String   @map("firstName")
-  apellido    String   @map("lastName")
-  telefono    String   @map("phone")
-  correo      String   @map("email")
-  fecha       DateTime @map("date") @db.Timestamp(6)
-  descripcion String?  @map("description")
-  inmueble_id String   @map("inmuebleId") @db.Uuid
+  agente_id   String   @db.Uuid
+  nombre      String
+  apellido    String
+  telefono    String
+  correo      String
+  fecha       DateTime @db.Timestamp(6)
+  descripcion String?
+  inmueble_id String   @db.Uuid
   empleado    empleado @relation(fields: [agente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   inmueble    inmueble @relation(fields: [inmueble_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -274,8 +274,8 @@ model consulta_cliente {
 
 model imagen_persona {
   id         String  @id @default(uuid()) @db.Uuid
-  persona_id String  @map("personId") @db.Uuid
-  imagen     String? @map("imagePath")
+  persona_id String  @db.Uuid
+  imagen     String?
   persona    persona @relation(fields: [persona_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([persona_id])

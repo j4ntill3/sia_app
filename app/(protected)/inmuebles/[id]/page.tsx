@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getSession } from "@/actions/auth-actions";
 import InmuebleForm from "@/components/InmuebleForm";
 import ConsultaForm from "@/components/ConsultaForm";
+import AsignarAgente from "@/components/AsignarAgente";
 
 const InmuebleEdit = () => {
   const params = useParams();
@@ -15,6 +16,7 @@ const InmuebleEdit = () => {
   const [saving, setSaving] = useState(false);
   const [session, setSession] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAssignedAgent, setIsAssignedAgent] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -27,7 +29,8 @@ const InmuebleEdit = () => {
           return;
         }
         setSession(sessionData);
-        setIsAdmin(sessionData.user?.role === "administrador");
+        const isAdminUser = sessionData.user?.role === "administrador";
+        setIsAdmin(isAdminUser);
 
         // Cargar inmueble
         if (!id) return;
@@ -35,6 +38,13 @@ const InmuebleEdit = () => {
         if (!res.ok) throw new Error("No se encontró el inmueble");
         const data = await res.json();
         setInmueble(data);
+
+        // Verificar si el agente está asignado a este inmueble
+        if (sessionData.user?.role === "agente" && sessionData.user?.empleadoId) {
+          const esAsignado = data.agenteAsignado?.id === sessionData.user.empleadoId;
+          setIsAssignedAgent(esAsignado);
+        }
+
         setLoading(false);
       } catch (err) {
         setError("Error al cargar el inmueble");
@@ -43,6 +53,24 @@ const InmuebleEdit = () => {
     };
     init();
   }, [id]);
+
+  const recargarInmueble = async () => {
+    try {
+      const res = await fetch(`/api/inmuebles/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setInmueble(data);
+
+        // Actualizar estado de agente asignado si el usuario es agente
+        if (session?.user?.role === "agente" && session?.user?.empleadoId) {
+          const esAsignado = data.agenteAsignado?.id === session.user.empleadoId;
+          setIsAssignedAgent(esAsignado);
+        }
+      }
+    } catch (err) {
+      console.error("Error al recargar inmueble:", err);
+    }
+  };
 
   if (loading) return <div className="p-8 text-center">Cargando...</div>;
   if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
@@ -80,10 +108,32 @@ const InmuebleEdit = () => {
         } : () => {}}
       />
 
-      {/* Formulario de consulta - visible para todos los usuarios autenticados */}
-      <div className="w-full max-w-4xl">
-        <ConsultaForm inmuebleId={id} />
-      </div>
+      {/* Componente de asignación de agente - solo visible para administradores */}
+      {isAdmin && (
+        <div className="w-full max-w-4xl">
+          <AsignarAgente
+            inmuebleId={id}
+            agenteActual={inmueble.agenteAsignado}
+            onAsignacionExitosa={recargarInmueble}
+          />
+        </div>
+      )}
+
+      {/* Formulario de consulta - solo visible para administradores o agentes asignados */}
+      {(isAdmin || isAssignedAgent) && (
+        <div className="w-full max-w-4xl">
+          <ConsultaForm inmuebleId={id} />
+        </div>
+      )}
+
+      {/* Mensaje para agentes no asignados */}
+      {session?.user?.role === "agente" && !isAssignedAgent && (
+        <div className="w-full max-w-4xl bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+          <p className="text-yellow-800 text-center">
+            Este inmueble no está asignado a tu cuenta. Solo puedes registrar consultas en inmuebles que te han sido asignados.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

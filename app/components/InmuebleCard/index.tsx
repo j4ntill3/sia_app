@@ -2,17 +2,20 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import type { Property as Inmueble } from "@/types/inmueble";
+import type { Inmueble } from "@/types/inmueble";
 
 interface InmuebleCardProps {
   inmueble: Inmueble;
+  isPublic?: boolean; // Nueva prop para determinar si es vista pública
 }
 
-const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble }) => {
+const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble, isPublic = false }) => {
   const router = useRouter();
 
   const handleViewMore = () => {
-    router.push(`/inmuebles/${inmueble.id}`); // Redirige a la página de detalles
+    // Usar ruta pública o privada según el contexto
+    const route = isPublic ? `/propiedades/${inmueble.id}` : `/inmuebles/${inmueble.id}`;
+    router.push(route);
   };
 
   // Obtener la imagen principal o la primera imagen disponible
@@ -57,6 +60,11 @@ const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble }) => {
       </p>
       <p className="text-[#083C2C] text-sm mb-2">
         <strong>Garaje:</strong> {inmueble.cochera ? "Sí" : "No"}
+      </p>
+      <p className="text-[#083C2C] text-sm mb-4">
+        <strong>Agente:</strong> {inmueble.agenteAsignado
+          ? `${inmueble.agenteAsignado.nombre} ${inmueble.agenteAsignado.apellido}`
+          : 'Sin asignar'}
       </p>
       <button
         onClick={handleViewMore}

@@ -90,8 +90,8 @@ const Clientes = () => {
     );
   }
 
-  const handleView = (id: number) => {
-    router.push(`/clientes/${id}`);
+  const handleView = (id: string) => {
+    router.push(`/consulta/${id}`);
   };
 
   if (isLoading) {
@@ -103,9 +103,9 @@ const Clientes = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
-      <div className="w-full max-w-4xl bg-white p-6 shadow-lg rounded-xl">
-        <h2 className="text-2xl font-semibold text-center mb-4">
+    <div className="min-h-[calc(100vh-80px-56px)] bg-gray-100 p-4">
+      <div className="w-full bg-white p-6 shadow-lg rounded-xl">
+        <h2 className="text-2xl font-semibold text-center mb-4 text-[#083C2C]">
           Lista de Consultas
         </h2>
         <div className="overflow-x-auto rounded-xl">
@@ -137,6 +137,9 @@ const Clientes = () => {
                     ID Agente
                   </th>
                 ) : null}
+                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody>

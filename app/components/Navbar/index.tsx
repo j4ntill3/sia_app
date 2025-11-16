@@ -75,7 +75,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center">
           <a
-            href="/"
+            href="/home"
             className="flex items-center text-white hover:opacity-80 transition-opacity duration-200"
           >
             <img
@@ -140,6 +140,17 @@ const Navbar = () => {
           {/* Menú de navegación */}
           <nav className="flex-1 px-6 py-4 overflow-y-auto">
             <div className="space-y-2">
+              {/* Botón Home - Disponible para todos */}
+              <Link href="/home" onClick={closeSidebar}>
+                <button className="mb-2 w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                  <Home
+                    size={20}
+                    className="mr-3 group-hover:scale-110 transition-transform duration-200"
+                  />
+                  <span className="font-medium">Inicio</span>
+                </button>
+              </Link>
+
               {/* Menú para AGENTE */}
               {session.user.role === "agente" && (
                 <>
@@ -205,12 +216,6 @@ const Navbar = () => {
                         <Link href="/misConsultasClientes" onClick={closeSidebar}>
                           <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
                             <span className="text-sm font-medium">Mis Consultas</span>
-                          </button>
-                        </Link>
-
-                        <Link href="/registrarConsultaCliente" onClick={closeSidebar}>
-                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                            <span className="text-sm font-medium">Registrar Nueva</span>
                           </button>
                         </Link>
                       </div>

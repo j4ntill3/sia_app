@@ -13,6 +13,7 @@ type FormData = {
   direccion: string;
   cuit: string;
   fechaNacimiento: string;
+  activo: boolean;
 };
 
 export default function EditarAgente({ params }: { params: Promise<{ id: string }> }) {
@@ -27,6 +28,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
     direccion: "",
     cuit: "",
     fechaNacimiento: "",
+    activo: true,
   });
 
   const [session, setSession] = useState<any>(null);
@@ -85,6 +87,10 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
       const data = await response.json();
       const { persona, empleado } = data.data;
 
+      // Activo si NO tiene fecha de egreso
+      const estaActivo = !empleado.fecha_egreso;
+      console.log("Estado del empleado - fecha_egreso:", empleado.fecha_egreso, "activo:", estaActivo);
+
       setPersonaId(persona.id);
       setFormData({
         nombre: persona.nombre || "",
@@ -97,6 +103,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
         fechaNacimiento: persona.fecha_nacimiento
           ? new Date(persona.fecha_nacimiento).toISOString().split('T')[0]
           : "",
+        activo: estaActivo,
       });
 
       if (persona.imagenes && persona.imagenes.length > 0) {
@@ -123,10 +130,11 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    const newValue = type === "checkbox" ? (e.target as HTMLInputElement).checked : value;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: newValue,
     }));
   };
 
@@ -149,6 +157,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
     const agenteData = {
       ...formData,
       DNI: formData.DNI,
+      activo: formData.activo, // Enviar el estado activo al backend
     };
 
     try {
@@ -451,6 +460,25 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                 {validationErrors.fechaNacimiento && (
                   <p className="text-red-500 text-xs mt-1">{validationErrors.fechaNacimiento[0]}</p>
                 )}
+              </div>
+
+              <div>
+                <label className="flex items-center space-x-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="activo"
+                    name="activo"
+                    checked={formData.activo}
+                    onChange={handleInputChange}
+                    className="w-5 h-5 text-[#6FC6D1] bg-gray-100 border-gray-300 rounded focus:ring-[#6FC6D1] focus:ring-2"
+                  />
+                  <span className="text-sm font-sans font-medium text-[#083C2C]">
+                    Agente Activo
+                  </span>
+                </label>
+                <p className="text-xs text-gray-500 mt-1 ml-8">
+                  {formData.activo ? "El agente está trabajando actualmente" : "El agente ya no trabaja (tiene fecha de egreso)"}
+                </p>
               </div>
 
               <div>

@@ -1,18 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { consultaClienteSchema } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { inmueble_id, nombre, apellido, telefono, correo, descripcion } = body;
 
-    // Validar campos requeridos
-    if (!inmueble_id || !nombre || !apellido || !telefono || !correo) {
+    // Validar datos con Zod
+    const validationResult = consultaClienteSchema.safeParse({
+      id_inmueble: body.inmueble_id,
+      nombre: body.nombre,
+      apellido: body.apellido,
+      telefono: body.telefono,
+      correo: body.correo,
+      descripcion: body.descripcion,
+    });
+
+    if (!validationResult.success) {
+      const errorMessages = validationResult.error.errors.map((err) => err.message).join(", ");
       return NextResponse.json(
-        { error: "Todos los campos son requeridos excepto la descripción" },
+        { error: errorMessages },
         { status: 400 }
       );
     }
+
+    const { id_inmueble: inmueble_id, nombre, apellido, telefono, correo, descripcion } = validationResult.data;
 
     // Verificar que el inmueble existe y no está eliminado
     const inmueble = await prisma.inmueble.findFirst({

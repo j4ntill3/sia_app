@@ -64,14 +64,14 @@ const config: any = {
     async jwt({ token, user }: any) {
       if (user) {
         token.role = user.role;
-        token.employeeId = user.employeeId;
+        token.empleadoId = user.empleadoId;
       }
       return token;
     },
     async session({ session, token }: any) {
       if (token) {
         session.user.role = token.role;
-        session.user.employeeId = token.employeeId;
+        session.user.empleadoId = token.empleadoId;
       }
       return session;
     },

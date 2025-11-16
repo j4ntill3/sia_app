@@ -18,16 +18,38 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [telefonoError, setTelefonoError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    // Validar teléfono en tiempo real
+    if (name === "telefono") {
+      if (value && !/^\d+$/.test(value)) {
+        setTelefonoError("El teléfono solo puede contener números");
+      } else if (value && value.length < 8) {
+        setTelefonoError("El teléfono debe tener al menos 8 dígitos");
+      } else if (value && value.length > 20) {
+        setTelefonoError("El teléfono no puede exceder 20 dígitos");
+      } else {
+        setTelefonoError(null);
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validar que no haya errores de teléfono antes de enviar
+    if (telefonoError) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -78,9 +100,6 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
           </svg>
           <h3 className="text-lg font-semibold">¡Consulta enviada exitosamente!</h3>
         </div>
-        <p className="mt-2 text-green-700">
-          Un agente se pondrá en contacto contigo pronto.
-        </p>
         <button
           onClick={() => setSuccess(false)}
           className="mt-4 text-sm text-green-800 underline hover:text-green-900"
@@ -109,7 +128,7 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
               value={formData.nombre}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] text-gray-900"
             />
           </div>
           <div>
@@ -123,7 +142,7 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
               value={formData.apellido}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] text-gray-900"
             />
           </div>
         </div>
@@ -140,8 +159,15 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
               value={formData.telefono}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-900 ${
+                telefonoError
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-[#6FC6D1]"
+              }`}
             />
+            {telefonoError && (
+              <p className="mt-1 text-sm text-red-600">{telefonoError}</p>
+            )}
           </div>
           <div>
             <label htmlFor="correo" className="block text-sm font-medium text-gray-700 mb-1">
@@ -154,7 +180,7 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
               value={formData.correo}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] text-gray-900"
             />
           </div>
         </div>
@@ -169,7 +195,7 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
             value={formData.descripcion}
             onChange={handleChange}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] text-gray-900"
             placeholder="Cuéntanos más sobre tu interés en esta propiedad..."
           />
         </div>

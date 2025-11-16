@@ -12,9 +12,15 @@ const inmuebleSchema = z.object({
   zona_id: z.string().min(1, "La zona es obligatoria"),
   barrio_id: z.string().min(1, "El barrio es obligatorio"),
   direccion: z.string().min(1, "La dirección es obligatoria"),
-  dormitorios: z.string().min(1, "El número de habitaciones es obligatorio"),
-  banos: z.string().min(1, "El número de baños es obligatorio"),
-  superficie: z.string().min(1, "La superficie es obligatoria"),
+  dormitorios: z.string()
+    .min(1, "El número de habitaciones es obligatorio")
+    .regex(/^\d+$/, "El número de habitaciones debe ser un número entero"),
+  banos: z.string()
+    .min(1, "El número de baños es obligatorio")
+    .regex(/^\d+$/, "El número de baños debe ser un número entero"),
+  superficie: z.string()
+    .min(1, "La superficie es obligatoria")
+    .regex(/^\d+(\.\d+)?$/, "La superficie debe ser un número válido (puede incluir decimales)"),
   cochera: z.boolean().optional(),
   estado_id: z.string().min(1, "El estado es obligatorio"),
   imagenes: z.array(z.string()).optional(),
@@ -22,7 +28,7 @@ const inmuebleSchema = z.object({
 
 interface InmuebleFormProps {
   mode: "create" | "edit" | "view";
-  initialData?: InmuebleCreate;
+  initialData?: InmuebleCreate & { agenteAsignado?: { id: string; nombre: string; apellido: string } };
   onSubmit: (data: InmuebleCreate) => void;
   loading?: boolean;
   readOnly?: boolean;
@@ -319,6 +325,21 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                 </select>
                 {formErrors.estado_id && <p className="text-red-500 text-xs mt-1">{formErrors.estado_id}</p>}
               </div>
+              {(mode === "edit" || mode === "view") && (
+                <div>
+                  <label htmlFor="agente" className="block text-sm font-sans font-medium text-[#083C2C]">Agente Asignado</label>
+                  <input
+                    type="text"
+                    id="agente"
+                    name="agente"
+                    value={initialData?.agenteAsignado
+                      ? `${initialData.agenteAsignado.nombre} ${initialData.agenteAsignado.apellido}`
+                      : 'Sin asignar'}
+                    disabled
+                    className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 opacity-60 cursor-not-allowed"
+                  />
+                </div>
+              )}
               <div>
                 <label htmlFor="localidad_id" className="block text-sm font-sans font-medium text-[#083C2C]">Localidad</label>
                 <select

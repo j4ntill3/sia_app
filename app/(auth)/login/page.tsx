@@ -40,7 +40,7 @@ export default function Login() {
         email: email,
         password: password,
         redirect: false,
-        callbackUrl: "/",
+        callbackUrl: "/home",
       });
       if (result?.error) {
         // Si el error es 'CredentialsSignin', mostrar mensaje personalizado
@@ -54,7 +54,7 @@ export default function Login() {
         setSuccessMessage("¡Acceso exitoso!");
         console.log("Login exitoso con:", { email, password });
         if (isMounted) {
-          window.location.href = "/";
+          window.location.href = "/home";
         }
       }
     } catch (error: any) {

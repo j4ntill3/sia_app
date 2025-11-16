@@ -28,7 +28,7 @@ export async function PUT(
     // Verificamos si ya existe un agente asignado al inmueble
     const existingAgent = await prisma.agente_inmueble.findFirst({
       where: {
-        inmuebleId: id,
+        inmueble_id: id,
         eliminado: false,
       },
     });
@@ -43,8 +43,8 @@ export async function PUT(
     // Insertamos el nuevo registro de agente
     const newPropertyAgent = await prisma.agente_inmueble.create({
       data: {
-        inmuebleId: id,
-        agentId: agentId,
+        inmueble_id: id,
+        agente_id: agentId,
         eliminado: false,
       },
     });
@@ -53,8 +53,8 @@ export async function PUT(
       message: "Agente asignado correctamente",
       data: {
         id: newPropertyAgent.id,
-        inmuebleId: newPropertyAgent.inmuebleId,
-        agentId: newPropertyAgent.agentId,
+        inmueble_id: newPropertyAgent.inmueble_id,
+        agente_id: newPropertyAgent.agente_id,
         eliminado: newPropertyAgent.eliminado,
       },
     });

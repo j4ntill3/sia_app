@@ -20,7 +20,7 @@ const InmuebleSearch: React.FC<InmuebleSearchProps> = ({ onSearch }) => {
         value={query}
         onChange={handleInputChange}
         placeholder="Buscar inmuebles por título, barrio, dirección..."
-        className="flex-1 px-4 py-2 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
+        className="flex-1 px-4 py-2 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] text-[#083C2C]"
       />
       <span className="px-4 py-2 bg-[#6FC6D1] text-white rounded-r-full font-semibold">
         🔍

@@ -2,13 +2,22 @@
 
 import { useRouter } from "next/navigation";
 import React from "react";
-import { Persona } from "@/types/persona";
-import { Employee } from "@/types/empleado";
+import { Empleado } from "@/types/empleado";
 
 interface AgenteItemProps {
   agente: {
-    empleado: Employee;
-    persona: Persona;
+    empleado: Empleado & { imagenes?: any[] };
+    persona: {
+      id: string;
+      nombre: string;
+      apellido: string;
+      correo: string;
+      telefono?: string;
+      direccion?: string;
+      dni?: number;
+      eliminado: boolean;
+      imagenes?: any[];
+    };
   };
 }
 
@@ -16,30 +25,30 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
   const { empleado, persona } = agente;
   const router = useRouter();
 
-  const profileImage = (persona as any).imagenes?.[0]?.imagen || "/img/no-image.webp";
+  const profileImage = persona.imagenes?.[0]?.imagen || "/img/no-image.webp";
 
   return (
     <tr className="border-b font-sans hover:bg-gray-50">
       <td className="px-4 py-2">
         <img
           src={profileImage}
-          alt={`${persona.firstName} ${persona.lastName}`}
+          alt={`${persona.nombre} ${persona.apellido}`}
           className="w-10 h-10 rounded-full object-cover border-2 border-gray-300"
         />
       </td>
       <td className="px-4 py-2 text-gray-900">{empleado.id}</td>
       <td className="px-4 py-2 text-gray-900">
-        {persona.firstName} {persona.lastName}
+        {persona.nombre} {persona.apellido}
       </td>
       <td className="px-4 py-2 text-gray-900">{empleado.cuit}</td>
       <td className="px-4 py-2 text-gray-900">
-        {empleado.hireDate
-          ? new Date(empleado.hireDate).toLocaleDateString("es-AR")
+        {empleado.fecha_ingreso
+          ? new Date(empleado.fecha_ingreso).toLocaleDateString("es-AR")
           : ""}
       </td>
       <td className="px-4 py-2 text-gray-900">
-        {empleado.terminationDate
-          ? new Date(empleado.terminationDate).toLocaleDateString("es-AR")
+        {empleado.fecha_egreso
+          ? new Date(empleado.fecha_egreso).toLocaleDateString("es-AR")
           : "-"}
       </td>
       <td className="px-4 py-2 text-gray-900">
@@ -48,12 +57,12 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
       <td className="px-4 py-2">
         <span
           className={`px-2 py-1 text-sm rounded-full ${
-            empleado.deleted
+            empleado.fecha_egreso
               ? "bg-red-100 text-red-600"
               : "bg-green-100 text-green-600"
           }`}
         >
-          {empleado.deleted ? "Eliminado" : "Activo"}
+          {empleado.fecha_egreso ? "Inactivo" : "Activo"}
         </span>
       </td>
       <td className="px-4 py-2 text-center">

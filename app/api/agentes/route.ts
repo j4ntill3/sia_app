@@ -8,13 +8,18 @@ import type { persona as Person } from "@prisma/client";
 
 // GET: Listar agentes
 export async function GET(request: NextRequest) {
+  console.log("=".repeat(50));
+  console.log("GET /api/agentes - LISTANDO TODOS LOS AGENTES");
+  console.log("=".repeat(50));
+
   try {
     const agentes = await prisma.empleado.findMany({
       where: {
         tipo: {
           tipo: "agente"
         },
-        eliminado: false,
+        eliminado: false, // Solo mostrar agentes no eliminados (soft delete)
+        // NO filtrar por fecha_egreso - mostrar tanto activos como inactivos
       },
       include: {
         personas_empleado: {
@@ -35,6 +40,12 @@ export async function GET(request: NextRequest) {
         persona: personaDb || undefined,
       };
     });
+
+    console.log("Total agentes encontrados:", agentesConPersona.length);
+    agentesConPersona.forEach(a => {
+      console.log(`Agente ${a.empleado.id}: eliminado=${a.empleado.eliminado}, fecha_egreso=${a.empleado.fecha_egreso}`);
+    });
+
     return NextResponse.json({ data: agentesConPersona });
   } catch (error) {
     console.error("Error al obtener agentes:", error);

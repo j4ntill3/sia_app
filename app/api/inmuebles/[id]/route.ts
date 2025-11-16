@@ -23,8 +23,27 @@ export async function GET(
       include: {
         estado: true,
         categoria: true,
+        localidad: true,
+        zona: true,
+        barrio: true,
         imagenes: {
           orderBy: { id: "desc" },
+        },
+        agentes: {
+          where: {
+            eliminado: false,
+          },
+          include: {
+            empleado: {
+              include: {
+                personas_empleado: {
+                  include: {
+                    persona: true,
+                  },
+                },
+              },
+            },
+          },
         },
       },
     });
@@ -33,6 +52,10 @@ export async function GET(
       console.log("Inmueble no encontrado para id:", id);
       return NextResponse.json({ error: "Inmueble no encontrado" }, { status: 404 });
     }
+    // Obtener agente asignado
+    const agenteAsignado = inmuebleDb.agentes?.[0];
+    const persona = agenteAsignado?.empleado?.personas_empleado?.[0]?.persona;
+
     // Mapear a tipo Inmueble
     const inmueble: Inmueble = {
       id: inmuebleDb.id,
@@ -56,6 +79,20 @@ export async function GET(
         id: inmuebleDb.estado.id,
         estado: inmuebleDb.estado.estado,
       } : undefined,
+      localidad: inmuebleDb.localidad ? {
+        id: inmuebleDb.localidad.id,
+        nombre: inmuebleDb.localidad.nombre,
+      } : undefined,
+      zona: inmuebleDb.zona ? {
+        id: inmuebleDb.zona.id,
+        nombre: inmuebleDb.zona.nombre,
+        localidad_id: inmuebleDb.zona.localidad_id,
+      } : undefined,
+      barrio: inmuebleDb.barrio ? {
+        id: inmuebleDb.barrio.id,
+        nombre: inmuebleDb.barrio.nombre,
+        localidad_id: inmuebleDb.barrio.localidad_id,
+      } : undefined,
       imagenes: inmuebleDb.imagenes?.map((img: any) => ({
         id: img.id,
         inmueble_id: img.inmueble_id,
@@ -63,7 +100,18 @@ export async function GET(
         es_principal: img.es_principal || false,
       })) || [],
     };
-    return NextResponse.json(inmueble);
+
+    // Incluir agente asignado en la respuesta
+    const response = {
+      ...inmueble,
+      agenteAsignado: persona ? {
+        id: agenteAsignado.agente_id,
+        nombre: persona.nombre,
+        apellido: persona.apellido,
+      } : undefined,
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Error al obtener propiedad:", error);
   return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
