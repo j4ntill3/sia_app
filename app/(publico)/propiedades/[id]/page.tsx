@@ -37,6 +37,7 @@ const PropiedadDetalle = () => {
   const [inmueble, setInmueble] = useState<Inmueble | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchInmueble = async () => {
@@ -54,6 +55,25 @@ const PropiedadDetalle = () => {
     };
     fetchInmueble();
   }, [id]);
+
+  // Cerrar modal con tecla Escape
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowModal(false);
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [showModal]);
 
   if (loading) {
     return (
@@ -97,7 +117,7 @@ const PropiedadDetalle = () => {
     <div className="min-h-screen bg-gray-50 pb-12">
       {/* Header con título */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="w-full px-6 py-6">
           <div className="flex items-center gap-3 mb-2">
             <Building2 className="w-8 h-8 text-[#6FC6D1]" />
             <h1 className="text-3xl md:text-4xl font-bold text-[#083C2C]">
@@ -113,47 +133,37 @@ const PropiedadDetalle = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Columna principal - Imágenes y descripción */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Carrusel de imágenes */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <ImageCarousel images={imagenes} />
-            </div>
-
-            {/* Estado */}
-            {inmueble.estado && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-[#083C2C] mb-3">Estado</h2>
-                <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-                  inmueble.estado.estado.toLowerCase() === "disponible"
-                    ? "bg-green-100 text-green-800"
-                    : inmueble.estado.estado.toLowerCase() === "vendido"
-                    ? "bg-red-100 text-red-800"
-                    : "bg-yellow-100 text-yellow-800"
-                }`}>
-                  {inmueble.estado.estado.toLowerCase() === "disponible" ? (
-                    <CheckCircle className="w-4 h-4" />
-                  ) : (
-                    <XCircle className="w-4 h-4" />
-                  )}
-                  {inmueble.estado.estado}
-                </span>
-              </div>
-            )}
-
-            {/* Descripción */}
-            {inmueble.descripcion && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-[#083C2C] mb-3">Descripción</h2>
-                <p className="text-gray-600 leading-relaxed">{inmueble.descripcion}</p>
-              </div>
-            )}
+      <div className="w-full px-6 py-8">
+        <div className="space-y-6">
+          {/* Carrusel de imágenes */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <ImageCarousel images={imagenes} />
           </div>
 
-          {/* Sidebar - Características */}
-          <div className="space-y-6">
+          {/* Estado */}
+          {inmueble.estado && (
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-[#083C2C] mb-3">Estado</h2>
+              <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+                inmueble.estado.estado.toLowerCase() === "disponible"
+                  ? "bg-green-100 text-green-800"
+                  : inmueble.estado.estado.toLowerCase() === "vendido"
+                  ? "bg-red-100 text-red-800"
+                  : "bg-yellow-100 text-yellow-800"
+              }`}>
+                {inmueble.estado.estado.toLowerCase() === "disponible" ? (
+                  <CheckCircle className="w-4 h-4" />
+                ) : (
+                  <XCircle className="w-4 h-4" />
+                )}
+                {inmueble.estado.estado}
+              </span>
+            </div>
+          )}
+
+          {/* Características y Ubicación lado a lado */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Características */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-semibold text-[#083C2C] mb-4">Características</h2>
               <div className="space-y-4">
@@ -242,21 +252,61 @@ const PropiedadDetalle = () => {
               </div>
             </div>
           </div>
+
+          {/* Descripción */}
+          {inmueble.descripcion && (
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-[#083C2C] mb-3">Descripción</h2>
+              <p className="text-gray-600 leading-relaxed">{inmueble.descripcion}</p>
+            </div>
+          )}
         </div>
 
-        {/* Formulario de consulta */}
-        <div className="mt-12 max-w-3xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <h2 className="text-2xl font-bold text-[#083C2C] mb-2 text-center">
-              ¿Te interesa esta propiedad?
-            </h2>
-            <p className="text-gray-600 text-center mb-6">
-              Completa el formulario y uno de nuestros agentes se contactará contigo a la brevedad
-            </p>
-            <ConsultaForm inmuebleId={id} />
+      </div>
+
+      {/* Botón flotante para consultar */}
+      <button
+        onClick={() => setShowModal(true)}
+        className="fixed bottom-8 right-8 bg-[#6FC6D1] hover:bg-[#5ab5c1] text-white px-6 py-4 rounded-full shadow-lg transition-all duration-300 flex items-center gap-3 font-semibold hover:scale-105 z-40"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        Consultar por esta propiedad
+      </button>
+
+      {/* Modal del formulario */}
+      {showModal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-[#083C2C]">
+                ¿Te interesa esta propiedad?
+              </h2>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="px-6 py-6">
+              <p className="text-gray-600 mb-6 text-center">
+                Completa el formulario y uno de nuestros agentes se contactará contigo a la brevedad
+              </p>
+              <ConsultaForm inmuebleId={id} onSuccess={() => setShowModal(false)} hideTitle={true} />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

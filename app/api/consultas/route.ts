@@ -62,18 +62,11 @@ export async function POST(request: NextRequest) {
       agente_id = primerAgente?.id;
     }
 
-    if (!agente_id) {
-      return NextResponse.json(
-        { error: "No hay agentes disponibles para procesar la consulta" },
-        { status: 500 }
-      );
-    }
-
-    // Crear la consulta
+    // Crear la consulta (agente_id puede ser null si no hay agentes disponibles)
     const nuevaConsulta = await prisma.consulta_cliente.create({
       data: {
         inmueble_id,
-        agente_id,
+        agente_id: agente_id || null,
         nombre,
         apellido,
         telefono,

@@ -1,0 +1,2576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Fichas de Casos de Uso - SIA App (Versión Imprimible)</title>
+    <style>
+        /* Estilos para visualización en pantalla */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.4;
+        }
+
+        .caso-uso {
+            border: 2px solid #333;
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+            page-break-inside: avoid;
+        }
+
+        .caso-uso h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .campo {
+            margin: 8px 0;
+        }
+
+        .campo-titulo {
+            font-weight: bold;
+            color: #34495e;
+            font-size: 12px;
+        }
+
+        .campo-contenido {
+            margin-left: 20px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        hr {
+            border: 1px solid #ccc;
+            margin: 30px 0;
+        }
+
+        .indice {
+            background-color: #e8f4f8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .indice ul {
+            list-style-type: none;
+        }
+
+        .indice li {
+            margin: 5px 0;
+        }
+
+        .portada {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        /* Estilos específicos para impresión */
+        @media print {
+            /* Configuración de página - Sin encabezados ni pies de página */
+            @page {
+                size: A4;
+                margin: 1.5cm 1.5cm 1.5cm 1.5cm;
+            }
+
+            /* Eliminar URL y otros elementos del navegador */
+            @page {
+                margin-top: 1.5cm;
+                margin-bottom: 1.5cm;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                font-size: 11pt;
+                line-height: 1.3;
+            }
+
+            /* Portada e índice en página separada */
+            .portada {
+                page-break-after: always;
+            }
+
+            .indice {
+                page-break-after: always;
+            }
+
+            /* Ocultar elementos decorativos */
+            hr {
+                display: none;
+            }
+
+            /* Cada caso de uso en su propia página */
+            .caso-uso {
+                page-break-before: always;
+                page-break-after: always;
+                page-break-inside: avoid;
+                border: 2px solid #000;
+                padding: 10px;
+                margin: 0;
+                background-color: white;
+            }
+
+            /* Títulos de sección deben aparecer con el primer caso de uso */
+            h2 {
+                page-break-before: always;
+                page-break-after: avoid;
+                margin-top: 0;
+                margin-bottom: 10px;
+            }
+
+            /* El primer caso de uso después de un título h2 NO debe tener page-break-before */
+            h2 + .caso-uso {
+                page-break-before: avoid;
+            }
+
+            /* El primer caso de uso del documento no necesita page-break-before */
+            .caso-uso:first-of-type {
+                page-break-before: auto;
+            }
+
+            .caso-uso h3 {
+                font-size: 14pt;
+                margin-top: 0;
+                margin-bottom: 10px;
+                color: #000;
+            }
+
+            .campo {
+                margin: 6px 0;
+                page-break-inside: avoid;
+            }
+
+            .campo-titulo {
+                font-size: 10pt;
+                font-weight: bold;
+                color: #000;
+            }
+
+            .campo-contenido {
+                font-size: 9pt;
+                margin-left: 15px;
+                line-height: 1.4;
+            }
+
+
+            /* Mejorar legibilidad en impresión */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="portada">
+        <h1>Fichas de Casos de Uso - SIA APP</h1>
+    </div>
+
+    <div class="indice">
+        <h2>Índice de Casos de Uso</h2>
+        <ul>
+            <li><strong>1. Cliente Público:</strong> CU-PUB-01 a CU-PUB-04 (4 casos)</li>
+            <li><strong>2. Autenticación:</strong> CU-AUTH-01 a CU-AUTH-03 (3 casos)</li>
+            <li><strong>3. Agente Inmobiliario:</strong> CU-AGE-01 a CU-AGE-06 (6 casos)</li>
+            <li><strong>4. Admin - Inmuebles:</strong> CU-ADM-INM-01 a CU-ADM-INM-07 (7 casos)</li>
+            <li><strong>5. Admin - Imágenes:</strong> CU-ADM-IMG-01 a CU-ADM-IMG-02 (2 casos)</li>
+            <li><strong>6. Admin - Asignación de Agentes:</strong> CU-ADM-ASG-01 a CU-ADM-ASG-02 (2 casos)</li>
+            <li><strong>7. Admin - Agentes:</strong> CU-ADM-AGT-01 a CU-ADM-AGT-07 (7 casos)</li>
+            <li><strong>8. Admin - Consultas de Clientes:</strong> CU-ADM-CNS-01 a CU-ADM-CNS-04 (4 casos)</li>
+            <li><strong>9. Admin - Datos de Ubicación:</strong>
+                <ul style="list-style-type: circle; margin-left: 20px;">
+                    <li>CU-ADM-RUB: Gestionar Categorías (Rubros)</li>
+                    <li>CU-ADM-EST: Gestionar Estados de Inmuebles</li>
+                    <li>CU-ADM-LOC: Gestionar Localidades</li>
+                    <li>CU-ADM-ZON: Gestionar Zonas</li>
+                    <li>CU-ADM-BAR: Gestionar Barrios</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>Total: 40 casos de uso documentados</strong></p>
+    </div>
+
+    <hr>
+    <h2>1. Casos de Uso - Cliente Público</h2>
+
+    <div class="caso-uso">
+        <h3>CU-PUB-01: Ver Catálogo de Inmuebles</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Cliente Público</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El cliente público navega por el catálogo de propiedades disponibles,
+                pudiendo buscar y filtrar según sus preferencias.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El usuario ingresa a la sección "Propiedades" desde el menú principal.<br>
+                2. El sistema muestra una galería de inmuebles, donde cada tarjeta contiene:<br>
+                   - Imagen principal de la propiedad<br>
+                   - Dirección<br>
+                   - Categoría (casa, departamento, etc.)<br>
+                   - Estado (disponible, vendido, etc.)<br>
+                   - Características principales<br>
+                3. El usuario puede escribir en la barra de búsqueda para filtrar por dirección o características.<br>
+                4. Los resultados se actualizan automáticamente mientras el usuario escribe en el buscador.<br>
+                5. El usuario puede navegar entre páginas usando los botones de paginación.<br>
+                6. El usuario hace clic en "Ver Más" de cualquier propiedad para acceder a información completa.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay propiedades disponibles, aparece el mensaje: "No hay propiedades disponibles en este momento".<br>
+                - Si la búsqueda no encuentra resultados, aparece: "No se encontraron propiedades con ese criterio".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El usuario visualiza las propiedades que coinciden con sus criterios de búsqueda.<br>
+                - El usuario puede navegar a la información detallada de cualquier propiedad.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-PUB-02: Ver Detalle de Inmueble</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Cliente Público</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El cliente visualiza toda la información de una propiedad específica, incluyendo
+                galería de fotos, características completas y opción para realizar consultas.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El usuario hace clic en "Ver Más" de una propiedad desde el catálogo.<br>
+                2. La pantalla muestra:<br>
+                   - Un carrusel de imágenes que el usuario puede navegar con flechas<br>
+                   - Información principal: dirección completa, categoría, estado<br>
+                   - Ubicación: localidad, zona, barrio<br>
+                   - Características: superficie, dormitorios, baños, cocheras, etc.<br>
+                   - Descripción completa de la propiedad<br>
+                   - Botón "Consultar sobre esta propiedad"<br>
+                3. El usuario puede navegar por todas las fotos de la propiedad usando las flechas del carrusel.<br>
+                4. El usuario puede hacer clic en "Consultar sobre esta propiedad" para abrir el formulario de contacto.<br>
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si la propiedad no tiene imágenes, se muestra una imagen placeholder.<br>
+                - Si falta información, los campos vacíos no se muestran.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El usuario visualiza toda la información detallada de la propiedad.<br>
+                - El usuario puede proceder a realizar una consulta o volver al catálogo.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-PUB-03: Registrar Consulta sobre Inmueble</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Cliente Público</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El cliente completa un formulario de consulta sobre una propiedad específica
+                sin necesidad de registrarse o iniciar sesión.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El usuario hace clic en "Consultar sobre esta propiedad" desde la vista detallada.<br>
+                2. Se muestra un formulario con los siguientes campos:<br>
+                   - Nombre completo (campo de texto)<br>
+                   - Email (campo de email)<br>
+                   - Teléfono (campo numérico)<br>
+                   - Mensaje/Consulta (área de texto grande)<br>
+                3. El usuario completa todos los campos del formulario.<br>
+                4. El usuario hace clic en el botón "Enviar Consulta".<br>
+                5. Aparece el mensaje: "Su consulta ha sido enviada exitosamente. Un agente se pondrá en contacto pronto".<br>
+                6. El formulario se limpia automáticamente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el usuario deja campos obligatorios vacíos, aparece: "Por favor complete todos los campos".<br>
+                - Si el email no tiene formato válido, aparece: "Por favor ingrese un email válido".<br>
+                - Si hay error al enviar, aparece: "Error al enviar la consulta. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - La consulta queda registrada en el sistema.<br>
+                - El cliente recibe confirmación visual de que su consulta fue recibida.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-PUB-04: Buscar y Filtrar Inmuebles</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Cliente Público</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El cliente utiliza filtros y búsqueda para encontrar propiedades específicas
+                que cumplan con sus criterios de selección.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El usuario ingresa a la sección "Propiedades".<br>
+                2. En la parte superior se muestra una barra de búsqueda y varios filtros:<br>
+                   - Barra de búsqueda (texto libre)<br>
+                   - Filtro por categoría (casa, departamento, terreno, etc.)<br>
+                   - Filtro por localidad<br>
+                   - Filtro por zona<br>
+                   - Filtro por barrio<br>
+                   - Filtro por estado (disponible, vendido, alquilado)<br>
+                3. El usuario escribe en la barra de búsqueda (busca por dirección o descripción).<br>
+                4. Los resultados mostrados corresponden a todas las propiedades que cumplen con los criterios seleccionados.<br>
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay resultados que coincidan con los criterios, aparece: "No se encontraron propiedades con esos criterios".<br>
+                - Si el usuario limpia los filtros, se muestran todas las propiedades disponibles nuevamente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El usuario visualiza solo las propiedades que cumplen con sus criterios de búsqueda.<br>
+                - Los filtros permanecen activos hasta que el usuario los modifique o los limpie.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <h2>2. Casos de Uso - Autenticación</h2>
+
+    <div class="caso-uso">
+        <h3>CU-AUTH-01: Iniciar Sesión</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Agente Inmobiliario, Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                Los usuarios autenticados (agentes y administradores) acceden al sistema
+                ingresando sus credenciales.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El usuario accede a la página de inicio de sesión.<br>
+                2. Se muestra un formulario con:<br>
+                   - Campo "Email"<br>
+                   - Campo "Contraseña" (con caracteres ocultos)<br>
+                   - Botón "Iniciar Sesión"<br>
+                3. El usuario ingresa su email y contraseña.<br>
+                4. El usuario hace clic en "Iniciar Sesión".<br>
+                5. Si las credenciales son correctas, el usuario es redirigido a la seccion de "Home"<br>
+                6. El menú de navegación se actualiza mostrando las opciones según el rol del usuario.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el email o contraseña son incorrectos, aparece: "Datos incorrectos. Verifica tu email y contraseña".<br>
+                - Si hay campos vacíos, aparece: "Por favor complete todos los campos".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El usuario queda autenticado en el sistema.<br>
+                - Se crea una sesión que permite acceder a las funcionalidades según su rol.<br>
+                - El menú muestra las opciones disponibles para ese rol.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-AUTH-02: Cerrar Sesión</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Agente Inmobiliario, Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El usuario cierra su sesión en el sistema de forma segura.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El usuario hace clic en el botón "Cerrar Sesión" ubicado en el menú de navegación.<br>
+                2. La sesión se cierra inmediatamente.<br>
+                3. El usuario es redirigido a la página de inicio de sesión.<br>
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Ninguno (la acción siempre finaliza la sesión).
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - La sesión del usuario queda cerrada.<br>
+                - El usuario no puede acceder a páginas protegidas sin volver a autenticarse.<br>el
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-AUTH-03: Establecer Contraseña Inicial</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Agente Inmobiliario</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                Cuando se crea un nuevo usuario de la intranet, este recibe un enlace por email para
+                establecer su contraseña personalizada antes del primer acceso.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El nuevo agente recibe un email con un enlace de activación.<br>
+                2. El agente hace clic en el enlace del email.<br>
+                3. Se abre una página que muestra:<br>
+                   - Campo "Nueva Contraseña"<br>
+                   - Campo "Confirmar Contraseña"<br>
+                   - Botón "Establecer Contraseña"<br>
+                4. El agente ingresa su contraseña deseada en ambos campos.<br>
+                5. El agente hace clic en "Establecer Contraseña".<br>
+                6. Aparece el mensaje: "Contraseña establecida exitosamente".<br>
+                7. El usuario es redirigido a la página de inicio de sesión.<br>
+                8. El agente puede ahora iniciar sesión con su email y la contraseña que estableció.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si las contraseñas no coinciden, aparece: "Las contraseñas no coinciden".<br>
+                - Si la contraseña no cumple requisitos mínimos, aparece: "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número".<br>
+                - Si el enlace expiró (más de 24 horas), aparece: "Este enlace ha expirado. Por favor contacte al administrador".<br>
+                - Si el token no es válido, aparece: "URL inválido o expirado".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El agente tiene una contraseña personalizada configurada.<br>
+                - El agente puede iniciar sesión en el sistema.<br>
+                - El enlace de activación queda invalidado (no puede usarse nuevamente).
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <h2>3. Casos de Uso - Agente Inmobiliario</h2>
+
+    <div class="caso-uso">
+        <h3>CU-AGE-01: Ver Listado de Mis Inmuebles Asignados</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Agente Inmobiliario</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El agente visualiza únicamente los inmuebles que le fueron asignados por
+                el administrador en formato de lista con tarjetas.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El agente hace clic en "Inmuebles" y luego la sección "Mis Inmuebles" en el menú de navegación.<br>
+                2. Se muestra una sección con todas las propiedades asignadas al agente.<br>
+                3. Cada propiedad se muestra en una tarjeta que contiene:<br>
+                   - Imagen principal<br>
+                   - Dirección<br>
+                   - Categoría y estado<br>
+                   - Características principales<br>
+                   - Botón "Ver Más"<br>
+                4. Los inmuebles se muestran con paginación (10 por página).<br>
+                5. El agente puede navegar entre las páginas usando los controles de paginación.<br>
+                6. El agente puede hacer clic en "Ver Más" para acceder a la información completa de cualquier propiedad.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el agente no tiene propiedades asignadas, aparece: "No tienes inmuebles asignados actualmente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El agente visualiza solo las propiedades que le corresponden.<br>
+                - El agente puede acceder a los detalles completos de sus propiedades asignadas.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-AGE-02: Ver Detalle de Inmueble Asignado</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Agente Inmobiliario</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El agente accede a la información completa de una propiedad asignada,
+                incluyendo todas sus características y galería de imágenes.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El agente hace clic en "Ver Más" de una propiedad desde "Mis Inmuebles".<br>
+                2. Se muestra la información completa:<br>
+                   - Carrusel de imágenes (navegable con flechas)<br>
+                   - Dirección completa<br>
+                   - Categoría y estado<br>
+                   - Ubicación: localidad, zona, barrio<br>
+                   - Características: superficie, ambientes, dormitorios, baños, cocheras<br>
+                   - Servicios disponibles (agua, luz, gas, cloacas, internet)<br>
+                   - Descripción detallada<br>
+                3. El agente puede navegar por todas las imágenes de la propiedad.<br>
+                4. El agente puede usar el botón "Volver" para regresar a la lista de sus inmuebles.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si la propiedad no tiene imágenes, se muestra una imagen placeholder.<br>
+                - Si falta información en algún campo, ese campo no se muestra.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El agente tiene acceso a toda la información necesaria para asesorar clientes sobre la propiedad.<br>
+                - El agente puede volver a la lista de propiedades cuando lo necesite.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-AGE-03: Buscar en Mis Inmuebles</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Agente Inmobiliario</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El agente utiliza la búsqueda y filtros para encontrar propiedades específicas
+                dentro de sus inmuebles asignados.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El agente está en la pantalla "Mis Inmuebles".<br>
+                2. En la parte superior se muestra:<br>
+                   - Barra de búsqueda (busca por dirección)<br>
+                   - Filtro por categoría<br>
+                   - Filtro por estado<br>
+                   - Filtro por localidad<br>
+                   - Filtro por zona<br>
+                3. El agente escribe en la barra de búsqueda o selecciona filtros.<br>
+                4. Los resultados se actualizan automáticamente.<br>
+                5. Solo se muestran los inmuebles asignados al agente que cumplan con los criterios.<br>
+                6. El agente puede limpiar la búsqueda y filtros para ver todos sus inmuebles nuevamente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si la búsqueda no encuentra resultados, aparece: "No se encontraron inmuebles con ese criterio".<br>
+                - Si el agente limpia los filtros, se muestran todos sus inmuebles asignados.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El agente visualiza solo los inmuebles que cumplen con los criterios de búsqueda.<br>
+                - Los filtros permanecen activos hasta que se modifiquen o limpien.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-AGE-04: Ver Mis Consultas de Clientes</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Agente Inmobiliario</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El agente visualiza sus consultas asignadas, con información completa del cliente y la propiedad consultada.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El agente hace clic en "Consultas" y luego en la sección "Mis Consultas" en el menú de navegación.<br>
+                2. Se muestra una tabla con las consultas asignadas, conteniendo:<br>
+                   - Fecha de la consulta<br>
+                   - Nombre del cliente<br>
+                   - Email del cliente<br>
+                   - Teléfono del cliente<br>
+                   - Mensaje del cliente<br>
+                3. El agente puede usar la barra de búsqueda para filtrar por nombre de cliente o dirección de propiedad.<br>
+                4. Las consultas se muestran ordenadas por fecha (más recientes primero).<br>
+                5. El agente puede ver toda la información de contacto para responder al cliente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay consultas asignadas, aparece: "No tienes consultas asignadas actualmente".<br>
+                - Si la búsqueda no encuentra resultados, aparece: "No se encontraron consultas con ese criterio".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El agente visualiza todas las consultas que debe atender.<br>
+                - El agente tiene acceso a la información de contacto de cada cliente.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-AGE-05: Ver Detalle de Consulta</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Agente Inmobiliario</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El agente visualiza la información completa de una consulta específica
+                de un cliente, incluyendo todos los datos de contacto y el inmueble consultado.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El agente está en la pantalla "Mis Consultas".<br>
+                2. El agente hace clic sobre el boton "Ver" de una consulta.<br>
+                3. Se redirige al detalle completo de la consulta:<br>
+                   - Fecha y hora de la consulta<br>
+                   - Nombre completo del cliente<br>
+                   - Email del cliente<br>
+                   - Teléfono del cliente<br>
+                   - Inmueble consultado (dirección, foto, características)<br>
+                   - Mensaje completo del cliente<br>
+                4. El agente puede hacer clic en "Ver detalles completos del inmueble" para ver los detalles del inmueble consultado.<br>
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El agente tiene acceso a toda la información para contactar al cliente.<br>
+                - El agente puede proceder a responder la consulta por los medios disponibles.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-AGE-06: Filtrar Consultas</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Agente Inmobiliario</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El agente utiliza filtros y búsqueda para encontrar consultas específicas
+                dentro de sus consultas asignadas.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El agente está en la pantalla "Mis Consultas".<br>
+                2. En la parte superior se muestra:<br>
+                   - Barra de búsqueda (busca por nombre de cliente o dirección de inmueble)<br>
+                   - Filtro por fecha (últimos 7 días, último mes, último año, personalizado)<br>
+                   - Ordenar por: fecha (más recientes/más antiguos)<br>
+                3. El agente escribe en la barra de búsqueda.<br>
+                4. Los resultados se filtran en tiempo real mostrando solo las consultas que coinciden.<br>
+                5. El agente puede seleccionar un rango de fechas para ver consultas de un período específico.<br>
+                6. El agente puede cambiar el orden de las consultas (más recientes primero o más antiguas primero).<br>
+                7. El agente puede limpiar todos los filtros para ver todas sus consultas nuevamente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si la búsqueda no encuentra resultados, aparece: "No se encontraron consultas con ese criterio".<br>
+                - Si el agente limpia los filtros, se muestran todas sus consultas asignadas.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El agente visualiza solo las consultas que cumplen con los criterios de búsqueda y filtros.<br>
+                - Los filtros permanecen activos hasta que se modifiquen o limpien.<br>
+                - El orden seleccionado se mantiene durante la sesión.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <h2>4. Casos de Uso - Administrador: Gestión de Inmuebles</h2>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-INM-01: Crear Inmueble</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador crea un nuevo inmueble en el sistema completando
+                un formulario con todas las características de la propiedad.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Alta Inmueble" en el menú de navegación.<br>
+                2. Se muestra un formulario con los siguientes campos:<br>
+                   - Dirección (campo de texto)<br>
+                   - Categoría (menú desplegable: casa, departamento, terreno, local, etc.)<br>
+                   - Estado (menú desplegable: disponible, vendido, alquilado, etc.)<br>
+                   - Localidad (menú desplegable)<br>
+                   - Zona (menú desplegable que se actualiza según la localidad seleccionada)<br>
+                   - Barrio (menú desplegable que se actualiza según la zona seleccionada)<br>
+                   - Superficie en m² (campo numérico)<br>
+                   - Cantidad de ambientes (campo numérico)<br>
+                   - Dormitorios (campo numérico)<br>
+                   - Baños (campo numérico)<br>
+                   - Cocheras (campo numérico)<br>
+                   - Servicios (checkboxes: agua, luz, gas, cloacas, internet)<br>
+                   - Descripción (área de texto grande)<br>
+                   - Selector de imágenes (permite múltiples archivos)<br>
+                   - Agente asignado (menú desplegable con lista de agentes activos)<br>
+                3. El administrador completa todos los campos requeridos.<br>
+                4. El administrador selecciona una o más imágenes de la propiedad.<br>
+                5. El administrador selecciona un agente responsable del menú desplegable.<br>
+                6. El administrador hace clic en el botón "Guardar".<br>
+                7. Aparece el mensaje: "Inmueble creado exitosamente".<br>
+                8. El administrador es redirigido a la lista de inmuebles donde puede ver la nueva propiedad.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si faltan campos obligatorios, aparece: "Por favor complete todos los campos requeridos".<br>
+                - Si hay error al subir imágenes, aparece: "Error al subir las imágenes. Verifique el formato (JPG, PNG)".<br>
+                - Si hay error al guardar, aparece: "Error al crear el inmueble. Por favor intente nuevamente".<br>
+                - El administrador puede hacer clic en "Cancelar" para descartar los cambios y volver a la lista.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El inmueble queda registrado en el sistema.<br>
+                - Las imágenes quedan asociadas al inmueble.<br>
+                - El agente seleccionado tiene acceso a este inmueble en "Mis Inmuebles".<br>
+                - El inmueble aparece en el catálogo público si está en estado "disponible".
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-INM-02: Editar Inmueble</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador modifica la información de un inmueble existente,
+                incluyendo sus características, imágenes y agente asignado.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Inmuebles" en el menú de navegación.<br>
+                2. Se muestra la lista de todos los inmuebles del sistema.<br>
+                3. El administrador busca la propiedad a editar usando la barra de búsqueda o filtros.<br>
+                4. El administrador hace clic en el botón "Editar" de la propiedad deseada.<br>
+                5. Se abre el formulario de edición con todos los datos actuales pre-cargados:<br>
+                   - Todos los campos del inmueble (dirección, categoría, estado, ubicación, etc.)<br>
+                   - Galería de imágenes actuales con opción de eliminar cada una<br>
+                   - Selector para agregar nuevas imágenes<br>
+                   - Agente actualmente asignado<br>
+                6. El administrador modifica los campos que desea actualizar.<br>
+                7. El administrador puede:<br>
+                   - Eliminar imágenes existentes haciendo clic en el botón "Eliminar" de cada imagen<br>
+                   - Marcar una imagen como principal haciendo clic en "Establecer como principal"<br>
+                   - Agregar nuevas imágenes seleccionándolas del selector<br>
+                   - Cambiar el agente asignado desde el menú desplegable<br>
+                8. El administrador hace clic en "Guardar Cambios".<br>
+                9. Aparece el mensaje: "Inmueble actualizado exitosamente".<br>
+                10. El administrador es redirigido a la lista de inmuebles con los cambios reflejados.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si se dejan campos obligatorios vacíos, aparece: "Por favor complete todos los campos requeridos".<br>
+                - Si hay error al eliminar imágenes, aparece: "Error al eliminar la imagen".<br>
+                - Si hay error al guardar, aparece: "Error al actualizar el inmueble. Por favor intente nuevamente".<br>
+                - El administrador puede hacer clic en "Cancelar" para descartar los cambios y volver a la lista.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - Los cambios quedan guardados en el sistema.<br>
+                - Si se cambió el agente asignado, el nuevo agente ve el inmueble en "Mis Inmuebles" y el anterior ya no lo ve.<br>
+                - Las imágenes eliminadas ya no se muestran en el inmueble.<br>
+                - Las nuevas imágenes agregadas quedan asociadas al inmueble.<br>
+                - Los cambios se reflejan inmediatamente en el catálogo público.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-INM-03: Eliminar Inmueble</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador elimina un inmueble del sistema. La eliminación es lógica
+                (soft delete), por lo que el inmueble se oculta pero los datos se conservan.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador accede a la lista de inmuebles en "Inmuebles".<br>
+                2. El administrador busca la propiedad a eliminar usando búsqueda o filtros.<br>
+                3. El administrador hace clic en el botón "Eliminar" de la propiedad deseada.<br>
+                4. Aparece un cuadro de diálogo de confirmación con el mensaje: "¿Está seguro que desea eliminar este inmueble?"<br>
+                5. El cuadro muestra los botones "Confirmar" y "Cancelar".<br>
+                6. El administrador hace clic en "Confirmar".<br>
+                7. Aparece el mensaje: "Inmueble eliminado exitosamente".<br>
+                8. El inmueble desaparece de la lista.<br>
+                9. La lista de inmuebles se actualiza automáticamente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el administrador hace clic en "Cancelar" en el diálogo, la eliminación se cancela y no ocurre ningún cambio.<br>
+                - Si hay error al eliminar, aparece: "Error al eliminar el inmueble. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El inmueble queda marcado como eliminado (no se borra físicamente).<br>
+                - El inmueble ya no aparece en la lista de inmuebles del administrador.<br>
+                - El inmueble ya no aparece en "Mis Inmuebles" del agente que lo tenía asignado.<br>
+                - El inmueble ya no aparece en el catálogo público.<br>
+                - Las consultas asociadas al inmueble se conservan para fines históricos.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-INM-04: Listar Inmuebles</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador visualiza el listado completo de todos los inmuebles
+                registrados en el sistema con opciones de gestión.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Inmuebles" en el menú de navegación.<br>
+                2. Se muestra una tabla/grid con todos los inmuebles del sistema:<br>
+                   - Imagen principal<br>
+                   - Dirección<br>
+                   - Categoría<br>
+                   - Estado<br>
+                   - Localidad<br>
+                   - Agente asignado<br>
+                   - Botones de acción: "Ver", "Editar", "Eliminar"<br>
+                3. La lista incluye paginación (10 inmuebles por página).<br>
+                4. En la parte superior se muestran:<br>
+                   - Barra de búsqueda<br>
+                   - Filtros por categoría, estado, localidad<br>
+                   - Botón "Agregar Nuevo Inmueble"<br>
+                   - Botón "Exportar a CSV"<br>
+                5. El administrador puede navegar entre las páginas.<br>
+                6. El administrador puede hacer clic en cualquier botón de acción para gestionar el inmueble.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay inmuebles registrados, aparece: "No hay inmuebles registrados en el sistema".<br>
+                - Si hay error al cargar la lista, aparece: "Error al cargar inmuebles. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El administrador visualiza todos los inmuebles del sistema.<br>
+                - El administrador puede acceder a las acciones de gestión de cada inmueble.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-INM-05: Ver Detalle de Inmueble</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador visualiza toda la información completa de un inmueble
+                específico antes de editarlo o eliminarlo.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en el botón "Ver" de un inmueble desde la lista.<br>
+                2. Se muestra una pantalla con la información completa del inmueble:<br>
+                   - Galería completa de imágenes<br>
+                   - Todos los datos de la propiedad (dirección, categoría, estado, etc.)<br>
+                   - Ubicación detallada (localidad, zona, barrio)<br>
+                   - Características completas<br>
+                   - Servicios disponibles<br>
+                   - Descripción completa<br>
+                   - Agente asignado con su información<br>
+                   - Fecha de creación y última modificación<br>
+                   - Botones: "Editar", "Eliminar", "Volver"<br>
+                3. El administrador puede revisar toda la información.<br>
+                4. El administrador puede hacer clic en "Editar" para modificar el inmueble.<br>
+                5. El administrador puede hacer clic en "Eliminar" para borrar el inmueble.<br>
+                6. El administrador puede hacer clic en "Volver" para regresar a la lista.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el inmueble no existe, aparece: "Inmueble no encontrado".<br>
+                - Si hay error al cargar, aparece: "Error al cargar el inmueble. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El administrador tiene acceso completo a toda la información del inmueble.<br>
+                - El administrador puede proceder a editar o eliminar el inmueble si lo desea.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-INM-06: Buscar y Filtrar Inmuebles</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador utiliza búsqueda y filtros para encontrar inmuebles
+                específicos dentro del sistema.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en la pantalla "Inmuebles".<br>
+                2. En la parte superior se muestra:<br>
+                   - Barra de búsqueda (busca por dirección o descripción)<br>
+                   - Filtro por categoría<br>
+                   - Filtro por estado<br>
+                   - Filtro por localidad<br>
+                   - Filtro por zona<br>
+                   - Filtro por barrio<br>
+                   - Filtro por agente asignado<br>
+                3. El administrador escribe en la barra de búsqueda.<br>
+                4. Los resultados se actualizan en tiempo real.<br>
+                5. El administrador puede seleccionar múltiples filtros.<br>
+                6. Los filtros son acumulativos (AND lógico entre filtros).<br>
+                7. El administrador puede limpiar todos los filtros haciendo clic en "Limpiar filtros".<br>
+                8. Los resultados filtrados se pueden exportar a CSV.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay resultados que coincidan, aparece: "No se encontraron inmuebles con esos criterios".<br>
+                - Si el administrador limpia los filtros, se muestran todos los inmuebles nuevamente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El administrador visualiza solo los inmuebles que cumplen con los criterios.<br>
+                - Los filtros permanecen activos hasta que se modifiquen o limpien.<br>
+                - La búsqueda y filtros aplicados se mantienen al exportar a CSV.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-INM-07: Exportar Inmuebles a CSV</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador exporta la lista de inmuebles (o los filtrados) a un
+                archivo CSV para análisis externo o respaldo.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en la pantalla "Inmuebles".<br>
+                2. El administrador puede aplicar filtros opcionales para exportar un subconjunto específico.<br>
+                3. El administrador hace clic en el botón "Exportar a CSV".<br>
+                4. El sistema genera un archivo CSV con las siguientes columnas:<br>
+                   - ID del inmueble<br>
+                   - Dirección<br>
+                   - Categoría<br>
+                   - Estado<br>
+                   - Localidad<br>
+                   - Zona<br>
+                   - Barrio<br>
+                   - Superficie<br>
+                   - Dormitorios<br>
+                   - Baños<br>
+                   - Cocheras<br>
+                   - Agente asignado<br>
+                   - Fecha de creación<br>
+                5. El archivo se descarga automáticamente con el nombre "inmuebles_YYYYMMDD_HHMMSS.csv".<br>
+                6. Aparece el mensaje: "Archivo exportado exitosamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay inmuebles para exportar, aparece: "No hay datos para exportar".<br>
+                - Si hay error al generar el archivo, aparece: "Error al exportar. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El archivo CSV queda descargado en el equipo del administrador.<br>
+                - El archivo contiene todos los inmuebles que cumplían con los filtros aplicados.<br>
+                - El formato del archivo es compatible con Excel y otras herramientas de análisis.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <h2>5. Casos de Uso - Administrador: Gestión de Imágenes</h2>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-IMG-01: Subir Imágenes de Inmueble</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador sube una o más imágenes a un inmueble existente,
+                permitiendo múltiples archivos en una sola operación.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en el formulario de edición de un inmueble.<br>
+                2. Debajo de la galería de imágenes actuales hay un botón "Agregar Imágenes".<br>
+                3. El administrador hace clic en "Agregar Imágenes".<br>
+                4. Se abre el selector de archivos del sistema operativo.<br>
+                5. El administrador selecciona una o más imágenes (formatos: JPG, JPEG, PNG).<br>
+                6. El administrador hace clic en "Abrir" en el selector de archivos.<br>
+                7. Las imágenes seleccionadas se muestran en vista previa antes de guardar.<br>
+                8. El administrador hace clic en "Guardar Cambios" del formulario.<br>
+                9. Las imágenes se suben al servidor y se asocian al inmueble.<br>
+                10. Aparece el mensaje: "Imágenes subidas exitosamente".<br>
+                11. Las nuevas imágenes aparecen en la galería del inmueble.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el archivo no tiene formato válido, aparece: "Solo se permiten archivos JPG y PNG".<br>
+                - Si el archivo es muy grande (>5MB), aparece: "La imagen excede el tamaño máximo permitido (5MB)".<br>
+                - Si hay error al subir, aparece: "Error al subir imágenes. Por favor intente nuevamente".<br>
+                - El administrador puede cancelar la selección antes de guardar.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - Las imágenes quedan almacenadas en el servidor.<br>
+                - Las imágenes quedan asociadas al inmueble.<br>
+                - Las imágenes aparecen en el catálogo público y en la vista de agentes.<br>
+                - Si era la primera imagen, se marca automáticamente como principal.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-IMG-02: Eliminar Imagen de Inmueble</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador elimina una imagen específica de un inmueble cuando
+                esta ya no es relevante o debe ser reemplazada.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en el formulario de edición de un inmueble.<br>
+                2. Se muestra la galería de imágenes actuales del inmueble.<br>
+                3. Cada imagen tiene un botón "X" o "Eliminar" superpuesto.<br>
+                4. El administrador hace clic en el botón "Eliminar" de la imagen que desea borrar.<br>
+                5. Aparece un cuadro de confirmación: "¿Está seguro que desea eliminar esta imagen?".<br>
+                6. El administrador hace clic en "Confirmar".<br>
+                7. La imagen desaparece de la galería inmediatamente.<br>
+                8. El administrador hace clic en "Guardar Cambios" para confirmar la operación.<br>
+                9. Aparece el mensaje: "Imagen eliminada exitosamente".<br>
+                10. La imagen ya no aparece en ninguna vista del inmueble.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el administrador hace clic en "Cancelar" en la confirmación, la imagen no se elimina.<br>
+                - Si es la única imagen del inmueble, aparece advertencia: "El inmueble debe tener al menos una imagen".<br>
+                - Si es la imagen principal, se debe marcar otra como principal primero.<br>
+                - Si hay error al eliminar, aparece: "Error al eliminar imagen. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - La imagen queda eliminada del servidor.<br>
+                - La imagen ya no se muestra en el catálogo público.<br>
+                - La imagen ya no se muestra en la vista de agentes.<br>
+                - Si era la imagen principal, otra imagen se marca automáticamente como principal.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <h2>6. Casos de Uso - Administrador: Asignación de Agentes</h2>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-ASG-01: Asignar Agente a Inmueble</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador asigna un agente inmobiliario como responsable de
+                gestionar un inmueble específico.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en el formulario de creación o edición de un inmueble.<br>
+                2. Hay un campo "Agente Asignado" con un menú desplegable.<br>
+                3. El menú desplegable muestra la lista de todos los agentes activos del sistema.<br>
+                4. Si el inmueble ya tiene un agente, este aparece seleccionado.<br>
+                5. El administrador abre el menú desplegable.<br>
+                6. El administrador selecciona un agente de la lista.<br>
+                7. El agente seleccionado aparece en el campo.<br>
+                8. El administrador hace clic en "Guardar" o "Guardar Cambios".<br>
+                9. Aparece el mensaje: "Agente asignado exitosamente".<br>
+                10. El inmueble queda asociado al agente seleccionado.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay agentes activos en el sistema, el menú aparece vacío con mensaje: "No hay agentes disponibles".<br>
+                - Si hay error al asignar, aparece: "Error al asignar agente. Por favor intente nuevamente".<br>
+                - El administrador puede dejar el campo vacío si no desea asignar ningún agente aún.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El inmueble queda asignado al agente seleccionado.<br>
+                - El agente puede ver el inmueble en su pantalla "Mis Inmuebles".<br>
+                - El agente recibe las consultas de clientes relacionadas con ese inmueble.<br>
+                - La asignación se registra en la tabla agente_inmueble con eliminado=false.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-ASG-02: Cambiar Agente Asignado</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador cambia el agente responsable de un inmueble, reasignándolo
+                a otro agente diferente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en el formulario de edición de un inmueble que ya tiene un agente asignado.<br>
+                2. El campo "Agente Asignado" muestra el agente actual.<br>
+                3. El administrador abre el menú desplegable de agentes.<br>
+                4. El administrador selecciona un agente diferente de la lista.<br>
+                5. El nuevo agente aparece en el campo reemplazando al anterior.<br>
+                6. El administrador hace clic en "Guardar Cambios".<br>
+                7. Aparece un cuadro de confirmación: "¿Está seguro que desea cambiar el agente asignado? El agente anterior perderá acceso a este inmueble".<br>
+                8. El administrador hace clic en "Confirmar".<br>
+                9. Aparece el mensaje: "Agente actualizado exitosamente".<br>
+                10. La asignación anterior se marca como eliminada (soft delete).<br>
+                11. Se crea una nueva asignación con el nuevo agente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el administrador hace clic en "Cancelar" en la confirmación, no se realiza el cambio.<br>
+                - Si hay error al cambiar, aparece: "Error al actualizar agente. Por favor intente nuevamente".<br>
+                - Si se selecciona el mismo agente que ya estaba asignado, no ocurre ningún cambio.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El nuevo agente puede ver el inmueble en "Mis Inmuebles".<br>
+                - El agente anterior ya no ve el inmueble en "Mis Inmuebles".<br>
+                - Las nuevas consultas del inmueble se asignan al nuevo agente.<br>
+                - Las consultas históricas del agente anterior se mantienen para registro.<br>
+                - Se mantiene un histórico de asignaciones para auditoría.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <h2>7. Casos de Uso - Administrador: Gestión de Agentes</h2>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-AGT-01: Crear Agente</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador registra un nuevo agente en el sistema, lo cual automáticamente
+                genera credenciales y envía un email para que el agente establezca su contraseña.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Alta Agente" en el menú de navegación.<br>
+                2. Se muestra un formulario con los siguientes campos:<br>
+                   - Apellido (campo de texto)<br>
+                   - Nombre (campo de texto)<br>
+                   - DNI (campo numérico)<br>
+                   - Teléfono (campo de texto)<br>
+                   - Email (campo de email)<br>
+                   - Dirección (campo de texto)<br>
+                   - Selector de foto de perfil (opcional)<br>
+                3. El administrador completa todos los campos requeridos.<br>
+                4. El administrador opcionalmente selecciona una foto de perfil.<br>
+                5. El administrador hace clic en el botón "Guardar".<br>
+                6. Aparece el mensaje: "Agente creado exitosamente. Se ha enviado un email para que establezca su contraseña".<br>
+                7. El administrador es redirigido a la lista de agentes.<br>
+                8. El nuevo agente recibe un email con un enlace para establecer su contraseña.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si faltan campos obligatorios, aparece: "Por favor complete todos los campos requeridos".<br>
+                - Si el email ya está registrado, aparece: "Ya existe un usuario con ese email".<br>
+                - Si el DNI ya está registrado, aparece: "Ya existe una persona con ese DNI".<br>
+                - Si el email no tiene formato válido, aparece: "Por favor ingrese un email válido".<br>
+                - Si hay error al crear, aparece: "Error al crear el agente. Por favor intente nuevamente".<br>
+                - El administrador puede hacer clic en "Cancelar" para descartar y volver a la lista.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El agente queda registrado en el sistema con estado activo.<br>
+                - Se crea automáticamente un usuario asociado al agente.<br>
+                - Se envía un email al agente con un enlace para establecer su contraseña.<br>
+                - El enlace de activación es válido por 24 horas.<br>
+                - El agente aparece en la lista de agentes disponibles para asignar a inmuebles.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-AGT-02: Editar Agente</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador modifica la información de un agente existente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Agentes" en el menú de navegación.<br>
+                2. Se muestra la lista de todos los agentes del sistema.<br>
+                3. El administrador busca el agente a editar usando la barra de búsqueda.<br>
+                4. El administrador hace clic en el nombre del agente o en el botón "Ver Más".<br>
+                5. Se muestra la información completa del agente:<br>
+                   - Foto de perfil<br>
+                   - Datos personales (apellido, nombre, DNI, teléfono, email, dirección)<br>
+                   - Inmuebles asignados actualmente<br>
+                   - Botón "Editar"<br>
+                6. El administrador hace clic en "Editar".<br>
+                7. Se abre el formulario de edición con todos los datos pre-cargados.<br>
+                8. El administrador modifica los campos que desea actualizar.<br>
+                9. El administrador puede cambiar la foto de perfil seleccionando una nueva imagen.<br>
+                10. El administrador hace clic en "Guardar Cambios".<br>
+                11. Aparece el mensaje: "Agente actualizado exitosamente".<br>
+                12. El administrador es redirigido a la vista de detalle del agente con los cambios reflejados.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si se dejan campos obligatorios vacíos, aparece: "Por favor complete todos los campos requeridos".<br>
+                - Si el email ya está en uso por otro usuario, aparece: "Ya existe un usuario con ese email".<br>
+                - Si hay error al guardar, aparece: "Error al actualizar el agente. Por favor intente nuevamente".<br>
+                - El administrador puede hacer clic en "Cancelar" para descartar los cambios y volver a la vista de detalle.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - Los cambios quedan guardados en el sistema.<br>
+                - Si se modificó el email, el agente debe usar el nuevo email para iniciar sesión.<br>
+                - Si se cambió la foto de perfil, la nueva imagen se muestra en todas las vistas.<br>
+                - Los cambios se reflejan en todos los lugares donde aparece el agente.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-AGT-03: Eliminar Agente</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador da de baja un agente del sistema. La eliminación es lógica,
+                por lo que se conserva el historial de inmuebles y consultas que tuvo asignadas.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador accede a la lista de agentes en "Agentes".<br>
+                2. El administrador busca el agente a eliminar usando la barra de búsqueda.<br>
+                3. El administrador hace clic en el botón "Eliminar" del agente deseado.<br>
+                4. Aparece un cuadro de diálogo de confirmación:<br>
+                   "¿Está seguro que desea eliminar este agente? Los inmuebles asignados quedarán sin agente".<br>
+                5. El cuadro muestra los botones "Confirmar" y "Cancelar".<br>
+                6. El administrador hace clic en "Confirmar".<br>
+                7. Aparece el mensaje: "Agente eliminado exitosamente".<br>
+                8. El agente desaparece de la lista.<br>
+                9. La lista de agentes se actualiza automáticamente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el administrador hace clic en "Cancelar", la eliminación se cancela.<br>
+                - Si hay error al eliminar, aparece: "Error al eliminar el agente. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El agente queda marcado como eliminado (no se borra físicamente).<br>
+                - El agente ya no aparece en la lista de agentes.<br>
+                - El agente no puede iniciar sesión en el sistema.<br>
+                - El agente ya no aparece en los menús desplegables de asignación de inmuebles.<br>
+                - Los inmuebles que tenía asignados quedan sin agente (deben reasignarse).<br>
+                - El historial de consultas que atendió se conserva para fines de registro.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-AGT-04: Listar Agentes</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador visualiza el listado completo de todos los agentes
+                registrados en el sistema con sus datos principales.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Agentes" en el menú de navegación.<br>
+                2. Se muestra una tabla/grid con todos los agentes activos del sistema:<br>
+                   - Foto de perfil<br>
+                   - Apellido y Nombre<br>
+                   - Email<br>
+                   - Teléfono<br>
+                   - Cantidad de inmuebles asignados<br>
+                   - Cantidad de consultas recibidas<br>
+                   - Botones de acción: "Ver", "Editar", "Eliminar"<br>
+                3. La lista incluye paginación (10 agentes por página).<br>
+                4. En la parte superior se muestran:<br>
+                   - Barra de búsqueda (busca por nombre, apellido o email)<br>
+                   - Botón "Agregar Nuevo Agente"<br>
+                   - Botón "Exportar a CSV"<br>
+                5. El administrador puede navegar entre las páginas.<br>
+                6. El administrador puede hacer clic en cualquier botón de acción para gestionar el agente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay agentes registrados, aparece: "No hay agentes registrados en el sistema".<br>
+                - Si hay error al cargar la lista, aparece: "Error al cargar agentes. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El administrador visualiza todos los agentes activos del sistema.<br>
+                - El administrador puede acceder a las acciones de gestión de cada agente.<br>
+                - El administrador puede ver métricas rápidas (inmuebles y consultas) de cada agente.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-AGT-05: Ver Detalle de Agente</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador visualiza toda la información completa de un agente
+                específico incluyendo sus asignaciones e historial.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en el botón "Ver" o en el nombre de un agente desde la lista.<br>
+                2. Se muestra una pantalla con la información completa del agente:<br>
+                   - Foto de perfil<br>
+                   - Datos personales completos (nombre, apellido, DNI, email, teléfono, dirección)<br>
+                   - Fecha de ingreso al sistema<br>
+                   - Estado (activo/inactivo)<br>
+                   - Lista de inmuebles actualmente asignados con botones para ver cada inmueble<br>
+                   - Estadísticas:<br>
+                     * Total de inmuebles asignados (histórico)<br>
+                     * Total de consultas recibidas<br>
+                     * Consultas pendientes de respuesta<br>
+                   - Últimas consultas recibidas (últimas 5)<br>
+                   - Botones: "Editar", "Eliminar", "Enviar Email de Reenvío de Contraseña", "Volver"<br>
+                3. El administrador puede revisar toda la información.<br>
+                4. El administrador puede hacer clic en cualquier inmueble para ver sus detalles.<br>
+                5. El administrador puede hacer clic en "Editar" para modificar el agente.<br>
+                6. El administrador puede hacer clic en "Volver" para regresar a la lista.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el agente no existe, aparece: "Agente no encontrado".<br>
+                - Si hay error al cargar, aparece: "Error al cargar el agente. Por favor intente nuevamente".<br>
+                - Si el agente no tiene inmuebles asignados, aparece: "Sin inmuebles asignados actualmente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El administrador tiene acceso completo a toda la información del agente.<br>
+                - El administrador puede proceder a editar, eliminar o gestionar las asignaciones del agente.<br>
+                - El administrador puede ver el desempeño del agente mediante las estadísticas.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-AGT-06: Buscar Agentes</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador utiliza la búsqueda para encontrar agentes específicos
+                por nombre, apellido o email.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en la pantalla "Agentes".<br>
+                2. En la parte superior se muestra una barra de búsqueda.<br>
+                3. El administrador escribe en la barra de búsqueda (puede buscar por nombre, apellido o email).<br>
+                4. Los resultados se filtran en tiempo real mientras el administrador escribe.<br>
+                5. Solo se muestran los agentes que coinciden con el texto ingresado.<br>
+                6. La búsqueda es case-insensitive y busca coincidencias parciales.<br>
+                7. El administrador puede limpiar la búsqueda haciendo clic en "X" o borrando el texto.<br>
+                8. Al limpiar la búsqueda, se muestran todos los agentes nuevamente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si la búsqueda no encuentra resultados, aparece: "No se encontraron agentes con ese criterio".<br>
+                - Si el administrador limpia la búsqueda, se muestran todos los agentes activos.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El administrador visualiza solo los agentes que cumplen con el criterio de búsqueda.<br>
+                - La búsqueda permanece activa hasta que se modifique o limpie.<br>
+                - Los resultados filtrados se pueden exportar a CSV manteniendo el filtro aplicado.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-AGT-07: Exportar Agentes a CSV</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador exporta la lista de agentes (o los filtrados) a un
+                archivo CSV para análisis externo o respaldo.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en la pantalla "Agentes".<br>
+                2. El administrador puede aplicar búsqueda opcional para exportar un subconjunto específico.<br>
+                3. El administrador hace clic en el botón "Exportar a CSV".<br>
+                4. El sistema genera un archivo CSV con las siguientes columnas:<br>
+                   - ID del agente<br>
+                   - Apellido<br>
+                   - Nombre<br>
+                   - DNI<br>
+                   - Email<br>
+                   - Teléfono<br>
+                   - Dirección<br>
+                   - Cantidad de inmuebles asignados<br>
+                   - Cantidad de consultas recibidas<br>
+                   - Fecha de registro<br>
+                   - Estado (activo/inactivo)<br>
+                5. El archivo se descarga automáticamente con el nombre "agentes_YYYYMMDD_HHMMSS.csv".<br>
+                6. Aparece el mensaje: "Archivo exportado exitosamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay agentes para exportar, aparece: "No hay datos para exportar".<br>
+                - Si hay error al generar el archivo, aparece: "Error al exportar. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El archivo CSV queda descargado en el equipo del administrador.<br>
+                - El archivo contiene todos los agentes que cumplían con la búsqueda aplicada.<br>
+                - El formato del archivo es compatible con Excel y otras herramientas de análisis.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <h2>8. Casos de Uso - Administrador: Gestión de Consultas de Clientes</h2>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-CNS-01: Ver Todas las Consultas</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador visualiza todas las consultas de clientes registradas en
+                el sistema, independientemente del agente asignado, con capacidad de búsqueda y exportación.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Consultas Clientes" en el menú de navegación.<br>
+                2. Se muestra una tabla con todas las consultas del sistema, conteniendo:<br>
+                   - Fecha de la consulta<br>
+                   - Nombre del cliente<br>
+                   - Email del cliente<br>
+                   - Teléfono del cliente<br>
+                   - Dirección del inmueble consultado<br>
+                   - Agente asignado<br>
+                   - Mensaje del cliente<br>
+                3. En la parte superior se muestra:<br>
+                   - Barra de búsqueda<br>
+                   - Botón "Exportar a CSV"<br>
+                   - Botón "Ver Estadísticas"<br>
+                4. El administrador puede usar la barra de búsqueda para filtrar por nombre, email, dirección o agente.<br>
+                5. Las consultas se muestran ordenadas por fecha (más recientes primero).<br>
+                6. El administrador puede hacer clic en "Exportar a CSV" para descargar todas las consultas en formato CSV.<br>
+                7. Al hacer clic en "Exportar a CSV", se descarga automáticamente un archivo con todas las consultas.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay consultas registradas, aparece: "No hay consultas registradas en el sistema".<br>
+                - Si la búsqueda no encuentra resultados, aparece: "No se encontraron consultas con ese criterio".<br>
+                - Si hay error al exportar, aparece: "Error al exportar. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El administrador visualiza todas las consultas del sistema.<br>
+                - Si se exportó a CSV, el archivo queda descargado en el equipo del administrador.<br>
+                - El archivo CSV contiene todas las columnas de información de las consultas.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-CNS-02: Ver Detalle de Consulta</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador visualiza la información completa de una consulta
+                específica con todos los detalles del cliente, inmueble y agente.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en la pantalla "Consultas Clientes".<br>
+                2. El administrador hace clic sobre una fila de la tabla de consultas.<br>
+                3. Se despliega o abre un panel/modal con el detalle completo:<br>
+                   - Fecha y hora exacta de la consulta<br>
+                   - Datos del cliente:<br>
+                     * Nombre completo<br>
+                     * Email<br>
+                     * Teléfono<br>
+                   - Datos del inmueble consultado:<br>
+                     * Dirección completa<br>
+                     * Foto principal<br>
+                     * Categoría y estado<br>
+                     * Enlace para "Ver inmueble completo"<br>
+                   - Mensaje completo del cliente<br>
+                   - Agente asignado con su información de contacto<br>
+                   - Botones: "Reasignar Agente", "Ver Inmueble", "Cerrar"<br>
+                4. El administrador puede hacer clic en "Ver Inmueble" para ver los detalles completos del inmueble.<br>
+                5. El administrador puede hacer clic en "Reasignar Agente" para cambiar el agente responsable.<br>
+                6. El administrador puede cerrar el detalle y volver a la lista.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si el inmueble consultado fue eliminado, se muestra: "El inmueble ya no está disponible".<br>
+                - Si el agente asignado fue eliminado, se muestra: "El agente ya no está activo".<br>
+                - Si hay error al cargar, aparece: "Error al cargar detalle. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El administrador tiene acceso a toda la información de la consulta.<br>
+                - El administrador puede gestionar la asignación de la consulta si lo desea.<br>
+                - El administrador puede navegar al inmueble o al perfil del agente desde el detalle.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-CNS-03: Filtrar Consultas</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador utiliza filtros avanzados para encontrar consultas
+                específicas según diferentes criterios.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en la pantalla "Consultas Clientes".<br>
+                2. En la parte superior se muestran opciones de filtrado:<br>
+                   - Barra de búsqueda (busca por nombre, email, dirección)<br>
+                   - Filtro por agente asignado (menú desplegable)<br>
+                   - Filtro por fecha:<br>
+                     * Últimos 7 días<br>
+                     * Último mes<br>
+                     * Último año<br>
+                     * Rango personalizado (selector de fechas)<br>
+                   - Filtro por inmueble (buscar por dirección)<br>
+                   - Ordenar por: fecha (más recientes/más antiguos), nombre de cliente<br>
+                3. El administrador selecciona uno o más filtros.<br>
+                4. Los resultados se actualizan automáticamente mostrando solo las consultas que cumplen todos los criterios.<br>
+                5. Los filtros son acumulativos (AND lógico).<br>
+                6. El administrador puede limpiar todos los filtros haciendo clic en "Limpiar filtros".<br>
+                7. Los resultados filtrados se pueden exportar a CSV manteniendo los filtros aplicados.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay resultados que coincidan con los filtros, aparece: "No se encontraron consultas con esos criterios".<br>
+                - Si el administrador limpia los filtros, se muestran todas las consultas nuevamente.<br>
+                - Si hay error al aplicar filtros, aparece: "Error al filtrar. Por favor intente nuevamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El administrador visualiza solo las consultas que cumplen con todos los criterios seleccionados.<br>
+                - Los filtros permanecen activos hasta que se modifiquen o limpien.<br>
+                - El contador de resultados muestra cuántas consultas cumplen con los criterios.<br>
+                - La exportación a CSV respeta los filtros aplicados.
+            </div>
+        </div>
+    </div>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-CNS-04: Exportar Consultas a CSV</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador exporta todas las consultas (o las filtradas) a un
+                archivo CSV para análisis o generación de reportes.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL:</div>
+            <div class="campo-contenido">
+                1. El administrador está en la pantalla "Consultas Clientes".<br>
+                2. El administrador puede aplicar filtros opcionales antes de exportar.<br>
+                3. El administrador hace clic en el botón "Exportar a CSV".<br>
+                4. El sistema genera un archivo CSV con las siguientes columnas:<br>
+                   - ID de la consulta<br>
+                   - Fecha y hora de la consulta<br>
+                   - Nombre del cliente<br>
+                   - Apellido del cliente<br>
+                   - Email del cliente<br>
+                   - Teléfono del cliente<br>
+                   - Dirección del inmueble<br>
+                   - ID del inmueble<br>
+                   - Agente asignado (nombre completo)<br>
+                   - Email del agente<br>
+                   - Mensaje de la consulta<br>
+                5. El archivo se descarga automáticamente con el nombre "consultas_YYYYMMDD_HHMMSS.csv".<br>
+                6. Aparece el mensaje: "Archivo exportado exitosamente".
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJOS ALTERNATIVOS:</div>
+            <div class="campo-contenido">
+                - Si no hay consultas para exportar, aparece: "No hay datos para exportar".<br>
+                - Si hay error al generar el archivo, aparece: "Error al exportar. Por favor intente nuevamente".<br>
+                - Si los filtros no devuelven resultados, aparece advertencia antes de intentar exportar.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - El archivo CSV queda descargado en el equipo del administrador.<br>
+                - El archivo contiene todas las consultas que cumplían con los filtros aplicados (o todas si no había filtros).<br>
+                - El formato del archivo es compatible con Excel, Google Sheets y otras herramientas.<br>
+                - Los caracteres especiales (tildes, ñ) se exportan correctamente en UTF-8.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <h2>9. Casos de Uso - Administrador: Datos de Ubicación y Clasificación</h2>
+
+    <div class="caso-uso">
+        <h3>CU-ADM-RUB: Gestionar Categorías (Rubros)</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador gestiona (crea, edita, elimina y lista) las categorías de inmuebles (rubros)
+                disponibles en el sistema para clasificar propiedades (ej: casa, departamento, quinta, galpón, oficina).
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL - LISTAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Datos de Ubicación" en el menú de navegación.<br>
+                2. El administrador selecciona "Rubros" del submenú.<br>
+                3. Se muestra una tabla con todos los rubros existentes:<br>
+                   - ID<br>
+                   - Nombre del rubro<br>
+                   - Botones "Editar" y "Eliminar" para cada rubro<br>
+                4. En la parte superior hay un botón "Agregar Nuevo Rubro".<br>
+                5. La tabla se muestra con paginación si hay más de 10 rubros.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - CREAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Agregar Nuevo Rubro".<br>
+                2. Se muestra un formulario con:<br>
+                   - Campo "Nombre del Rubro" (texto obligatorio)<br>
+                   - Botones "Guardar" y "Cancelar"<br>
+                3. El administrador ingresa el nombre (ej: "Quinta", "Galpón", "Oficina").<br>
+                4. El administrador hace clic en "Guardar".<br>
+                5. Aparece el mensaje: "Rubro creado exitosamente".<br>
+                6. El nuevo rubro aparece en la tabla de rubros.<br>
+                7. El formulario se cierra y vuelve a la lista.<br>
+                8. El rubro está disponible inmediatamente en formularios de inmuebles.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - EDITAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Editar" de un rubro existente.<br>
+                2. Se abre el formulario con el nombre actual pre-cargado.<br>
+                3. El administrador modifica el nombre del rubro.<br>
+                4. El administrador hace clic en "Guardar Cambios".<br>
+                5. Aparece el mensaje: "Rubro actualizado exitosamente".<br>
+                6. La tabla se actualiza mostrando el nuevo nombre.<br>
+                7. Todos los inmuebles que usan este rubro reflejan el cambio.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - ELIMINAR (SOFT DELETE):</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Eliminar" del rubro que desea borrar.<br>
+                2. Aparece un cuadro de confirmación: "¿Está seguro que desea eliminar este rubro?".<br>
+                3. El administrador hace clic en "Confirmar".<br>
+                4. Aparece el mensaje: "Rubro eliminado exitosamente".<br>
+                5. El rubro desaparece de la tabla.<br>
+                6. El rubro queda marcado como eliminado (no se borra físicamente).<br>
+                7. El rubro ya no aparece en menús desplegables de formularios.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">VALIDACIONES Y ERRORES:</div>
+            <div class="campo-contenido">
+                - Si no hay rubros registrados: "No hay rubros registrados en el sistema".<br>
+                - Si el nombre está vacío: "Por favor ingrese un nombre".<br>
+                - Si el nombre ya existe: "Ya existe un rubro con ese nombre".<br>
+                - Si hay error en operación: "Error al procesar. Por favor intente nuevamente".<br>
+                - Hacer clic en "Cancelar" descarta los cambios y cierra el formulario.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - Los rubros están actualizados en el sistema.<br>
+                - Los cambios se reflejan inmediatamente en formularios de inmuebles.<br>
+                - Los inmuebles existentes mantienen referencias históricas a rubros eliminados.<br>
+                - El sistema mantiene integridad referencial con soft delete.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <div class="caso-uso">
+        <h3>CU-ADM-EST: Gestionar Estados de Inmuebles</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador gestiona (crea, edita, elimina y lista) los estados de inmuebles
+                disponibles en el sistema para clasificar la disponibilidad de propiedades (ej: disponible, vendido, alquilado, reservado, en construcción).
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL - LISTAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Datos de Ubicación" en el menú de navegación.<br>
+                2. El administrador selecciona "Estados" del submenú.<br>
+                3. Se muestra una tabla con todos los estados existentes:<br>
+                   - ID<br>
+                   - Nombre del estado<br>
+                   - Botones "Editar" y "Eliminar" para cada estado<br>
+                4. En la parte superior hay un botón "Agregar Nuevo Estado".<br>
+                5. La tabla se muestra con paginación si hay más de 10 estados.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - CREAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Agregar Nuevo Estado".<br>
+                2. Se muestra un formulario con:<br>
+                   - Campo "Nombre del Estado" (texto obligatorio)<br>
+                   - Botones "Guardar" y "Cancelar"<br>
+                3. El administrador ingresa el nombre (ej: "Reservado", "En construcción", "Permutado").<br>
+                4. El administrador hace clic en "Guardar".<br>
+                5. Aparece el mensaje: "Estado creado exitosamente".<br>
+                6. El nuevo estado aparece en la tabla.<br>
+                7. El formulario se cierra y vuelve a la lista.<br>
+                8. El estado está disponible inmediatamente en formularios de inmuebles.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - EDITAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Editar" de un estado existente.<br>
+                2. Se abre el formulario con el nombre actual pre-cargado.<br>
+                3. El administrador modifica el nombre del estado.<br>
+                4. El administrador hace clic en "Guardar Cambios".<br>
+                5. Aparece el mensaje: "Estado actualizado exitosamente".<br>
+                6. La tabla se actualiza mostrando el nuevo nombre.<br>
+                7. Todos los inmuebles con este estado reflejan el cambio.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - ELIMINAR (SOFT DELETE):</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Eliminar" del estado que desea borrar.<br>
+                2. Aparece un cuadro de confirmación: "¿Está seguro que desea eliminar este estado?".<br>
+                3. El administrador hace clic en "Confirmar".<br>
+                4. Aparece el mensaje: "Estado eliminado exitosamente".<br>
+                5. El estado desaparece de la tabla.<br>
+                6. El estado queda marcado como eliminado (no se borra físicamente).<br>
+                7. El estado ya no aparece en menús desplegables de formularios.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">VALIDACIONES Y ERRORES:</div>
+            <div class="campo-contenido">
+                - Si no hay estados registrados: "No hay estados registrados en el sistema".<br>
+                - Si el nombre está vacío: "Por favor ingrese un nombre".<br>
+                - Si el nombre ya existe: "Ya existe un estado con ese nombre".<br>
+                - Si hay error en operación: "Error al procesar. Por favor intente nuevamente".<br>
+                - Hacer clic en "Cancelar" descarta los cambios y cierra el formulario.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - Los estados están actualizados en el sistema.<br>
+                - Los cambios se reflejan inmediatamente en formularios de inmuebles.<br>
+                - Los inmuebles existentes mantienen referencias históricas a estados eliminados.<br>
+                - El sistema mantiene integridad referencial con soft delete.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <div class="caso-uso">
+        <h3>CU-ADM-LOC: Gestionar Localidades</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador gestiona (crea, edita, elimina y lista) las localidades/ciudades
+                del sistema donde se ubican los inmuebles (ej: Resistencia, Corrientes, Barranqueras).
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL - LISTAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Datos de Ubicación" en el menú de navegación.<br>
+                2. El administrador selecciona "Localidades" del submenú.<br>
+                3. Se muestra una tabla con todas las localidades existentes:<br>
+                   - ID<br>
+                   - Nombre de la localidad<br>
+                   - Botones "Editar" y "Eliminar" para cada localidad<br>
+                4. En la parte superior hay un botón "Agregar Nueva Localidad".<br>
+                5. La tabla se muestra con paginación si hay más de 10 localidades.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - CREAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Agregar Nueva Localidad".<br>
+                2. Se muestra un formulario con:<br>
+                   - Campo "Nombre de la Localidad" (texto obligatorio)<br>
+                   - Botones "Guardar" y "Cancelar"<br>
+                3. El administrador ingresa el nombre.<br>
+                4. El administrador hace clic en "Guardar".<br>
+                5. Aparece el mensaje: "Localidad creada exitosamente".<br>
+                6. La nueva localidad aparece en la tabla.<br>
+                7. El formulario se cierra y vuelve a la lista.<br>
+                8. La localidad está disponible inmediatamente en formularios.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - EDITAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Editar" de una localidad existente.<br>
+                2. Se abre el formulario con el nombre actual pre-cargado.<br>
+                3. El administrador modifica el nombre.<br>
+                4. El administrador hace clic en "Guardar Cambios".<br>
+                5. Aparece el mensaje: "Localidad actualizada exitosamente".<br>
+                6. La tabla se actualiza mostrando el nuevo nombre.<br>
+                7. Todos los inmuebles, zonas y barrios asociados reflejan el cambio.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - ELIMINAR (SOFT DELETE):</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Eliminar" de la localidad que desea borrar.<br>
+                2. Aparece un cuadro de confirmación: "¿Está seguro que desea eliminar esta localidad?".<br>
+                3. El administrador hace clic en "Confirmar".<br>
+                4. Aparece el mensaje: "Localidad eliminada exitosamente".<br>
+                5. La localidad desaparece de la tabla.<br>
+                6. La localidad queda marcada como eliminada (no se borra físicamente).<br>
+                7. La localidad ya no aparece en menús desplegables de formularios.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">VALIDACIONES Y ERRORES:</div>
+            <div class="campo-contenido">
+                - Si no hay localidades: "No hay localidades registradas en el sistema".<br>
+                - Si el nombre está vacío: "Por favor ingrese un nombre".<br>
+                - Si el nombre ya existe: "Ya existe una localidad con ese nombre".<br>
+                - Si hay error en operación: "Error al procesar. Por favor intente nuevamente".<br>
+                - Hacer clic en "Cancelar" descarta los cambios y cierra el formulario.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - Las localidades están actualizadas en el sistema.<br>
+                - Los cambios se reflejan inmediatamente en formularios.<br>
+                - La jerarquía geográfica (Localidad → Zona → Barrio) se mantiene.<br>
+                - El sistema mantiene integridad referencial con soft delete.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <div class="caso-uso">
+        <h3>CU-ADM-ZON: Gestionar Zonas</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador gestiona (crea, edita, elimina y lista) las zonas dentro de cada localidad
+                para organizar geográficamente los inmuebles (ej: Zona Norte, Zona Centro, Zona Sur).
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL - LISTAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Datos de Ubicación" en el menú de navegación.<br>
+                2. El administrador selecciona "Zonas" del submenú.<br>
+                3. Se muestra una tabla con todas las zonas existentes:<br>
+                   - ID<br>
+                   - Nombre de la zona<br>
+                   - Localidad a la que pertenece<br>
+                   - Botones "Editar" y "Eliminar" para cada zona<br>
+                4. En la parte superior hay un botón "Agregar Nueva Zona".<br>
+                5. La tabla se muestra con paginación si hay más de 10 zonas.<br>
+                6. El administrador puede filtrar por localidad.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - CREAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Agregar Nueva Zona".<br>
+                2. Se muestra un formulario con:<br>
+                   - Campo "Nombre de la Zona" (texto obligatorio)<br>
+                   - Menú "Localidad" (obligatorio)<br>
+                   - Botones "Guardar" y "Cancelar"<br>
+                3. El administrador selecciona la localidad e ingresa el nombre de la zona.<br>
+                4. El administrador hace clic en "Guardar".<br>
+                5. Aparece el mensaje: "Zona creada exitosamente".<br>
+                6. La nueva zona aparece en la tabla.<br>
+                7. El formulario se cierra y vuelve a la lista.<br>
+                8. La zona está disponible inmediatamente en formularios.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - EDITAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Editar" de una zona existente.<br>
+                2. Se abre el formulario con los datos actuales pre-cargados.<br>
+                3. El administrador modifica el nombre y/o la localidad.<br>
+                4. El administrador hace clic en "Guardar Cambios".<br>
+                5. Aparece el mensaje: "Zona actualizada exitosamente".<br>
+                6. La tabla se actualiza mostrando los nuevos datos.<br>
+                7. Todos los inmuebles y barrios asociados reflejan el cambio.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - ELIMINAR (SOFT DELETE):</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Eliminar" de la zona que desea borrar.<br>
+                2. Aparece un cuadro de confirmación: "¿Está seguro que desea eliminar esta zona?".<br>
+                3. El administrador hace clic en "Confirmar".<br>
+                4. Aparece el mensaje: "Zona eliminada exitosamente".<br>
+                5. La zona desaparece de la tabla.<br>
+                6. La zona queda marcada como eliminada (no se borra físicamente).<br>
+                7. La zona ya no aparece en menús desplegables de formularios.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">VALIDACIONES Y ERRORES:</div>
+            <div class="campo-contenido">
+                - Si no hay zonas: "No hay zonas registradas en el sistema".<br>
+                - Si el nombre está vacío: "Por favor ingrese un nombre".<br>
+                - Si no selecciona localidad: "Por favor seleccione una localidad".<br>
+                - Si el nombre ya existe en esa localidad: "Ya existe una zona con ese nombre en esta localidad".<br>
+                - Si hay error en operación: "Error al procesar. Por favor intente nuevamente".<br>
+                - Hacer clic en "Cancelar" descarta los cambios y cierra el formulario.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - Las zonas están actualizadas en el sistema.<br>
+                - Los cambios se reflejan inmediatamente en formularios.<br>
+                - La relación Localidad → Zona se mantiene correctamente.<br>
+                - El sistema mantiene integridad referencial con soft delete.
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <div class="caso-uso">
+        <h3>CU-ADM-BAR: Gestionar Barrios</h3>
+
+        <div class="campo">
+            <div class="campo-titulo">ACTORES PRINCIPALES:</div>
+            <div class="campo-contenido">Administrador</div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">DESCRIPCIÓN:</div>
+            <div class="campo-contenido">
+                El administrador gestiona (crea, edita, elimina y lista) los barrios dentro de cada localidad
+                para organizar geográficamente los inmuebles con mayor precisión (ej: Villa Don Andrés, Centro, Resistencia).
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO PRINCIPAL - LISTAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Datos de Ubicación" en el menú de navegación.<br>
+                2. El administrador selecciona "Barrios" del submenú.<br>
+                3. Se muestra una tabla con todos los barrios existentes:<br>
+                   - ID<br>
+                   - Nombre del barrio<br>
+                   - Localidad a la que pertenece<br>
+                   - Botones "Editar" y "Eliminar" para cada barrio<br>
+                4. En la parte superior hay un botón "Agregar Nuevo Barrio".<br>
+                5. La tabla se muestra con paginación si hay más de 10 barrios.<br>
+                6. El administrador puede filtrar por localidad.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - CREAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Agregar Nuevo Barrio".<br>
+                2. Se muestra un formulario con:<br>
+                   - Campo "Nombre del Barrio" (texto obligatorio)<br>
+                   - Menú "Localidad" (obligatorio)<br>
+                   - Botones "Guardar" y "Cancelar"<br>
+                3. El administrador selecciona la localidad e ingresa el nombre del barrio.<br>
+                4. El administrador hace clic en "Guardar".<br>
+                5. Aparece el mensaje: "Barrio creado exitosamente".<br>
+                6. El nuevo barrio aparece en la tabla.<br>
+                7. El formulario se cierra y vuelve a la lista.<br>
+                8. El barrio está disponible inmediatamente en formularios.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - EDITAR:</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Editar" de un barrio existente.<br>
+                2. Se abre el formulario con los datos actuales pre-cargados.<br>
+                3. El administrador modifica el nombre y/o la localidad.<br>
+                4. El administrador hace clic en "Guardar Cambios".<br>
+                5. Aparece el mensaje: "Barrio actualizado exitosamente".<br>
+                6. La tabla se actualiza mostrando los nuevos datos.<br>
+                7. Todos los inmuebles asociados reflejan el cambio.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">FLUJO ALTERNATIVO - ELIMINAR (SOFT DELETE):</div>
+            <div class="campo-contenido">
+                1. El administrador hace clic en "Eliminar" del barrio que desea borrar.<br>
+                2. Aparece un cuadro de confirmación: "¿Está seguro que desea eliminar este barrio?".<br>
+                3. El administrador hace clic en "Confirmar".<br>
+                4. Aparece el mensaje: "Barrio eliminado exitosamente".<br>
+                5. El barrio desaparece de la tabla.<br>
+                6. El barrio queda marcado como eliminado (no se borra físicamente).<br>
+                7. El barrio ya no aparece en menús desplegables de formularios.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">VALIDACIONES Y ERRORES:</div>
+            <div class="campo-contenido">
+                - Si no hay barrios: "No hay barrios registrados en el sistema".<br>
+                - Si el nombre está vacío: "Por favor ingrese un nombre".<br>
+                - Si no selecciona localidad: "Por favor seleccione una localidad".<br>
+                - Si el nombre ya existe en esa localidad: "Ya existe un barrio con ese nombre en esta localidad".<br>
+                - Si hay error en operación: "Error al procesar. Por favor intente nuevamente".<br>
+                - Hacer clic en "Cancelar" descarta los cambios y cierra el formulario.
+            </div>
+        </div>
+
+        <div class="campo">
+            <div class="campo-titulo">POSTCONDICIONES:</div>
+            <div class="campo-contenido">
+                - Los barrios están actualizados en el sistema.<br>
+                - Los cambios se reflejan inmediatamente en formularios.<br>
+                - La relación Localidad → Barrio se mantiene correctamente.<br>
+                - El sistema mantiene integridad referencial con soft delete.
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

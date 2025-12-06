@@ -47,9 +47,7 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
           : ""}
       </td>
       <td className="px-4 py-2 text-gray-900">
-        {empleado.fecha_egreso
-          ? new Date(empleado.fecha_egreso).toLocaleDateString("es-AR")
-          : "-"}
+        {persona.correo}
       </td>
       <td className="px-4 py-2 text-gray-900">
         {persona.telefono ?? "No disponible"}
@@ -68,7 +66,7 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
       <td className="px-4 py-2 text-center">
         <button
           onClick={() => router.push(`/agentes/${empleado.id}`)}
-          className="px-4 py-2 text-white bg-[#6FC6D1] rounded-full hover:underline"
+          className="px-3 py-1 text-sm text-white bg-[#6FC6D1] rounded-md hover:bg-[#5AB5C1] transition-colors"
         >
           Ver
         </button>

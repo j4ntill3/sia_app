@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { requireAuth } from "@/lib/api-helpers";
 import { agentSchema } from "@/lib/validation";
-import { generateRandomPassword } from "@/lib/password";
+import { sendSetPasswordEmail } from "@/lib/email";
+import crypto from "crypto";
 import type { persona as Person } from "@prisma/client";
 
 // GET: Listar agentes
@@ -140,19 +141,54 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Generar contraseña aleatoria temporal
-    const temporaryPassword = generateRandomPassword(12);
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(temporaryPassword, salt);
+    // Crear usuario con contraseña temporal vacía (se establecerá mediante email)
+    // Usar un hash de placeholder que nunca podrá ser usado para login
+    const placeholderHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
 
     await prisma.usuario.create({
       data: {
         rol_id,
-        contrasena: hashedPassword,
+        contrasena: placeholderHash,
         persona_id: person.id,
         eliminado: false,
       },
     });
+
+    // Generar token único para establecer contraseña
+    const token = crypto.randomBytes(32).toString('hex');
+
+    // Calcular fecha de expiración (24 horas desde ahora)
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 24);
+
+    // Eliminar tokens anteriores para este email (por si acaso)
+    await prisma.verificationtoken.deleteMany({
+      where: {
+        identifier: person.correo,
+      },
+    });
+
+    // Crear nuevo token
+    await prisma.verificationtoken.create({
+      data: {
+        identifier: person.correo,
+        token,
+        expires,
+      },
+    });
+
+    // Enviar email con link para establecer contraseña
+    const emailSent = await sendSetPasswordEmail(
+      person.correo,
+      person.nombre,
+      token
+    );
+
+    if (!emailSent) {
+      console.error("Error al enviar email al agente:", person.correo);
+      // Aún así devolvemos éxito porque el agente fue creado
+      // El admin podrá reenviar el email más tarde
+    }
 
     return NextResponse.json({
       data: {
@@ -162,9 +198,8 @@ export async function POST(request: NextRequest) {
         empleadoId: employee.id,
         empleado: employee,
         persona: person,
-        // IMPORTANTE: La contraseña temporal debe ser comunicada al agente de forma segura
-        temporaryPassword: temporaryPassword,
-        warningMessage: "Por favor, comunique esta contraseña al agente de forma segura. El agente deberá cambiarla en su primer inicio de sesión."
+        emailSent: emailSent,
+        email: person.correo,
       }
     }, { status: 201 });
   } catch (error) {

@@ -25,6 +25,14 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Validar si hay campos vacíos
+    if (!email.trim() || !password.trim()) {
+      setErrorMessage("Por favor complete todos los campos");
+      setSuccessMessage("");
+      return;
+    }
+
     const resultValidation = loginSchema.safeParse({ email, password });
     if (!resultValidation.success) {
       const firstError = resultValidation.error.errors[0]?.message || "Datos inválidos.";
@@ -72,7 +80,7 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
+      <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
         <h2 className="text-3xl font-bold text-center mb-6 text-[#083C2C]">
           Bienvenido a SIA
         </h2>
@@ -80,30 +88,30 @@ export default function Login() {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-sm font-sans font-medium text-[#083C2C]"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Email
+              Email *
             </label>
             <input
               type="email"
               id="email"
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
               placeholder="Ingresa tu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mb-10">
+          <div className="mb-6">
             <label
               htmlFor="password"
-              className="block font-sans text-sm font-medium text-[#083C2C]"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Contraseña
+              Contraseña *
             </label>
             <input
               type="password"
               id="password"
-              className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
               placeholder="Ingresa tu contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -111,18 +119,22 @@ export default function Login() {
           </div>
 
           {errorMessage && (
-            <div className="mb-4 text-red-500 text-sm">{errorMessage}</div>
+            <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3">
+              <p className="text-sm text-red-800">{errorMessage}</p>
+            </div>
           )}
           {successMessage && (
-            <div className="mb-4 text-green-500 text-sm">{successMessage}</div>
+            <div className="mb-4 bg-green-50 border border-green-200 rounded-md p-3">
+              <p className="text-sm text-green-800">{successMessage}</p>
+            </div>
           )}
 
           <button
             type="submit"
-            className="w-full font-sans bg-[#6FC6D1] text-white py-2 px-4 rounded-full text-xs"
+            className="w-full bg-[#6FC6D1] text-white py-3 px-4 rounded-md hover:bg-[#5AB5C1] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
             disabled={loading}
           >
-            {loading ? "Cargando..." : "INGRESAR"}
+            {loading ? "Cargando..." : "Ingresar"}
           </button>
         </form>
       </div>

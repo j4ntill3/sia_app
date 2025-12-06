@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getSession } from "@/actions/auth-actions";
+import { Mail } from "lucide-react";
 
 type FormData = {
   nombre: string;
@@ -40,6 +41,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
   const [existingImage, setExistingImage] = useState<string | null>(null);
   const [personaId, setPersonaId] = useState<string>("");
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [sendingEmail, setSendingEmail] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -246,6 +248,41 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
     }
   };
 
+  const handleResendEmail = async () => {
+    if (sendingEmail) return;
+
+    if (!confirm(`¿Deseas reenviar el email de establecimiento de contraseña a ${formData.email}?`)) {
+      return;
+    }
+
+    setSendingEmail(true);
+
+    try {
+      const response = await fetch("/api/send-set-password-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          personaId: personaId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`Email enviado exitosamente a ${formData.email}`);
+      } else {
+        alert(data.error || "Error al enviar el email");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error de conexión al enviar el email");
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -271,21 +308,56 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4 md:p-8">
-      <div className="w-full max-w-5xl py-6 px-6 md:px-10 bg-white shadow-md rounded-2xl">
-        <h2 className="text-3xl font-bold text-center mt-2 mb-6 text-[#083C2C]">
-          Editar Agente
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <div className="space-y-4">
-              {/* Columna 1 */}
+    <div className="min-h-[calc(100vh-80px-56px)] bg-gray-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">Editar Agente</h1>
+            <p className="text-gray-600 mt-2">Modifica los datos del agente en el sistema</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => router.push("/agentes")}
+              className="bg-gray-500 text-white py-2 px-3 rounded-md hover:bg-gray-600 transition-colors font-medium text-sm"
+            >
+              Volver
+            </button>
+            <button
+              type="button"
+              onClick={handleResendEmail}
+              disabled={sendingEmail}
+              className="bg-blue-600 text-white py-2 px-3 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-medium text-sm flex items-center gap-2"
+              title="Reenviar email de contraseña"
+            >
+              <Mail size={16} />
+              {sendingEmail ? "Enviando..." : "Reenviar Email Contraseña"}
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-red-500 text-white py-2 px-3 rounded-md hover:bg-red-600 transition-colors font-medium text-sm"
+            >
+              Eliminar
+            </button>
+            <button
+              type="submit"
+              form="agente-form"
+              className="bg-[#6FC6D1] text-white py-2 px-3 rounded-md hover:bg-[#5AB5C1] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-medium text-sm"
+              disabled={saving}
+            >
+              {saving ? "Guardando..." : "Guardar"}
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <form id="agente-form" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Nombre */}
               <div>
-                <label
-                  htmlFor="nombre"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
-                  Nombre
+                <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre *
                 </label>
                 <input
                   type="text"
@@ -293,7 +365,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   name="nombre"
                   value={formData.nombre}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ingresa el nombre"
                   required
                 />
@@ -302,12 +374,10 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                 )}
               </div>
 
+              {/* Apellido */}
               <div>
-                <label
-                  htmlFor="apellido"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
-                  Apellido
+                <label htmlFor="apellido" className="block text-sm font-medium text-gray-700 mb-1">
+                  Apellido *
                 </label>
                 <input
                   type="text"
@@ -315,7 +385,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   name="apellido"
                   value={formData.apellido}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ingresa el apellido"
                   required
                 />
@@ -324,12 +394,10 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                 )}
               </div>
 
+              {/* Teléfono */}
               <div>
-                <label
-                  htmlFor="telefono"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
-                  Teléfono
+                <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-1">
+                  Teléfono *
                 </label>
                 <input
                   type="text"
@@ -337,7 +405,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   name="telefono"
                   value={formData.telefono}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ingresa el teléfono"
                   required
                 />
@@ -346,12 +414,10 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                 )}
               </div>
 
+              {/* Email */}
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
-                  Email
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  Email *
                 </label>
                 <input
                   type="email"
@@ -359,7 +425,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ingresa el email"
                   required
                 />
@@ -368,12 +434,10 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                 )}
               </div>
 
+              {/* DNI */}
               <div>
-                <label
-                  htmlFor="DNI"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
-                  DNI
+                <label htmlFor="DNI" className="block text-sm font-medium text-gray-700 mb-1">
+                  DNI *
                 </label>
                 <input
                   type="text"
@@ -381,7 +445,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   name="DNI"
                   value={formData.DNI}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ej: 12345678"
                   required
                   pattern="\d{7,8}"
@@ -393,16 +457,11 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   <p className="text-red-500 text-xs mt-1">{validationErrors.DNI[0]}</p>
                 )}
               </div>
-            </div>
 
-            <div className="space-y-4">
-              {/* Columna 2 */}
+              {/* Dirección */}
               <div>
-                <label
-                  htmlFor="direccion"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
-                  Dirección
+                <label htmlFor="direccion" className="block text-sm font-medium text-gray-700 mb-1">
+                  Dirección *
                 </label>
                 <input
                   type="text"
@@ -410,7 +469,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   name="direccion"
                   value={formData.direccion}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ingresa la dirección"
                   required
                 />
@@ -419,12 +478,10 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                 )}
               </div>
 
+              {/* CUIT */}
               <div>
-                <label
-                  htmlFor="cuit"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
-                  CUIT
+                <label htmlFor="cuit" className="block text-sm font-medium text-gray-700 mb-1">
+                  CUIT *
                 </label>
                 <input
                   type="text"
@@ -432,7 +489,7 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   name="cuit"
                   value={formData.cuit}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ingresa el CUIT"
                   required
                 />
@@ -441,12 +498,10 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                 )}
               </div>
 
+              {/* Fecha de Nacimiento */}
               <div>
-                <label
-                  htmlFor="fechaNacimiento"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
-                  Fecha de Nacimiento
+                <label htmlFor="fechaNacimiento" className="block text-sm font-medium text-gray-700 mb-1">
+                  Fecha de Nacimiento *
                 </label>
                 <input
                   type="date"
@@ -454,91 +509,64 @@ export default function EditarAgente({ params }: { params: Promise<{ id: string 
                   name="fechaNacimiento"
                   value={formData.fechaNacimiento}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] bg-white"
                   required
                 />
                 {validationErrors.fechaNacimiento && (
                   <p className="text-red-500 text-xs mt-1">{validationErrors.fechaNacimiento[0]}</p>
                 )}
               </div>
+            </div>
 
-              <div>
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    id="activo"
-                    name="activo"
-                    checked={formData.activo}
-                    onChange={handleInputChange}
-                    className="w-5 h-5 text-[#6FC6D1] bg-gray-100 border-gray-300 rounded focus:ring-[#6FC6D1] focus:ring-2"
-                  />
-                  <span className="text-sm font-sans font-medium text-[#083C2C]">
-                    Agente Activo
-                  </span>
-                </label>
-                <p className="text-xs text-gray-500 mt-1 ml-8">
-                  {formData.activo ? "El agente está trabajando actualmente" : "El agente ya no trabaja (tiene fecha de egreso)"}
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-sans font-medium text-[#083C2C]">
-                  Imagen de perfil
-                </label>
-                {!imagePreview && (
-                  <div className="mt-2 mb-2">
-                    <img
-                      src={existingImage || "/img/no-image.webp"}
-                      alt="Imagen actual"
-                      className="w-32 h-32 object-cover rounded-full border"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {existingImage ? "Imagen actual" : "Sin imagen"}
-                    </p>
-                  </div>
-                )}
+            {/* Checkbox Agente Activo */}
+            <div className="mt-4">
+              <label htmlFor="activo" className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#6FC6D1] file:text-white hover:file:bg-[#5ab5c0]"
+                  type="checkbox"
+                  id="activo"
+                  name="activo"
+                  checked={formData.activo}
+                  onChange={handleInputChange}
+                  className="rounded border-gray-300 focus:ring-2 focus:ring-[#6FC6D1] w-4 h-4"
                 />
-                {imagePreview && (
+                Agente Activo
+              </label>
+            </div>
+
+            {/* Imagen de perfil - ancho completo */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Imagen de perfil
+              </label>
+              {!imagePreview && existingImage && (
+                <div className="mb-2">
+                  <img
+                    src={existingImage}
+                    alt="Imagen actual"
+                    className="w-32 h-32 object-cover rounded-full border-2 border-gray-300"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Imagen actual</p>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#6FC6D1] file:text-white hover:file:bg-[#5AB5C1]"
+              />
+              {imagePreview && (
+                <div className="mt-3">
                   <img
                     src={imagePreview}
                     alt="Previsualización"
-                    className="mt-2 w-32 h-32 object-cover rounded-full border"
+                    className="w-32 h-32 object-cover rounded-full border-2 border-gray-300"
                   />
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          </div>
-
-          <div className="mt-6 space-y-3">
-            <button
-              type="submit"
-              className="w-full bg-[#6FC6D1] text-white py-3 px-4 rounded-full text-sm font-sans hover:bg-[#5ab5c0] transition-colors"
-              disabled={saving}
-            >
-              {saving ? "Guardando..." : "Guardar Cambios"}
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push("/agentes")}
-              className="w-full bg-gray-500 text-white py-3 px-4 rounded-full text-sm font-sans hover:bg-gray-600 transition-colors"
-            >
-              Volver a Agentes
-            </button>
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="w-full bg-red-500 text-white py-3 px-4 rounded-full text-sm font-sans hover:bg-red-600 transition-colors"
-            >
-              Eliminar Agente
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

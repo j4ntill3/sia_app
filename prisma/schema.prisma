@@ -255,17 +255,17 @@ model agente_inmueble {
 }
 
 model consulta_cliente {
-  id          String   @id @default(uuid()) @db.Uuid
-  agente_id   String   @db.Uuid
+  id          String    @id @default(uuid()) @db.Uuid
+  agente_id   String?   @db.Uuid
   nombre      String
   apellido    String
   telefono    String
   correo      String
-  fecha       DateTime @db.Timestamp(6)
+  fecha       DateTime  @db.Timestamp(6)
   descripcion String?
-  inmueble_id String   @db.Uuid
-  empleado    empleado @relation(fields: [agente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  inmueble    inmueble @relation(fields: [inmueble_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  inmueble_id String    @db.Uuid
+  empleado    empleado? @relation(fields: [agente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  inmueble    inmueble  @relation(fields: [inmueble_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([agente_id])
   @@index([inmueble_id])

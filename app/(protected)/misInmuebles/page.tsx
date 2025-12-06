@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth-actions";
 import InmuebleCard from "@/app/components/InmuebleCard";
 import type { Inmueble } from "@/types/inmueble";
-import InmuebleSearch from "@/app/components/InmuebleSearch";
+import SearchBar from "@/app/components/SearchBar";
 import Pagination from "@/app/components/Pagination";
 
 const misInmuebles = () => {
@@ -118,7 +118,27 @@ const misInmuebles = () => {
   return (
     <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4">
       {/* Solo mostrar el buscador si hay inmuebles registrados */}
-      {inmuebles.length > 0 && <InmuebleSearch onSearch={setSearchQuery} />}
+      {inmuebles.length > 0 && (
+        <SearchBar
+          onSearch={setSearchQuery}
+          placeholder="Buscar inmuebles por categoría, barrio, dirección..."
+        />
+      )}
+
+      {/* Contador de resultados */}
+      {inmuebles.length > 0 && (
+        <div className="w-full max-w-md mb-4">
+          <p className="text-sm text-gray-600 text-center">
+            Mostrando <span className="font-semibold">{filteredInmuebles.length}</span> de{" "}
+            <span className="font-semibold">{totalItems}</span> inmuebles
+            {searchQuery && (
+              <span className="ml-2 text-blue-600">
+                (filtrado por: "{searchQuery}")
+              </span>
+            )}
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-wrap justify-center gap-6 w-full">
         {inmuebles.length === 0 ? (

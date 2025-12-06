@@ -263,7 +263,7 @@ const Navbar = () => {
 
                         {/* Separador para Datos Maestros */}
                         <div className="border-t border-gray-200 pt-2 mt-3">
-                          <p className="text-xs font-semibold text-gray-500 px-4 pb-2">DATOS MAESTROS</p>
+                          <p className="text-xs font-semibold text-gray-500 px-4 pb-2">DATOS UBICACIÓN</p>
 
                           <Link href="/admin/rubros" onClick={closeSidebar}>
                             <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">

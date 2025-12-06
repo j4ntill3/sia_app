@@ -31,34 +31,35 @@ export default function CrearAgente() {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-
-  // Función de autenticación
-  const authenticateUser = async () => {
-    try {
-      const sessionData = await getSession();
-
-      if (!sessionData) {
-        setError("No autenticado. Por favor inicia sesión.");
-        setLoading(false); // Finalizamos el estado de carga
-        return;
-      }
-
-      if (sessionData.user.role !== "administrador") {
-        setError("No autorizado para acceder a esta página.");
-        setLoading(false); // Finalizamos el estado de carga
-        return;
-      }
-
-      setSession(sessionData);
-      setLoading(false); // Finalizamos el estado de carga
-    } catch (err) {
-      setError("Error al autenticar al usuario.");
-      setLoading(false); // Finalizamos el estado de carga
-    }
-  };
+  const [validationErrors, setValidationErrors] = useState<Record<string, string | string[]>>({});
 
   useEffect(() => {
+    // Función de autenticación
+    const authenticateUser = async () => {
+      try {
+        const sessionData = await getSession();
+
+        if (!sessionData) {
+          setError("No autenticado. Por favor inicia sesión.");
+          setLoading(false);
+          return;
+        }
+
+        if (sessionData.user.role !== "administrador") {
+          setError("No autorizado para acceder a esta página.");
+          setLoading(false);
+          return;
+        }
+
+        setSession(sessionData);
+      } catch (err) {
+        console.error("Error en authenticateUser:", err);
+        setError("Error al autenticar al usuario.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     authenticateUser();
   }, []);
 
@@ -139,12 +140,20 @@ export default function CrearAgente() {
           });
           const imgData = await imgRes.json();
           if (imgRes.ok && imgData.data?.image?.imagePath) {
-            alert(`Agente creado con éxito.\n\nContraseña temporal: ${data.data.temporaryPassword}\n\nPor favor, comunique esta contraseña al agente de forma segura.`);
+            if (data.data.emailSent) {
+              alert(`Agente creado con éxito.\n\nSe ha enviado un email a ${data.data.email} con instrucciones para establecer su contraseña.`);
+            } else {
+              alert(`Agente creado con éxito, pero el email no se pudo enviar.\n\nPuedes reenviar el email desde la lista de agentes.`);
+            }
           } else {
-            alert(`Agente creado, pero la imagen no se pudo guardar.\n\nContraseña temporal: ${data.data.temporaryPassword}`);
+            alert(`Agente creado, pero la imagen no se pudo guardar.\n\n${data.data.emailSent ? `Email enviado a ${data.data.email}` : 'El email no se pudo enviar. Puedes reenviarlo desde la lista de agentes.'}`);
           }
         } else {
-          alert(`Agente creado con éxito.\n\nContraseña temporal: ${data.data.temporaryPassword}\n\nPor favor, comunique esta contraseña al agente de forma segura.`);
+          if (data.data.emailSent) {
+            alert(`Agente creado con éxito.\n\nSe ha enviado un email a ${data.data.email} con instrucciones para establecer su contraseña.`);
+          } else {
+            alert(`Agente creado con éxito, pero el email no se pudo enviar.\n\nPuedes reenviar el email desde la lista de agentes.`);
+          }
         }
 
         // Limpiar formulario
@@ -218,20 +227,19 @@ export default function CrearAgente() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4 md:p-8">
-      <div className="w-full max-w-5xl py-6 px-6 md:px-10 bg-white shadow-md rounded-2xl">
-        <h2 className="text-3xl font-bold text-center mt-2 mb-6 text-[#083C2C]">
-          Alta Agente
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <div className="space-y-4">
-              {/* Columna 1 */}
+    <div className="min-h-[calc(100vh-80px-56px)] bg-gray-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">Alta Agente</h1>
+          <p className="text-gray-600 mt-2">Completa los datos para crear un nuevo agente en el sistema</p>
+        </div>
+
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Nombre */}
               <div>
-                <label
-                  htmlFor="nombre"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
+                <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-1">
                   Nombre *
                 </label>
                 <input
@@ -240,22 +248,22 @@ export default function CrearAgente() {
                   name="nombre"
                   value={formData.nombre}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ingresa el nombre"
                   required
                   minLength={2}
                   maxLength={100}
                 />
                 {validationErrors.nombre && (
-                  <p className="text-red-500 text-xs mt-1">{validationErrors.nombre[0]}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {Array.isArray(validationErrors.nombre) ? validationErrors.nombre[0] : validationErrors.nombre}
+                  </p>
                 )}
               </div>
 
+              {/* Apellido */}
               <div>
-                <label
-                  htmlFor="apellido"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
+                <label htmlFor="apellido" className="block text-sm font-medium text-gray-700 mb-1">
                   Apellido *
                 </label>
                 <input
@@ -264,22 +272,22 @@ export default function CrearAgente() {
                   name="apellido"
                   value={formData.apellido}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ingresa el apellido"
                   required
                   minLength={2}
                   maxLength={100}
                 />
                 {validationErrors.apellido && (
-                  <p className="text-red-500 text-xs mt-1">{validationErrors.apellido[0]}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {Array.isArray(validationErrors.apellido) ? validationErrors.apellido[0] : validationErrors.apellido}
+                  </p>
                 )}
               </div>
 
+              {/* Teléfono */}
               <div>
-                <label
-                  htmlFor="telefono"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
+                <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-1">
                   Teléfono *
                 </label>
                 <input
@@ -288,7 +296,7 @@ export default function CrearAgente() {
                   name="telefono"
                   value={formData.telefono}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ej: +54 11 1234-5678"
                   required
                   minLength={8}
@@ -297,15 +305,15 @@ export default function CrearAgente() {
                   title="Solo números, +, -, espacios y paréntesis"
                 />
                 {validationErrors.telefono && (
-                  <p className="text-red-500 text-xs mt-1">{validationErrors.telefono[0]}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {Array.isArray(validationErrors.telefono) ? validationErrors.telefono[0] : validationErrors.telefono}
+                  </p>
                 )}
               </div>
 
+              {/* Email */}
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email *
                 </label>
                 <input
@@ -314,21 +322,21 @@ export default function CrearAgente() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="ejemplo@correo.com"
                   required
                   maxLength={100}
                 />
                 {validationErrors.email && (
-                  <p className="text-red-500 text-xs mt-1">{validationErrors.email[0]}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {Array.isArray(validationErrors.email) ? validationErrors.email[0] : validationErrors.email}
+                  </p>
                 )}
               </div>
 
+              {/* DNI */}
               <div>
-                <label
-                  htmlFor="DNI"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
+                <label htmlFor="DNI" className="block text-sm font-medium text-gray-700 mb-1">
                   DNI *
                 </label>
                 <input
@@ -337,7 +345,7 @@ export default function CrearAgente() {
                   name="DNI"
                   value={formData.DNI}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ej: 12345678"
                   required
                   pattern="\d{7,8}"
@@ -346,18 +354,15 @@ export default function CrearAgente() {
                   title="El DNI debe tener 7 u 8 dígitos"
                 />
                 {validationErrors.DNI && (
-                  <p className="text-red-500 text-xs mt-1">{validationErrors.DNI[0]}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {Array.isArray(validationErrors.DNI) ? validationErrors.DNI[0] : validationErrors.DNI}
+                  </p>
                 )}
               </div>
-            </div>
 
-            <div className="space-y-4">
-              {/* Columna 2 */}
+              {/* Dirección */}
               <div>
-                <label
-                  htmlFor="direccion"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
+                <label htmlFor="direccion" className="block text-sm font-medium text-gray-700 mb-1">
                   Dirección *
                 </label>
                 <input
@@ -366,22 +371,22 @@ export default function CrearAgente() {
                   name="direccion"
                   value={formData.direccion}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ej: Av. Corrientes 1234"
                   required
                   minLength={5}
                   maxLength={200}
                 />
                 {validationErrors.direccion && (
-                  <p className="text-red-500 text-xs mt-1">{validationErrors.direccion[0]}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {Array.isArray(validationErrors.direccion) ? validationErrors.direccion[0] : validationErrors.direccion}
+                  </p>
                 )}
               </div>
 
+              {/* CUIT */}
               <div>
-                <label
-                  htmlFor="cuit"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
+                <label htmlFor="cuit" className="block text-sm font-medium text-gray-700 mb-1">
                   CUIT *
                 </label>
                 <input
@@ -390,7 +395,7 @@ export default function CrearAgente() {
                   name="cuit"
                   value={formData.cuit}
                   onChange={handleCUITChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   placeholder="Ej: 20-12345678-9"
                   required
                   pattern="\d{2}-\d{8}-\d{1}"
@@ -398,15 +403,15 @@ export default function CrearAgente() {
                   title="Formato: XX-XXXXXXXX-X"
                 />
                 {validationErrors.cuit && (
-                  <p className="text-red-500 text-xs mt-1">{validationErrors.cuit[0]}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {Array.isArray(validationErrors.cuit) ? validationErrors.cuit[0] : validationErrors.cuit}
+                  </p>
                 )}
               </div>
 
+              {/* Fecha de Nacimiento */}
               <div>
-                <label
-                  htmlFor="fechaNacimiento"
-                  className="block text-sm font-sans font-medium text-[#083C2C]"
-                >
+                <label htmlFor="fechaNacimiento" className="block text-sm font-medium text-gray-700 mb-1">
                   Fecha de Nacimiento *
                 </label>
                 <input
@@ -415,46 +420,51 @@ export default function CrearAgente() {
                   name="fechaNacimiento"
                   value={formData.fechaNacimiento}
                   onChange={handleInputChange}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1]"
                   required
                   max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
                   min={new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split('T')[0]}
                 />
                 {validationErrors.fechaNacimiento && (
-                  <p className="text-red-500 text-xs mt-1">{validationErrors.fechaNacimiento[0]}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-sans font-medium text-[#083C2C]">
-                  Imagen de perfil
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#6FC6D1] file:text-white hover:file:bg-[#5ab5c0]"
-                />
-                {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Previsualización"
-                    className="mt-2 w-32 h-32 object-cover rounded-full border"
-                  />
+                  <p className="text-red-500 text-xs mt-1">
+                    {Array.isArray(validationErrors.fechaNacimiento) ? validationErrors.fechaNacimiento[0] : validationErrors.fechaNacimiento}
+                  </p>
                 )}
               </div>
             </div>
-          </div>
 
-          <div className="mt-6 space-y-3">
-            <button
-              type="submit"
-              className="w-full bg-[#6FC6D1] text-white py-3 px-4 rounded-full text-sm font-sans hover:bg-[#5ab5c0] transition-colors"
-            >
-              Crear Agente
-            </button>
-          </div>
-        </form>
+            {/* Imagen de perfil - ancho completo */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Imagen de perfil
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#6FC6D1] file:text-white hover:file:bg-[#5AB5C1]"
+              />
+              {imagePreview && (
+                <div className="mt-3">
+                  <img
+                    src={imagePreview}
+                    alt="Previsualización"
+                    className="w-32 h-32 object-cover rounded-full border-2 border-gray-300"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6">
+              <button
+                type="submit"
+                className="w-full bg-[#6FC6D1] text-white py-3 px-4 rounded-md hover:bg-[#5AB5C1] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+              >
+                Crear Agente
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

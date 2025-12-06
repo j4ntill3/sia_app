@@ -121,7 +121,13 @@ export default function ZonasPage() {
     ? zonas.filter((z) => z.localidad_id === filterLocalidad)
     : zonas;
 
-  if (loading) return <div className="p-8 text-center">Cargando...</div>;
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-gray-600">Cargando...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">

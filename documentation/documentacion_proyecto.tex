@@ -1,0 +1,1803 @@
+\documentclass[12pt,a4paper]{report}
+
+% Paquetes necesarios
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}  % Para usar [H] y forzar posición exacta de figuras
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{listings}
+
+% Configuración de geometría
+\geometry{
+    left=3cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+% Configuración de hipervínculos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdfauthor={Nicolás Ybañez, José Antille, Javier Bar},
+    pdftitle={SIA - Sistema de Inmuebles y Agentes}
+}
+
+% Configuración de encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{SIA - Sistema de Inmuebles y Agentes}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Configuración de código
+ \lstset{
+     basicstyle=\ttfamily\small,
+     breaklines=true,
+     frame=single,
+     numbers=left,
+     numberstyle=\tiny,
+     backgroundcolor=\color{gray!10},
+     extendedchars=true,
+     inputencoding=utf8,
+     literate=
+         {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+         {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+         {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+         {ü}{{\"u}}1 {Ü}{{\"U}}1
+}
+
+\begin{document}
+
+% Página de título
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\LARGE\bfseries Intituto Superior de Comercio Nº 46\\[0.3cm]
+    Domingo Guzmán Silva\\[2cm]}
+
+    {\Large Prácticas Profesionalizantes 2\\[1cm]}
+
+    {\large Docente: Diego Galante\\[3cm]}
+
+    {\Huge\bfseries SIA - Sistema de Inmuebles y Agentes\\[0.5cm]}
+    {\LARGE Documentación del Proyecto\\[3cm]}
+
+    {\large\bfseries Alumnos:\\[0.5cm]}
+    {\large
+    José Antille\\
+    Javier Bar\\[2cm]}
+
+    \vfill
+
+\end{titlepage}
+
+% Tabla de contenidos
+\tableofcontents
+\newpage
+
+\chapter{Introducción}
+
+\section{Objetivo del Documento}
+
+Este documento tiene como propósito presentar y documentar de manera integral el proyecto de desarrollo de software realizado para la cátedra de ``Prácticas Profesionalizantes 2'' de la carrera de Tecnicatura Superior en Desarrollo de Software, impartida en la Escuela Normal y Superior de Comercio Nº 46 Domingo Guzmán Silva.
+
+El presente trabajo detalla todos los aspectos relevantes del sistema desarrollado, incluyendo sus fundamentos teóricos, alcance, objetivos, análisis de requerimientos, diseño técnico, implementación y funcionalidades. Este documento servirá como referencia técnica completa del proyecto, proporcionando una visión integral tanto de la planificación como de la ejecución del mismo.
+
+Se busca demostrar la aplicación práctica de los conocimientos adquiridos durante la formación académica, evidenciando las competencias técnicas y profesionales desarrolladas en el ámbito del desarrollo de software empresarial.
+
+\section{Breve Descripción del Proyecto}
+
+El proyecto consiste en el desarrollo de un sistema integral de gestión inmobiliaria diseñado específicamente para centralizar y optimizar la administración de información relacionada con inmuebles, agentes inmobiliarios y clientes. El sistema fue concebido como una solución tecnológica que permite a las empresas del sector inmobiliario gestionar de manera eficiente sus operaciones diarias.
+
+La plataforma desarrollada permite registrar y administrar información detallada de cada propiedad, incluyendo características físicas, ubicación geográfica, estado de disponibilidad, imágenes y descripciones. Asimismo, facilita la gestión de los agentes inmobiliarios como empleados de la organización, controlando sus datos personales, información de contacto y asignaciones de propiedades.
+
+Una de las funcionalidades clave del sistema es la capacidad de registrar y hacer seguimiento de las consultas realizadas por clientes potenciales, permitiendo a los agentes mantener un historial completo de interacciones y mejorar la calidad del servicio ofrecido. Adicionalmente, el sistema incorpora herramientas de generación de reportes que facilitan el análisis de datos y la toma de decisiones estratégicas.
+
+El sistema fue diseñado bajo una arquitectura moderna y escalable, utilizando tecnologías web actuales que garantizan accesibilidad, rendimiento y seguridad en el manejo de la información empresarial.
+
+\chapter{Título del Proyecto}
+
+\begin{center}
+\textbf{\LARGE SIA - Sistema de Inmuebles y Agentes}
+\end{center}
+
+\chapter{Planteamiento del Sistema}
+
+El presente sistema se desarrolla en respuesta a una necesidad identificada en el sector inmobiliario: la falta de herramientas integradas para centralizar y gestionar eficientemente la información generada en las interacciones entre agentes inmobiliarios, clientes e inmuebles.
+
+En el contexto actual, muchas empresas inmobiliarias dependen de métodos informales y descentralizados para gestionar sus operaciones. Los agentes suelen utilizar canales de comunicación como WhatsApp, llamadas telefónicas o correos electrónicos personales para interactuar con sus clientes. Si bien estos medios son efectivos para la comunicación inmediata, no permiten almacenar, organizar ni analizar la información de valor generada en estas interacciones.
+
+Esta situación deriva en diversas problemáticas:
+
+\begin{itemize}
+    \item Pérdida de información valiosa sobre consultas de clientes y preferencias
+    \item Dificultad para realizar seguimiento de potenciales compradores o inquilinos
+    \item Imposibilidad de generar métricas detalladas sobre inmuebles más consultados
+    \item Duplicación de esfuerzos cuando múltiples agentes atienden al mismo cliente
+    \item Falta de trazabilidad en las gestiones realizadas
+    \item Ausencia de respaldo documental de las interacciones
+    \item Dificultad para que administradores supervisen la actividad de los agentes
+\end{itemize}
+
+El SIA surge como solución a estas problemáticas, ofreciendo una plataforma centralizada que permite registrar cada inmueble con sus características específicas, asignarlos a agentes responsables, y documentar cada consulta recibida con la información completa del cliente interesado. De esta manera, la empresa cuenta con un repositorio organizado de información que puede ser consultado, analizado y utilizado para mejorar la eficiencia operativa y la calidad del servicio.
+
+Además, el sistema contempla diferentes niveles de acceso según el rol del usuario, permitiendo que los agentes gestionen sus propios inmuebles y consultas, mientras que los administradores tienen una visión global de toda la operación, pudiendo generar reportes y tomar decisiones estratégicas basadas en datos concretos.
+
+\chapter{Alcance y Justificación}
+
+\section{Alcance}
+
+Este proyecto tiene como alcance principal el desarrollo de un software empresarial a medida, diseñado para funcionar como una intranet corporativa para organizaciones dedicadas a la comercialización de inmuebles. Su propósito es centralizar y optimizar la gestión de información y procesos internos, permitiendo una administración más eficiente, organizada y trazable dentro de la empresa.
+
+El sistema desarrollado abarca las siguientes áreas funcionales:
+
+\subsection*{Gestión de Inmuebles}
+\begin{itemize}
+    \item Registro completo de propiedades con toda su información relevante (ubicación, características, superficies, comodidades)
+    \item Carga de múltiples imágenes por inmueble con designación de imagen principal
+    \item Clasificación por categorías (casa, departamento, terreno, local comercial, etc.)
+    \item Control de estados (disponible, reservado, vendido, alquilado)
+    \item Organización geográfica por localidad, zona y barrio
+    \item Búsqueda y filtrado de inmuebles
+    \item Actualización y eliminación lógica de registros
+\end{itemize}
+
+\subsection*{Gestión de Usuarios y Empleados}
+\begin{itemize}
+    \item Creación y administración de cuentas de usuario
+    \item Sistema de roles diferenciados (Administrador y Agente)
+    \item Registro de agentes inmobiliarios como empleados de la empresa
+    \item Control de información personal: DNI, CUIT, datos de contacto, fecha de ingreso
+    \item Gestión de fotografías de perfil
+    \item Generación automática de contraseñas temporales seguras
+    \item Autenticación y control de acceso basado en roles
+\end{itemize}
+
+\subsection*{Asignación y Control}
+\begin{itemize}
+    \item Asignación de inmuebles específicos a agentes responsables
+    \item Visualización personalizada para cada agente de sus inmuebles asignados
+    \item Reasignación de propiedades cuando sea necesario
+    \item Trazabilidad de responsabilidades
+\end{itemize}
+
+\subsection*{Gestión de Consultas de Clientes}
+\begin{itemize}
+    \item Registro de consultas realizadas por clientes potenciales
+    \item Captura de datos del consultante (nombre, apellido, teléfono, correo electrónico)
+    \item Vinculación de consultas con inmuebles específicos y agentes
+    \item Registro de fecha y descripción de la consulta
+    \item Visualización de todas las consultas para administradores
+    \item Visualización de consultas propias para cada agente
+\end{itemize}
+
+\subsection*{Generación de Reportes}
+\begin{itemize}
+    \item Exportación de listados de inmuebles a formato CSV
+    \item Exportación de listados de agentes a formato CSV
+    \item Exportación de consultas de clientes a formato CSV
+    \item Reportes descargables para análisis externo
+\end{itemize}
+
+\subsection*{Gestión de Datos de Ubicación}
+\begin{itemize}
+    \item Administración de categorías de inmuebles
+    \item Administración de estados de inmuebles
+    \item Gestión de localidades, zonas y barrios
+    \item Interfaz administrativa para crear, modificar y eliminar estas entidades
+\end{itemize}
+
+El sistema está diseñado con una arquitectura escalable que permite la incorporación de nuevas funcionalidades en el futuro, tales como:
+
+\begin{itemize}
+    \item Sistema de calendario y agendamiento de visitas
+    \item Sistema de calificación con estrellas a agentes por clientes
+    \item Mailer de newsletter
+    \item Dashboard con métricas
+    \item Notificaciones automáticas
+\end{itemize}
+
+La implementación actual se enfoca en proporcionar una base sólida y funcional que cubra las necesidades operativas esenciales, garantizando estabilidad, seguridad y usabilidad. El diseño modular facilita la evolución del sistema conforme crezcan los requerimientos del negocio.
+
+\section{Justificación}
+
+El desarrollo del Sistema de Gestión Inmobiliaria (SIA) se justifica como una necesidad imperativa para modernizar y optimizar la operación de las empresas inmobiliarias, superando las ineficiencias causadas por la fragmentación de la información (hojas de cálculo, documentos físicos).
+
+El SIA proporciona una solución integral que garantiza:
+
+\begin{itemize}
+    \item \textbf{Centralización y Consistencia de Datos:} Toda la información se almacena en una única base de datos relacional, lo que asegura la integridad de los datos (sin duplicados ni inconsistencias) y facilita el acceso desde cualquier lugar con conexión.
+
+    \item \textbf{Eficiencia Operativa:} El sistema automatiza procesos clave (registro de consultas, reportes) y ofrece trazabilidad completa de cada operación. Esto reduce significativamente los errores humanos y el tiempo dedicado a tareas administrativas.
+
+    \item \textbf{Mejora Estratégica y de Servicio:} Los agentes pueden acceder rápidamente al historial completo de clientes e inmuebles, permitiendo un servicio personalizado y de mayor calidad. A nivel gerencial, facilita la toma de decisiones basada en datos al generar reportes que analizan tendencias, desempeño de agentes y oportunidades de mercado.
+
+    \item \textbf{Ventaja Competitiva y Económica:} Al ser un sistema a medida, la empresa obtiene independencia tecnológica y adaptabilidad. La reducción de costos operativos (por la automatización) y la prevención de pérdidas (por el registro sistematizado de clientes) justifican la inversión, asegurando un retorno a mediano plazo.
+
+    \item \textbf{Valor Académico:} El proyecto sirve como la aplicación práctica de conocimientos de desarrollo de software, bases de datos y arquitectura de sistemas, desarrollando competencias profesionales cruciales para el egresado.
+\end{itemize}
+
+En conclusión, el SIA transforma la gestión inmobiliaria, migrando de métodos manuales a un modelo digital, eficiente y escalable, esencial para el crecimiento y la competitividad en el sector.
+
+\chapter{Objetivos}
+
+El desarrollo del Sistema de Inmuebles y Agentes (SIA) persigue objetivos claros orientados a mejorar la gestión operativa de empresas inmobiliarias mediante la implementación de herramientas tecnológicas modernas, seguras y escalables.
+
+\section{Objetivo General}
+
+Diseñar, desarrollar e implementar un sistema integral de gestión inmobiliaria basado en tecnologías web que permita centralizar la información de propiedades, agentes y consultas de clientes, facilitando la administración eficiente de procesos internos, mejorando la trazabilidad de operaciones y optimizando la toma de decisiones estratégicas mediante el acceso controlado y seguro a datos estructurados y actualizados.
+
+\section{Objetivos Específicos}
+
+\subsection*{Implementar una base de datos centralizada y estructurada}
+Desarrollar un modelo de datos relacional robusto que almacene de manera organizada y segura toda la información relevante del negocio inmobiliario, garantizando integridad referencial, consistencia de datos y capacidad de consulta eficiente mediante el motor de base de datos PostgreSQL.
+
+\subsection*{Desarrollar módulo de gestión integral de inmuebles}
+Crear funcionalidades completas para el registro, consulta, actualización y eliminación de propiedades, incluyendo la capacidad de asociar múltiples imágenes, clasificarlas por categorías y estados, organizarlas geográficamente y permitir búsquedas y filtrados eficientes por diversos criterios.
+
+\subsection*{Implementar sistema de Gestión de Agentes Inmobiliarios}
+Desarrollar las capacidades necesarias para administrar el personal de agentes como empleados de la empresa, registrando sus datos personales, información laboral (CUIT, fechas de ingreso/egreso), fotografías de perfil y vinculación con cuentas de usuario del sistema.
+
+\subsection*{Crear Sistema de Autenticación y Control de Acceso basado en roles}
+Implementar un mecanismo seguro de autenticación mediante credenciales, diferenciando roles de usuario (Administrador y Agente) con permisos y restricciones específicas para cada nivel, garantizando que cada usuario acceda únicamente a las funcionalidades y datos correspondientes a su función.
+
+\subsection*{Desarrollar funcionalidad de Asignación de Inmuebles a Agentes}
+Crear el mecanismo que permite asignar propiedades específicas a agentes responsables, facilitando la distribución de cartera, el control de responsabilidades y la visualización personalizada para cada agente de los inmuebles que tiene a su cargo.
+
+\subsection*{Implementar Módulo de Registro y Gestión de Consultas de Clientes}
+Desarrollar las funcionalidades que permitan a los agentes registrar cada consulta recibida de clientes potenciales, capturando datos del consultante, inmueble de interés, fecha y descripción de la consulta, generando un historial completo de interacciones que facilite el seguimiento comercial.
+
+\subsection*{Incorporar Capacidades de Generación de Reportes y Exportación de datos}
+Implementar herramientas que permitan exportar listados de inmuebles, agentes y consultas en formato CSV, facilitando el análisis externo de datos, la generación de respaldos de información y la integración con otras herramientas de análisis y presentación.
+
+\subsection*{Garantizar la Seguridad de la Información mediante encriptación y buenas prácticas}
+Aplicar técnicas de seguridad informática como el cifrado de contraseñas mediante algoritmos robustos (bcrypt), la generación de contraseñas temporales aleatorias, la validación de datos de entrada y la protección contra vulnerabilidades comunes en aplicaciones web.
+
+\subsection*{Diseñar una interfaz de Usuario intuitiva y responsiva}
+Crear una experiencia de usuario fluida y accesible mediante interfaces gráficas modernas, responsivas y fáciles de usar, que no requieran capacitación técnica extensa y se adapten a diferentes dispositivos (computadoras de escritorio, tablets y dispositivos móviles).
+
+\subsection*{Asegurar la Escalabilidad y Mantenibilidad del Sistema}
+Desarrollar el sistema siguiendo principios de arquitectura de software que faciliten su evolución futura, documentar adecuadamente el código, utilizar patrones de diseño reconocidos y estructurar el proyecto de manera modular para permitir la incorporación de nuevas funcionalidades sin afectar las existentes.
+
+\subsection*{Implementar Gestión de Datos de Ubicación}
+Proporcionar interfaces administrativas para la gestión de entidades base del sistema (categorías de inmuebles, estados, localidades, zonas y barrios), permitiendo a los administradores mantener actualizadas las opciones de clasificación y organización.
+
+\subsection*{Garantizar la Disponibilidad y Accesibilidad del sistema}
+Desarrollar una aplicación web accesible mediante navegadores estándar desde cualquier ubicación con conexión a internet, sin requerir instalación de software especializado, facilitando el trabajo remoto y la movilidad de los usuarios.
+
+\vspace{1cm}
+
+El cumplimiento de estos objetivos específicos contribuye directamente al logro del objetivo general, asegurando que el sistema SIA sea una herramienta completa, eficiente y valiosa para la gestión inmobiliaria empresarial.
+
+\chapter{Definición de Requerimientos}
+
+\section{Requerimientos Funcionales}
+
+\subsection{RF01 -- Gestión de Inmuebles}
+
+El sistema debe permitir la administración completa del catálogo de propiedades, incluyendo:
+
+\subsubsection*{Creación de nuevos registros de inmuebles con los siguientes datos:}
+\begin{itemize}
+    \item Categoría (Casa, Departamento, Terreno, Local Comercial, etc.)
+    \item Ubicación geográfica (Localidad, Zona, Barrio)
+    \item Dirección completa
+    \item Características físicas (cantidad de dormitorios, baños, superficie total)
+    \item Comodidades (cochera, patio, etc.)
+    \item Estado actual (Disponible, Reservado, Vendido, Alquilado)
+    \item Descripción textual detallada
+    \item Múltiples imágenes fotográficas con designación de imagen principal
+\end{itemize}
+
+\subsubsection*{Consulta y visualización de inmuebles registrados:}
+\begin{itemize}
+    \item Listado paginado de todas las propiedades
+    \item Vista detallada individual con toda la información e imágenes
+    \item Búsqueda y filtrado por diferentes criterios (dirección, barrio, zona, localidad, categoría)
+\end{itemize}
+
+\subsubsection*{Actualización de información de inmuebles existentes:}
+\begin{itemize}
+    \item Modificación de cualquier campo de datos
+    \item Adición o eliminación de imágenes
+    \item Cambio de estado de la propiedad
+\end{itemize}
+
+\subsubsection*{Eliminación lógica de inmuebles:}
+\begin{itemize}
+    \item Marcado de inmuebles como eliminados sin borrado físico de datos
+    \item Exclusión automática de inmuebles eliminados de los listados visibles
+    \item Preservación de integridad referencial con consultas históricas
+\end{itemize}
+
+\subsubsection*{Generación de reportes de inmuebles:}
+\begin{itemize}
+    \item Exportación del catálogo completo a formato CSV
+    \item Inclusión de datos principales para análisis externo
+\end{itemize}
+
+\subsection{RF02 -- Gestión de Usuarios y Empleados}
+
+El sistema debe proporcionar capacidades completas para la administración de usuarios del sistema:
+
+\subsubsection*{Creación de cuentas de usuario vinculadas a personas:}
+\begin{itemize}
+    \item Registro de datos personales (nombre, apellido, DNI, fecha de nacimiento)
+    \item Datos de contacto (correo electrónico, teléfono, dirección)
+    \item Fotografía de perfil
+    \item Asignación de rol (Administrador o Agente)
+    \item Generación automática de contraseña temporal aleatoria y segura
+\end{itemize}
+
+\subsubsection*{Gestión de agentes inmobiliarios como empleados:}
+\begin{itemize}
+    \item Registro de información laboral (CUIT, fecha de ingreso, fecha de egreso)
+    \item Vinculación con datos de la persona
+    \item Creación automática de cuenta de usuario con rol de Agente
+    \item Tipo de empleado: Agente inmobiliario
+\end{itemize}
+
+\subsubsection*{Consulta de agentes:}
+\begin{itemize}
+    \item Listado completo de agentes activos en el sistema
+    \item Vista detallada con información personal y laboral
+    \item Visualización de fotografía de perfil
+\end{itemize}
+
+\subsubsection*{Actualización de datos de agentes:}
+\begin{itemize}
+    \item Modificación de información personal y laboral
+    \item Cambio de fotografía de perfil
+    \item Actualización de datos de contacto
+\end{itemize}
+
+\subsubsection*{Eliminación lógica de agentes:}
+\begin{itemize}
+    \item Marcado de agentes como inactivos sin borrado físico
+    \item Conservación de historial de consultas y asignaciones
+\end{itemize}
+
+\subsubsection*{Generación de reportes de agentes:}
+\begin{itemize}
+    \item Exportación del listado de agentes a formato CSV
+    \item Inclusión de datos personales, laborales y estado
+\end{itemize}
+
+\subsection{RF03 -- Autenticación y Autorización}
+
+\subsubsection*{Autenticación de usuarios:}
+\begin{itemize}
+    \item Inicio de sesión mediante correo electrónico y contraseña
+    \item Validación de credenciales contra base de datos
+    \item Generación de sesión segura tras autenticación exitosa
+    \item Cierre de sesión y finalización de sesión activa
+\end{itemize}
+
+\subsubsection*{Control de acceso basado en roles:}
+\begin{itemize}
+    \item Diferenciación de permisos según rol de usuario (Administrador o Agente)
+    \item Restricción de acceso a funcionalidades según autorización
+    \item Validación de rol en cada operación sensible
+\end{itemize}
+
+\subsubsection*{Gestión de contraseñas:}
+\begin{itemize}
+    \item Almacenamiento de contraseñas mediante hash criptográfico (bcrypt)
+    \item Generación de contraseñas temporales aleatorias para nuevos usuarios
+    \item Verificación segura de contraseñas durante autenticación
+\end{itemize}
+
+\subsection{RF04 -- Asignación de Inmuebles a Agentes}
+
+El sistema debe facilitar la distribución de responsabilidades sobre propiedades:
+
+\subsubsection*{Asignación de inmuebles a agentes responsables:}
+\begin{itemize}
+    \item Vinculación de uno o más agentes con inmuebles específicos
+    \item Validación de existencia de inmueble y agente antes de asignación
+    \item Reasignación cuando sea necesario cambiar el responsable
+\end{itemize}
+
+\subsubsection*{Consulta de asignaciones:}
+\begin{itemize}
+    \item Visualización para administradores de todos los inmuebles y sus agentes asignados
+    \item Vista personalizada para agentes mostrando únicamente sus inmuebles asignados
+\end{itemize}
+
+\subsubsection*{Gestión de asignaciones:}
+\begin{itemize}
+    \item Eliminación lógica de asignaciones anteriores al reasignar
+    \item Trazabilidad de cambios de responsabilidad
+\end{itemize}
+
+\subsection{RF05 -- Gestión de Consultas de Clientes}
+
+El sistema debe permitir el registro y seguimiento de interacciones con clientes potenciales:
+
+\subsubsection*{Registro de consultas por parte de agentes:}
+\begin{itemize}
+    \item Captura de datos del cliente consultante (nombre, apellido, teléfono, correo electrónico)
+    \item Vinculación con el inmueble de interés
+    \item Registro automático del agente que atiende la consulta
+    \item Fecha y hora automática de la consulta
+    \item Descripción o comentarios adicionales de la consulta
+\end{itemize}
+
+\subsubsection*{Validación de permisos:}
+\begin{itemize}
+    \item Verificación de que el agente esté asignado al inmueble consultado
+    \item Restricción para evitar registro de consultas sobre inmuebles no asignados
+\end{itemize}
+
+\subsubsection*{Consulta de registros de consultas:}
+\begin{itemize}
+    \item Listado completo para administradores de todas las consultas del sistema
+    \item Listado para agentes únicamente de sus propias consultas
+    \item Ordenamiento por fecha (más recientes primero)
+    \item Visualización de datos completos del consultante e inmueble
+\end{itemize}
+
+\subsubsection*{Generación de reportes de consultas:}
+\begin{itemize}
+    \item Exportación de listados a formato CSV
+    \item Inclusión de datos del cliente, fecha, inmueble y agente responsable
+\end{itemize}
+
+\subsection{RF06 -- Gestión de Datos de Ubicación}
+
+El sistema debe permitir la administración de entidades de clasificación y organización:
+
+\subsubsection*{Gestión de categorías de inmuebles:}
+\begin{itemize}
+    \item Creación de nuevas categorías (Casa, Departamento, Terreno, etc.)
+    \item Consulta de categorías existentes
+    \item Eliminación de categorías sin inmuebles asociados
+\end{itemize}
+
+\subsubsection*{Gestión de estados de inmuebles:}
+\begin{itemize}
+    \item Creación de estados (Disponible, Reservado, Vendido, Alquilado, etc.)
+    \item Consulta de estados disponibles
+    \item Eliminación de estados no utilizados
+\end{itemize}
+
+\subsubsection*{Gestión de localidades:}
+\begin{itemize}
+    \item Registro de localidades/ciudades
+    \item Consulta de listado de localidades
+    \item Eliminación de localidades sin dependencias
+\end{itemize}
+
+\subsubsection*{Gestión de zonas:}
+\begin{itemize}
+    \item Registro de zonas dentro de localidades
+    \item Vinculación con localidad correspondiente
+    \item Consulta y eliminación de zonas
+\end{itemize}
+
+\subsubsection*{Gestión de barrios:}
+\begin{itemize}
+    \item Registro de barrios dentro de localidades
+    \item Vinculación con localidad correspondiente
+    \item Consulta y eliminación de barrios
+\end{itemize}
+
+\subsubsection*{Restricciones de acceso:}
+Únicamente usuarios con rol Administrador pueden gestionar datos de ubicación.
+
+\subsection{RF07 -- Búsqueda y Filtrado}
+
+El sistema debe proporcionar mecanismos eficientes de búsqueda:
+
+\subsubsection*{Búsqueda de inmuebles por múltiples criterios:}
+\begin{itemize}
+    \item Por dirección (coincidencia parcial)
+    \item Por barrio
+    \item Por zona
+    \item Por localidad
+    \item Por categoría
+\end{itemize}
+
+\subsubsection*{Aplicación de búsqueda en tiempo real:}
+\begin{itemize}
+    \item Filtrado inmediato conforme el usuario escribe
+    \item Coincidencias insensibles a mayúsculas/minúsculas
+\end{itemize}
+
+\subsection{RF08 -- Paginación}
+
+El sistema debe manejar grandes volúmenes de datos mediante paginación:
+
+\subsubsection*{Listados paginados de inmuebles:}
+\begin{itemize}
+    \item 5 elementos por página por defecto
+    \item Navegación entre páginas
+    \item Visualización del número de página actual y total
+\end{itemize}
+
+\subsubsection*{Control de paginación:}
+\begin{itemize}
+    \item Navegación a página siguiente/anterior
+    \item Indicador de página actual
+    \item Total de elementos disponibles
+\end{itemize}
+
+\subsection{RF09 -- Gestión de Imágenes}
+
+El sistema debe manejar archivos multimedia asociados a entidades:
+
+\begin{itemize}
+    \item Carga de imágenes de inmuebles
+    \item Designación de imagen principal
+    \item Carga de fotografías de perfil de agentes
+\end{itemize}
+
+\section{Requerimientos No Funcionales}
+
+Los requerimientos no funcionales establecen atributos de calidad y restricciones técnicas que el sistema debe cumplir:
+
+\subsection{RNF01 -- Usabilidad}
+
+\begin{itemize}
+    \item Interfaz intuitiva y fácil de usar que no requiera capacitación técnica extensa
+    \item Diseño visual limpio y profesional utilizando principios modernos de UI/UX
+    \item Mensajes de error claros y orientados al usuario
+    \item Retroalimentación visual de acciones (carga, éxito, error)
+    \item Navegación coherente y predecible
+    \item Curva de aprendizaje baja para nuevos usuarios
+\end{itemize}
+
+\subsection{RNF02 -- Seguridad}
+
+\begin{itemize}
+    \item Autenticación obligatoria para acceder al sistema
+    \item Autorización basada en roles antes de permitir operaciones sensibles
+    \item Contraseñas almacenadas mediante hash criptográfico seguro (bcrypt con salt)
+    \item Generación de contraseñas temporales aleatorias y robustas
+    \item Protección contra inyección SQL mediante uso de ORM (Prisma)
+    \item Validación de datos de entrada en cliente y servidor
+    \item Sesiones con tokens seguros gestionadas por NextAuth
+    \item Protección de rutas sensibles mediante middleware
+    \item Retorno de errores genéricos que no expongan detalles del sistema
+\end{itemize}
+
+\subsection{RNF03 -- Disponibilidad}
+
+\begin{itemize}
+    \item Sistema accesible 24/7 mediante navegador web
+    \item Sin requerimiento de instalación de software cliente
+    \item Compatibilidad con navegadores modernos (Chrome, Firefox, Edge, Safari)
+    \item Accesibilidad desde cualquier ubicación con conexión a internet
+\end{itemize}
+
+\subsection{RNF04 -- Rendimiento}
+
+\begin{itemize}
+    \item Tiempo de respuesta normales
+    \item Capacidad de manejar múltiples usuarios concurrentes
+    \item Paginación de resultados para evitar sobrecarga en listados grandes
+    \item Consultas optimizadas a base de datos mediante índices apropiados
+    \item Carga eficiente de imágenes
+\end{itemize}
+
+\subsection{RNF05 -- Escalabilidad}
+
+\begin{itemize}
+    \item Arquitectura modular que facilite adición de nuevas funcionalidades
+    \item Diseño de base de datos normalizado y extensible
+    \item Separación clara entre frontend, backend y base de datos
+    \item Código organizado en componentes y módulos reutilizables
+    \item Capacidad de crecimiento del volumen de datos sin degradación crítica de rendimiento
+\end{itemize}
+
+\subsection{RNF06 -- Mantenibilidad}
+
+\begin{itemize}
+    \item Código fuente documentado con comentarios explicativos
+    \item Estructura de proyecto organizada siguiendo convenciones estándar de Next.js
+    \item Uso de TypeScript para tipado estático y reducción de errores
+    \item Nombres de variables y funciones descriptivos y en idioma consistente
+    \item Separación de lógica de negocio, presentación y acceso a datos
+    \item Versionamiento de código mediante Git
+    \item Documentación técnica del sistema
+\end{itemize}
+
+\subsection{RNF07 -- Portabilidad}
+
+\begin{itemize}
+    \item Aplicación web accesible desde múltiples plataformas (Windows, macOS, Linux)
+    \item Diseño responsivo que se adapta a diferentes tamaños de pantalla
+    \item Soporte para dispositivos móviles (tablets y smartphones)
+\end{itemize}
+
+\subsection{RNF08 -- Confiabilidad}
+
+\begin{itemize}
+    \item Implementación de soft delete para evitar pérdida accidental de datos
+    \item Validación de integridad referencial en base de datos
+    \item Manejo de errores con mensajes informativos
+    \item Logs de errores en servidor para diagnóstico
+    \item Transacciones de base de datos para operaciones críticas
+\end{itemize}
+
+\subsection{RNF09 -- Cumplimiento de estándares}
+
+\begin{itemize}
+    \item Cumplimiento de estándares web W3C en HTML y CSS
+    \item Uso de HTTPS para comunicaciones seguras (en producción)
+    \item Respeto de buenas prácticas de desarrollo web
+    \item Uso de bibliotecas y frameworks ampliamente adoptados y mantenidos
+\end{itemize}
+
+\subsection{RNF10 -- Compatibilidad}
+
+\begin{itemize}
+    \item Compatible con PostgreSQL como sistema gestor de base de datos
+    \item Funcionamiento en entornos de servidor Node.js
+\end{itemize}
+
+\chapter{Modelado de Casos de Uso}
+
+Los diagramas de casos de uso proporcionan una representación visual de las funcionalidades del sistema y las interacciones entre los diferentes actores y el sistema. Esta sección presenta los diagramas organizados por tipo de usuario, mostrando claramente las responsabilidades y capacidades de cada rol dentro del SIA.
+
+Los siguientes diagramas ilustran los casos de uso organizados por tipo de actor y funcionalidad.
+
+\section{Casos de Uso - Autenticación}
+
+Un diagrama especializado modela el flujo de autenticación y establecimiento de contraseñas, aspecto fundamental para la seguridad del sistema. Este diagrama muestra dos actores principales: Agente y Administrador. Los casos de uso implementados son tres: inicio de sesión (autenticación con credenciales para acceder al sistema), cierre de sesión (finalización segura de la sesión activa), y establecimiento de contraseña inicial (exclusivo para agentes nuevos que reciben un email con token de 24 horas de validez para configurar su contraseña personalizada por primera vez).
+
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.50\textwidth]{documentation/images/CASOS_USO_AUTENTICACION.png}
+  \end{figure}
+
+\section{Casos de Uso - Cliente Público}
+
+Los clientes públicos representan usuarios no autenticados que acceden al sistema desde el sitio web público. Este diagrama muestra las funcionalidades disponibles para visitantes que buscan propiedades sin necesidad de iniciar sesión. Las capacidades incluyen la navegación del catálogo de inmuebles disponibles, visualización de detalles completos de cada propiedad incluyendo imágenes y características, búsqueda y filtrado de propiedades según diversos criterios, y el registro de consultas sobre inmuebles de interés. Este último caso de uso es particularmente importante ya que permite capturar leads comerciales sin fricción, asignando automáticamente un agente responsable para dar seguimiento a cada consulta recibida.
+
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.85\textwidth]{documentation/images/CASOS_USO_PUBLICO.png}
+  \end{figure}
+
+\section{Casos de Uso - Agente Inmobiliario}
+
+Los agentes inmobiliarios son usuarios autenticados con permisos limitados que trabajan con los inmuebles que les han sido asignados por los administradores. El diagrama de casos de uso para agentes muestra dos grupos principales de funcionalidades: gestión de inmuebles asignados (visualización de sus propiedades, acceso a detalles completos y búsqueda dentro de su cartera), y gestión de consultas de clientes (visualización de consultas recibidas sobre sus inmuebles asignados, acceso a detalles de cada consulta y capacidades de filtrado). Los agentes tienen una vista restringida del sistema, pudiendo operar únicamente sobre los inmuebles que les fueron asignados, garantizando así la segregación apropiada de responsabilidades y datos. Las funcionalidades de autenticación para agentes (inicio de sesión, cierre de sesión y establecimiento de contraseña inicial) se documentan en el diagrama de autenticación separado.
+
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.5\textwidth]{documentation/images/CASOS_USO_AGENTE.png}
+  \end{figure}
+
+\section{Casos de Uso - Administrador}
+
+\subsection{Gestión de Inmuebles}
+
+El primer diagrama de administrador cubre la gestión completa de inmuebles: creación, edición, eliminación, listado, detalle, búsqueda, filtrado y exportación a CSV. También incluye gestión de imágenes (carga, eliminación y designación de imagen principal) y gestión de asignaciones de agentes a inmuebles.
+
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.75\textwidth]{documentation/images/CASOS_USO_ADMIN_INMUEBLES.png}
+  \end{figure}
+
+\subsection{Gestión de Agentes y Consultas}
+
+El segundo diagrama cubre la gestión de agentes (CRUD completo con búsqueda y exportación) y gestión de consultas de clientes (visualización de todas las consultas del sistema, filtrado, estadísticas y exportación).
+
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.73\textwidth]{documentation/images/CASOS_USO_ADMIN_AGENTES.png}
+  \end{figure}
+
+\subsection{Datos de Ubicación y Clasificación}
+
+El tercer diagrama cubre la gestión de datos de ubicación y clasificación organizados por entidad (rubros, estados, localidades, zonas y barrios), cada uno con operaciones CRUD completas y soft delete.
+
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.80\textwidth]{documentation/images/CASOS_USO_ADMIN_DATOS_UBICACION.png}
+  \end{figure}
+
+\chapter{Descripción del Sistema Propuesto}
+
+El Sistema de Inmuebles y Agentes (SIA) es una aplicación web empresarial desarrollada específicamente para optimizar la gestión integral de empresas dedicadas a la comercialización de propiedades inmobiliarias. El sistema se concibe como una plataforma centralizada, segura y accesible que facilita la coordinación entre diferentes actores del negocio inmobiliario.
+
+\section{Características Principales}
+
+El sistema se estructura como una intranet corporativa accesible mediante navegadores web, eliminando la necesidad de instalación de software especializado en los equipos de los usuarios. Esta decisión arquitectónica garantiza accesibilidad universal desde cualquier dispositivo con conexión a internet, facilitando el trabajo remoto y la movilidad de los agentes inmobiliarios.
+
+La plataforma se fundamenta en una base de datos PostgreSQL centralizada que constituye el núcleo del sistema. Esta base de datos almacena y organiza toda la información relevante del negocio: catálogo de inmuebles con sus características detalladas, datos de agentes inmobiliarios y empleados, registros de consultas de clientes, información geográfica de organización territorial, y metadatos de clasificación.
+
+\section{Arquitectura y Organización}
+
+El sistema implementa una arquitectura de tres capas claramente diferenciadas:
+
+\subsection{Capa de Presentación (Frontend)}
+
+Desarrollada con React y Next.js, proporciona las interfaces visuales con las que interactúan los usuarios. Esta capa incluye páginas para listados de inmuebles con visualización tipo galería, formularios de alta y edición de propiedades con carga de imágenes, interfaces de gestión de agentes con fotografías de perfil, pantallas de registro de consultas de clientes, paneles administrativos para gestión de datos de ubicación, y funcionalidades de búsqueda y filtrado en tiempo real.
+
+\subsection{Capa de Lógica de Negocio (Backend)}
+
+También implementada con Next.js mediante API Routes, contiene toda la lógica operativa del sistema. Maneja la autenticación y autorización de usuarios, validación de datos ingresados mediante esquemas Zod, procesamiento de operaciones CRUD sobre todas las entidades, gestión de asignaciones entre agentes e inmuebles, control de permisos según roles, procesamiento y almacenamiento de archivos de imágenes, generación de exportaciones CSV, y manejo de errores y excepciones.
+
+\subsection{Capa de Datos}
+
+Constituida por la base de datos PostgreSQL gestionada mediante el ORM Prisma. Esta capa asegura persistencia confiable de información, integridad referencial entre entidades relacionadas, consultas optimizadas mediante índices, transacciones ACID para operaciones críticas, y respaldo de datos históricos mediante eliminación lógica.
+
+\section{Roles y Permisos}
+
+\subsection{Administradores}
+Los administradores tienen permisos completos:
+\begin{itemize}
+    \item Visualizar todos los inmuebles, agentes y consultas del sistema
+    \item Crear, modificar y eliminar inmuebles
+    \item Crear, modificar y eliminar agentes
+    \item Asignar y reasignar inmuebles a agentes
+    \item Gestionar datos de ubicación (categorías, estados, localidades, zonas, barrios)
+    \item Generar y exportar reportes (CSV)
+    \item Acceder a métricas básicas del sistema (dashboard)
+\end{itemize}
+
+\subsection{Agentes}
+Los agentes tienen permisos limitados:
+\begin{itemize}
+    \item Visualizar listado general de inmuebles (solo consulta)
+    \item Visualizar detalle de sus inmuebles asignados
+    \item Registrar consultas de clientes únicamente sobre sus inmuebles asignados
+    \item Consultar el historial de sus propias consultas
+    \item Actualizar sus datos personales (funcionalidad futura)
+\end{itemize}
+
+\section{Seguridad}
+
+El sistema implementa múltiples capas de seguridad:
+\begin{itemize}
+    \item Autenticación obligatoria: Ninguna funcionalidad es accesible sin iniciar sesión
+    \item Contraseñas cifradas: Todas las contraseñas se almacenan mediante hash bcrypt con salt
+    \item Contraseñas temporales robustas: Generación aleatoria de 12 caracteres con mayúsculas, minúsculas, números y símbolos
+    \item Validación de entrada: Todos los datos ingresados se validan en frontend y backend
+    \item Protección SQL: Uso de ORM Prisma que previene inyección SQL
+    \item Sesiones seguras: Gestión de sesiones mediante NextAuth con tokens
+    \item Autorización por endpoint: Cada operación valida el rol del usuario
+    \item Eliminación lógica: Preservación de datos históricos mediante soft delete
+\end{itemize}
+
+\section{Experiencia de Usuario}
+
+La interfaz se diseñó priorizando usabilidad y claridad:
+
+\begin{itemize}
+    \item Navegación intuitiva mediante barra superior con enlaces a secciones principales
+    \item Formularios con validación en tiempo real y mensajes de error claros
+    \item Diseño responsivo que se adapta a pantallas de diferentes tamaños
+    \item Visualización de imágenes mediante carrusel interactivo
+    \item Indicadores visuales de estado (carga, éxito, error)
+    \item Búsqueda con retroalimentación inmediata
+    \item Paginación con controles claros de navegación
+    \item Paleta de colores profesional y legible
+    \item Iconos intuitivos para acciones comunes
+\end{itemize}
+
+\section{Beneficios Operativos}
+
+La implementación del SIA genera beneficios tangibles:
+
+\begin{itemize}
+    \item \textbf{Centralización:} Toda la información en un único lugar accesible
+    \item \textbf{Trazabilidad:} Registro completo de consultas y asignaciones
+    \item \textbf{Eficiencia:} Reducción de tiempos en búsqueda y gestión de información
+    \item \textbf{Control:} Supervisión administrativa de actividades de agentes
+    \item \textbf{Escalabilidad:} Capacidad de crecimiento sin limitaciones manuales
+    \item \textbf{Profesionalismo:} Imagen corporativa moderna y tecnológica
+    \item \textbf{Análisis:} Capacidad de generar reportes para decisiones estratégicas
+    \item \textbf{Seguridad:} Protección de información sensible del negocio
+\end{itemize}
+
+El sistema representa una solución completa y profesional para la gestión inmobiliaria, combinando funcionalidad robusta, seguridad adecuada y experiencia de usuario optimizada.
+
+\chapter{Tecnologías Utilizadas}
+
+El desarrollo del Sistema de Inmuebles y Agentes se realizó utilizando un conjunto de tecnologías modernas, probadas y ampliamente adoptadas en la industria del desarrollo de software. La selección de estas herramientas se fundamentó en criterios de rendimiento, seguridad, escalabilidad, disponibilidad de documentación y soporte comunitario.
+
+\section{Frontend}
+
+\subsection{React 18}
+
+React es una biblioteca JavaScript desarrollada por Meta (Facebook) para la construcción de interfaces de usuario basadas en componentes. En el SIA, React constituye el núcleo del frontend, permitiendo:
+
+\begin{itemize}
+    \item Desarrollo basado en componentes reutilizables (InmuebleCard, AgenteItem, Navbar, etc.)
+    \item Gestión eficiente del estado de la aplicación mediante hooks (useState, useEffect)
+    \item Renderizado eficiente mediante Virtual DOM
+    \item Flujo de datos unidireccional que facilita el debugging
+    \item Ecosistema extenso de bibliotecas complementarias
+    \item Actualizaciones reactivas de la interfaz ante cambios de datos
+\end{itemize}
+
+\subsection{Next.js 14}
+
+Next.js es un framework de React desarrollado por Vercel que extiende las capacidades de React agregando funcionalidades empresariales. Se utiliza en el SIA por:
+
+\begin{itemize}
+    \item App Router: Sistema de enrutamiento basado en sistema de archivos que simplifica la navegación
+    \item Renderizado del lado del servidor (SSR) para mejor rendimiento inicial
+    \item API Routes: Permite crear endpoints de backend dentro del mismo proyecto
+    \item Optimización automática de imágenes y recursos
+    \item Soporte nativo para TypeScript
+    \item Sistema de metadata para SEO
+    \item Organización clara mediante route groups
+    \item Hot Module Replacement para desarrollo ágil
+\end{itemize}
+
+\subsection{TypeScript 5}
+
+TypeScript es un superset de JavaScript que agrega tipado estático opcional. Su uso en el SIA aporta:
+
+\begin{itemize}
+    \item Detección de errores en tiempo de desarrollo antes de ejecutar el código
+    \item Autocompletado inteligente en IDEs
+    \item Definición clara de estructuras de datos mediante interfaces y types
+    \item Mejor documentación implícita del código
+    \item Refactorización segura facilitada por el compilador
+    \item Prevención de errores comunes de JavaScript
+    \item Mejor escalabilidad en proyectos grandes
+\end{itemize}
+
+\subsection{Tailwind CSS 3}
+
+Tailwind es un framework CSS utility-first que proporciona clases predefinidas para estilizado. Se eligió por:
+
+\begin{itemize}
+    \item Desarrollo rápido mediante clases utilitarias (bg-blue-500, flex, p-4)
+    \item Diseño consistente sin escribir CSS personalizado
+    \item Responsividad fácil mediante prefijos (sm:, md:, lg:)
+    \item Sistema de diseño escalable y mantenible
+    \item Reducción de CSS no utilizado en producción
+    \item Personalización mediante configuración
+    \item Excelente documentación y comunidad
+\end{itemize}
+
+\subsection{Lucide-React y React-Icons}
+
+Bibliotecas de íconos que proporcionan componentes React para visualizar íconos. Aportan:
+
+\begin{itemize}
+    \item Íconos vectoriales escalables sin pérdida de calidad
+    \item Facilidad de integración como componentes React
+    \item Consistencia visual en toda la aplicación
+    \item Personalización de tamaño y color mediante props
+\end{itemize}
+
+\section{Backend}
+
+\subsection{Next.js 14 API Routes}
+
+Next.js permite crear API endpoints en el mismo proyecto del frontend. El SIA implementa el backend mediante esta funcionalidad:
+
+\begin{itemize}
+    \item Ubicación: Carpeta app/api/ con estructura de archivos que define rutas
+    \item Métodos HTTP: GET, POST, PUT, DELETE implementados según REST
+    \item Handlers tipados con TypeScript para seguridad de tipos
+    \item Integración directa con Prisma para acceso a datos
+    \item Middleware personalizado para autenticación y autorización
+\end{itemize}
+
+\subsection{NextAuth 5 (Beta)}
+
+NextAuth es una solución completa de autenticación para aplicaciones Next.js. Se utiliza para:
+
+\begin{itemize}
+    \item Gestión de sesiones de usuario
+    \item Provider de credenciales (email + contraseña)
+    \item Callbacks personalizados para agregar información a la sesión (rol, employeeId)
+    \item Integración con base de datos para almacenar usuarios
+    \item Manejo seguro de tokens
+    \item Protección de rutas mediante middleware
+\end{itemize}
+
+\subsection{Bcryptjs}
+
+Biblioteca para hash de contraseñas. Implementada en el SIA para:
+
+\begin{itemize}
+    \item Cifrado de contraseñas mediante algoritmo bcrypt con salt
+    \item Generación de salts aleatorios para cada contraseña
+    \item Verificación segura de contraseñas durante autenticación
+    \item Prevención de ataques de diccionario y rainbow tables
+    \item Configuración de rounds de hash para balance seguridad/rendimiento
+\end{itemize}
+
+\subsection{Zod 4}
+
+Biblioteca de validación y parsing de datos con inferencia de tipos TypeScript. Se usa para:
+
+\begin{itemize}
+    \item Definición de schemas de validación (inmuebleSchema, agentSchema, etc.)
+    \item Validación de datos recibidos en API endpoints antes de procesarlos
+    \item Generación automática de tipos TypeScript desde schemas
+    \item Mensajes de error descriptivos en caso de validación fallida
+    \item Prevención de datos inválidos o maliciosos
+\end{itemize}
+
+\subsection{Prisma ORM}
+
+Prisma es un ORM (Object-Relational Mapping) moderno para Node.js y TypeScript. En el SIA gestiona toda la interacción con la base de datos:
+
+\begin{itemize}
+    \item Definición del modelo de datos mediante schema declarativo (schema.prisma)
+    \item Generación automática de cliente tipado para consultas
+    \item Migraciones de base de datos gestionadas
+    \item Queries type-safe que previenen errores en tiempo de compilación
+    \item Protección contra inyección SQL
+    \item Soporte para relaciones complejas entre entidades
+    \item Introspección de base de datos existente
+    \item Seed scripts para datos iniciales
+\end{itemize}
+
+\section{Base de Datos}
+
+\subsection{PostgreSQL}
+
+PostgreSQL es un sistema gestor de bases de datos relacional de código abierto, robusto y maduro. Se seleccionó por:
+
+\begin{itemize}
+    \item Cumplimiento estricto de estándares SQL
+    \item Soporte completo para integridad referencial
+    \item Tipos de datos avanzados (UUID, JSON, fechas, etc.)
+    \item Índices eficientes para optimización de consultas
+    \item Transacciones ACID confiables
+    \item Escalabilidad para grandes volúmenes de datos
+    \item Amplio soporte en servicios de hosting cloud
+    \item Excelente rendimiento y estabilidad
+    \item Documentación extensa y comunidad activa
+\end{itemize}
+
+\subsection{Estructura de la Base de Datos}
+
+El modelo de datos implementado incluye las siguientes tablas principales:
+
+\begin{itemize}
+    \item \textbf{inmueble:} Almacena propiedades con características y ubicación
+    \item \textbf{persona:} Datos personales de individuos
+    \item \textbf{empleado:} Información laboral de empleados
+    \item \textbf{persona\_empleado:} Relación many-to-many entre personas y empleados
+    \item \textbf{usuario:} Cuentas de acceso al sistema
+    \item \textbf{rol\_usuario:} Roles disponibles (administrador, agente)
+    \item \textbf{tipo\_empleado:} Tipos de empleados (agente)
+    \item \textbf{consulta\_cliente:} Registros de consultas recibidas
+    \item \textbf{agente\_inmueble:} Asignaciones de inmuebles a agentes
+    \item \textbf{categoria\_inmueble:} Categorías de propiedades
+    \item \textbf{estado\_inmueble:} Estados posibles de inmuebles
+    \item \textbf{localidad, zona, barrio:} Organización geográfica
+    \item \textbf{imagen\_inmueble, imagen\_persona:} Archivos multimedia
+\end{itemize}
+
+\section{Herramientas Complementarias}
+
+\subsection{Node.js}
+Entorno de ejecución de JavaScript del lado del servidor. Necesario para ejecutar Next.js y todo el backend.
+
+\subsection{NPM (Node Package Manager)}
+Gestor de paquetes para instalar y administrar dependencias del proyecto.
+
+\subsection{Git}
+Sistema de control de versiones utilizado para rastrear cambios en el código fuente durante el desarrollo.
+
+\subsection{Visual Studio Code}
+Editor de código con soporte excelente para TypeScript, React y Next.js.
+
+\vspace{1cm}
+
+Esta selección tecnológica proporciona una base sólida, moderna y escalable para el Sistema de Inmuebles y Agentes, asegurando mantenibilidad a largo plazo y facilidad de evolución futura.
+
+\chapter{Arquitectura del Sistema}
+
+\section{Modelo de Datos}
+
+El sistema implementa un modelo de datos relacional normalizado que refleja las entidades del dominio inmobiliario y sus interacciones. La estructura fue diseñada para garantizar integridad referencial, minimizar redundancia y facilitar consultas eficientes.
+
+\subsection{Entidades Principales y sus Relaciones}
+
+\subsubsection{PERSONA}
+
+Entidad central que representa individuos en el sistema.
+
+\textbf{Campos:} id, nombre, apellido, dni, correo, teléfono, dirección, fecha\_nacimiento, eliminado
+
+\textbf{Relaciones:}
+\begin{itemize}
+    \item Puede asociarse con múltiples empleados (many-to-many via persona\_empleado)
+    \item Puede tener múltiples usuarios (one-to-many)
+    \item Puede tener múltiples imágenes de perfil (one-to-many)
+\end{itemize}
+
+\subsubsection{EMPLEADO}
+
+Representa a empleados de la inmobiliaria.
+
+\textbf{Campos:} id (UUID), cuit (único), fecha\_ingreso, fecha\_egreso, tipo\_id, eliminado
+
+\textbf{Relaciones:}
+\begin{itemize}
+    \item Pertenece a un tipo\_empleado (many-to-one)
+    \item Se asocia con personas (many-to-many via persona\_empleado)
+    \item Puede tener asignados múltiples inmuebles (one-to-many via agente\_inmueble)
+    \item Puede registrar múltiples consultas de clientes (one-to-many)
+\end{itemize}
+
+\subsubsection{INMUEBLE}
+
+Entidad que representa propiedades inmobiliarias.
+
+\textbf{Campos:} id (UUID), categoria\_id, localidad\_id, zona\_id, barrio\_id, direccion, dormitorios, baños, superficie, cochera, estado\_id, descripcion, eliminado
+
+\textbf{Relaciones:}
+\begin{itemize}
+    \item Pertenece a una categoría (many-to-one)
+    \item Pertenece a un estado (many-to-one)
+    \item Ubicado en localidad, zona y barrio (many-to-one cada uno)
+    \item Puede tener asignados múltiples agentes (one-to-many via agente\_inmueble)
+    \item Puede tener múltiples imágenes (one-to-many)
+    \item Puede tener múltiples consultas (one-to-many)
+\end{itemize}
+
+\subsubsection{USUARIO}
+
+Cuentas de acceso al sistema.
+
+\textbf{Campos:} id (UUID), persona\_id, rol\_id, contrasena (hash), eliminado, correo\_verificado, creado\_en, actualizado\_en
+
+\textbf{Relaciones:}
+\begin{itemize}
+    \item Vinculado a una persona (one-to-one efectivo)
+    \item Pertenece a un rol (many-to-one)
+    \item Puede tener múltiples sesiones (one-to-many)
+\end{itemize}
+
+\subsubsection{CONSULTA\_CLIENTE}
+
+Registros de consultas de clientes sobre inmuebles.
+
+\textbf{Campos:} id (UUID), agente\_id, inmueble\_id, nombre, apellido, telefono, correo, fecha, descripcion
+
+\textbf{Relaciones:}
+\begin{itemize}
+    \item Vinculada a un agente/empleado (many-to-one)
+    \item Vinculada a un inmueble (many-to-one)
+\end{itemize}
+
+\subsubsection{AGENTE\_INMUEBLE}
+
+Tabla de asignación entre agentes e inmuebles.
+
+\textbf{Campos:} id (UUID), agente\_id, inmueble\_id, eliminado
+
+\textbf{Relaciones:}
+\begin{itemize}
+    \item Vincula empleado con inmueble (many-to-many)
+\end{itemize}
+
+\subsubsection{Datos de Ubicación}
+
+\begin{itemize}
+    \item \textbf{categoria\_inmueble, estado\_inmueble:} Clasificaciones de inmuebles
+    \item \textbf{localidad, zona, barrio:} Organización geográfica jerárquica
+    \item \textbf{tipo\_empleado:} Tipos de empleados en la organización
+    \item \textbf{rol\_usuario:} Roles de acceso al sistema
+\end{itemize}
+
+\subsection{Diagrama Entidad-Relación}
+
+El siguiente diagrama muestra visualmente la estructura completa de la base de datos, las relaciones entre entidades, cardinalidades y claves foráneas del sistema.
+
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{documentation/images/bd.png}
+  \end{figure}
+
+\subsection{Características del Diseño}
+
+\begin{itemize}
+    \item \textbf{IDENTIFICADORES:} Uso de UUIDs (Universally Unique Identifiers) como claves primarias para facilitar distribución futura y prevenir colisiones
+    \item \textbf{SOFT DELETE:} Todas las entidades principales incluyen campo ``eliminado'' para preservar integridad histórica
+    \item \textbf{NORMALIZACIÓN:} Separación de conceptos para evitar redundancia (persona separada de empleado)
+    \item \textbf{INTEGRIDAD REFERENCIAL:} Claves foráneas con restricciones ON DELETE/UPDATE apropiadas
+    \item \textbf{ÍNDICES:} Campos de búsqueda frecuente están indexados (DNI, CUIT, correo, categoría\_id, estado\_id, etc.)
+\end{itemize}
+
+\section{Estructura de la Aplicación}
+
+El proyecto sigue la estructura estándar de Next.js 14 con App Router:
+
+\begin{lstlisting}[language=bash, numbers=none]
+sia_app/
+├── app/                          # Directorio principal
+│   ├── (auth)/                   # Rutas autenticación
+│   │   └── login/                # Página de login
+│   ├── (protected)/              # Rutas protegidas
+│   │   ├── agentes/              # Gestión agentes
+│   │   ├── altaAgente/           # Creación agente
+│   │   ├── altaInmueble/         # Creación inmueble
+│   │   ├── inmuebles/            # Listado inmuebles
+│   │   ├── misInmuebles/         # Inmuebles agente
+│   │   ├── consultasClientes/    # Consultas
+│   │   ├── misConsultasClientes/ # Consultas propias
+│   │   └── admin/                # Datos de Ubicación
+│   ├── api/                      # API Routes (backend)
+│   ├── components/               # Componentes React
+│   ├── layout.tsx                # Layout raíz
+│   └── page.tsx                  # Página de inicio
+├── components/                   # Componentes globales
+├── lib/                          # Utilidades y helpers
+├── types/                        # Tipos TypeScript
+├── prisma/                       # Configuración Prisma
+├── actions/                      # Server Actions
+├── public/                       # Archivos estáticos
+├── auth.config.ts                # Config NextAuth
+├── middleware.ts                 # Middleware
+└── package.json                  # Dependencias
+\end{lstlisting}
+
+\section{Sistema de Autenticación}
+
+\subsection{Flujo de Autenticación}
+
+\begin{enumerate}
+    \item Usuario accede a /login
+    \item Ingresa correo y contraseña
+    \item Sistema valida credenciales contra base de datos
+    \item Si válidas, NextAuth genera sesión con JWT
+    \item Se agrega información customizada a la sesión (role, empleadoId)
+    \item Usuario redirigido a página principal con sesión activa
+    \item Cada request incluye token de sesión en cookies
+    \item Middleware y API endpoints validan sesión antes de permitir acceso
+\end{enumerate}
+
+\subsection{Componentes del Sistema}
+
+\begin{itemize}
+    \item \textbf{auth.config.ts:} Configuración de providers, callbacks, páginas
+    \item \textbf{actions/auth-actions.ts:} Server actions para login, logout, getSession
+    \item \textbf{middleware.ts:} Protección de rutas (actualmente comentado)
+    \item \textbf{lib/api-helpers.ts:} requireAuth() para validar sesión en APIs
+\end{itemize}
+
+\subsection{Almacenamiento de Sesiones}
+
+Las sesiones se almacenan en cookies HTTP-only seguras gestionadas por NextAuth. La información de sesión incluye:
+\begin{itemize}
+    \item user.email: Correo del usuario
+    \item user.name: Nombre completo
+    \item user.role: Rol (administrador/agente)
+    \item user.empleadoId: ID del empleado si es agente
+\end{itemize}
+
+\subsection{Control de Acceso}
+
+Cada endpoint API utiliza requireAuth() que:
+
+\begin{enumerate}
+    \item Verifica existencia de sesión válida
+    \item Opcionalmente valida rol requerido
+    \item Retorna sesión si autorizado, error si no
+\end{enumerate}
+
+\chapter{Roles de Usuario}
+
+El sistema implementa un modelo de control de acceso basado en roles (RBAC - Role-Based Access Control) que diferencia las capacidades de los usuarios según su función dentro de la organización inmobiliaria.
+
+\section{Tipos de Usuario}
+
+El SIA contempla dos roles principales:
+
+\subsection{Administrador}
+
+Rol con permisos completos sobre el sistema. Los usuarios con este rol tienen responsabilidades de gestión y supervisión de toda la operación inmobiliaria. Típicamente asignado a:
+
+\begin{itemize}
+    \item Gerentes o propietarios de la inmobiliaria
+    \item Personal administrativo senior
+    \item Supervisores de agentes
+    \item Personal del área de sistemas
+\end{itemize}
+
+\textbf{Características:}
+
+\begin{itemize}
+    \item Control total sobre inmuebles, agentes y consultas
+    \item Capacidad de crear y eliminar registros
+    \item Acceso a métricas básicas y reportes (exportación CSV)
+    \item Gestión de datos de ubicación del sistema
+    \item Visualización de actividad de todos los agentes
+\end{itemize}
+
+\subsection{Agente}
+
+Rol con permisos limitados enfocados en operación diaria. Los usuarios con este rol son agentes inmobiliarios que interactúan con clientes y gestionan propiedades asignadas. Asignado a:
+
+\begin{itemize}
+    \item Agentes inmobiliarios de campo
+    \item Vendedores de propiedades
+    \item Personal de atención al cliente
+\end{itemize}
+
+\textbf{Características:}
+
+\begin{itemize}
+    \item Acceso de solo lectura al catálogo general de inmuebles
+    \item Gestión completa de sus inmuebles asignados
+    \item Capacidad de registrar consultas de clientes
+    \item Visualización únicamente de sus propias consultas
+    \item Sin permisos para crear/eliminar inmuebles ni agentes
+\end{itemize}
+
+\subsection{Super Usuario}
+
+El diseño inicial contemplaba un tercer rol de ``Super Usuario'' con permisos especiales para:
+
+\begin{itemize}
+    \item Gestión de usuarios y roles
+    \item Configuración del sistema
+    \item Acceso a logs y auditoría
+    \item Respaldos y mantenimiento
+\end{itemize}
+
+Este rol no fue implementado en la versión actual ya que las funciones administrativas son suficientes para el alcance del proyecto.
+
+\section{Secciones del Sistema}
+
+\subsection{Secciones Públicas (Sin autenticación)}
+\begin{itemize}
+    \item /login: Página de inicio de sesión
+\end{itemize}
+
+\subsection{Secciones Compartidas}
+Requieren autenticación, accesibles para ambos roles:
+\begin{itemize}
+    \item /: Página principal/dashboard
+    \item /inmuebles: Listado completo de inmuebles (solo visualización)
+    \item /inmuebles/[id]: Detalle de inmueble individual
+\end{itemize}
+
+\subsection{Secciones Exclusivas de Administrador}
+\begin{itemize}
+    \item /agentes: Listado de todos los agentes registrados
+    \item /agentes/[id]: Detalle y edición de agente
+    \item /altaAgente: Formulario de creación de nuevo agente
+    \item /altaInmueble: Formulario de creación de nuevo inmueble
+    \item /consultasClientes: Todas las consultas del sistema
+    \item /admin/rubros: Gestión de categorías de inmuebles
+    \item /admin/estados: Gestión de estados de inmuebles
+    \item /admin/localidades: Gestión de localidades
+    \item /admin/zonas: Gestión de zonas
+    \item /admin/barrios: Gestión de barrios
+\end{itemize}
+
+\subsection{Secciones Exclusivas de Agente}
+\begin{itemize}
+    \item /misInmuebles: Inmuebles asignados al agente
+    \item /misConsultasClientes: Consultas registradas por el agente
+    \item /registrarConsultaCliente: Formulario para registrar nueva consulta
+\end{itemize}
+
+Los permisos se implementan en dos niveles:
+
+\subsubsection{Nivel de Interfaz (Frontend)}
+\begin{itemize}
+    \item Ocultamiento de elementos UI según rol
+    \item Ejemplo: Botón ``Alta Inmueble'' solo visible para administradores
+    \item Verificación de session.user.role en componentes React
+\end{itemize}
+
+\subsubsection{Nivel de API (Backend)}
+\begin{itemize}
+    \item Validación obligatoria en cada endpoint
+    \item Uso de requireAuth(request, roleRequired)
+    \item Retorno de error 403 Forbidden si rol insuficiente
+\end{itemize}
+
+Esta arquitectura de doble validación asegura que incluso si un usuario malicioso manipula el frontend, el backend rechazará operaciones no autorizadas.
+
+\chapter{Funcionalidades Implementadas}
+
+El sistema SIA incluye un conjunto completo de funcionalidades operativas que cubren todas las necesidades identificadas en los requerimientos. A continuación se describen en detalle las capacidades implementadas.
+
+\section{Gestión de Inmuebles}
+
+\subsection{Creación de Inmuebles}
+
+Los administradores pueden registrar nuevas propiedades mediante un formulario completo que captura:
+
+\begin{itemize}
+    \item Categoría: Selección desde lista (Casa, Departamento, Terreno, Local, etc.)
+    \item Ubicación: Localidad, Zona y Barrio mediante selectores dependientes
+    \item Dirección: Calle y número exactos
+    \item Características: Dormitorios, baños, superficie en metros cuadrados
+    \item Comodidades: Checkbox para cochera
+    \item Estado: Disponible, Reservado, Vendido, Alquilado, etc.
+    \item Descripción: Campo de texto libre para detalles adicionales
+    \item Imágenes: Carga múltiple de fotografías
+\end{itemize}
+
+El formulario implementa validación en tiempo real con Zod, indicando errores específicos para cada campo. Las imágenes se convierten de Base64 a archivos y se almacenan en el servidor con nombres únicos. La primera imagen se marca automáticamente como principal.
+
+\subsection{Visualización de Inmuebles}
+
+Todos los usuarios autenticados pueden acceder al catálogo completo mediante:
+
+\begin{itemize}
+    \item Vista de galería con cards mostrando imagen principal, dirección y datos básicos
+    \item Paginación de 5 elementos por página
+    \item Clic en card para acceder a vista detallada
+\end{itemize}
+
+La vista detallada muestra:
+
+\begin{itemize}
+    \item Carrusel de imágenes navegable
+    \item Todos los datos de la propiedad organizados en secciones
+    \item Ubicación completa (localidad, zona, barrio)
+    \item Estado actual claramente visible
+    \item Botones de acción según rol del usuario
+\end{itemize}
+
+\subsection{Edición y Eliminación}
+
+Los administradores pueden:
+
+\begin{itemize}
+    \item Modificar cualquier campo de un inmueble existente
+    \item Agregar o eliminar imágenes
+    \item Cambiar estado de la propiedad
+    \item Marcar inmueble como eliminado (soft delete)
+\end{itemize}
+
+La eliminación lógica preserva el registro en base de datos pero lo excluye de los listados, manteniendo integridad de consultas históricas.
+
+\subsection{Búsqueda y Filtrado}
+
+Campo de búsqueda en tiempo real que filtra por:
+
+\begin{itemize}
+    \item Dirección (coincidencia parcial)
+    \item Nombre de barrio
+    \item Nombre de zona
+    \item Nombre de localidad
+    \item Categoría del inmueble
+\end{itemize}
+
+Los resultados se actualizan instantáneamente mientras el usuario escribe.
+
+\section{Gestión de Agentes}
+
+\subsection{Alta de Agentes}
+
+Los administradores registran nuevos agentes mediante formulario que captura:
+
+\begin{itemize}
+    \item Datos personales: Nombre, apellido, DNI, fecha de nacimiento
+    \item Datos de contacto: Correo electrónico, teléfono, dirección física
+    \item Datos laborales: CUIT, fecha de ingreso (fecha actual por defecto)
+    \item Fotografía de perfil (opcional)
+\end{itemize}
+
+El sistema ejecuta automáticamente:
+
+\begin{itemize}
+    \item Creación de registro de persona
+    \item Creación de registro de empleado tipo ``agente''
+    \item Vinculación persona-empleado
+    \item Generación de contraseña temporal aleatoria de 12 caracteres
+    \item Creación de cuenta de usuario con rol ``agente''
+    \item Encriptación de contraseña con bcrypt
+\end{itemize}
+
+La respuesta incluye la contraseña temporal que el administrador debe comunicar al agente de forma segura.
+
+\subsection{Listado de Agentes}
+
+Vista tabular accesible solo para administradores mostrando:
+
+\begin{itemize}
+    \item Fotografía de perfil
+    \item ID de empleado
+    \item Nombre completo
+    \item CUIT
+    \item Fecha de alta
+    \item Fecha de baja (si aplica)
+    \item Teléfono
+    \item Estado (Activo/Inactivo)
+    \item Botón de acceso a detalle
+\end{itemize}
+
+\subsection{Detalle y Edición de Agentes}
+
+Vista completa de información del agente con capacidad de editar:
+
+\begin{itemize}
+    \item Datos personales
+    \item Datos laborales
+    \item Fotografía de perfil
+    \item Fecha de egreso para marcar inactivación
+\end{itemize}
+
+\subsection{Exportación}
+
+Botón ``Exportar CSV'' genera archivo descargable con todos los agentes incluyendo: ID, Nombre, Apellido, DNI, CUIT, Correo, Teléfono, Fecha de Alta, Fecha de Baja, Estado.
+
+\section{Gestión de Consultas de Clientes}
+
+\subsection{Registro de Consultas (por agentes)}
+
+Los agentes pueden documentar consultas recibidas de clientes:
+
+\begin{enumerate}
+    \item Seleccionan inmueble de interés desde listado de sus inmuebles asignados
+    \item Ingresan datos del cliente: nombre, apellido, teléfono, correo
+    \item Agregan descripción de la consulta o comentarios
+    \item Guardan registro
+\end{enumerate}
+
+El sistema valida automáticamente que el agente tenga asignado ese inmueble. La fecha se registra automáticamente. El agente queda vinculado a la consulta.
+
+\subsection{Visualización de Consultas}
+
+\textbf{ADMINISTRADORES:} Ven tabla con todas las consultas del sistema, mostrando nombre del cliente, teléfono, email, fecha, descripción, ID de inmueble e ID de agente responsable. Ordenadas por fecha descendente.
+
+\textbf{AGENTES:} Ven únicamente sus propias consultas registradas, con los mismos campos excepto ID de agente (ya que todas son suyas).
+
+\subsection{Exportación de Consultas}
+
+Botón disponible para administradores que genera CSV con todas las consultas incluyendo: Nombre, Apellido, Teléfono, Email, Fecha, Descripción, ID Inmueble, ID Agente.
+
+\section{Asignación de Inmuebles a Agentes}
+
+\subsection{Proceso de Asignación}
+
+Los administradores pueden asignar propiedades a agentes responsables mediante:
+
+\begin{enumerate}
+    \item Acceso a detalle del inmueble
+    \item Selección de agente desde listado
+    \item Confirmación de asignación
+\end{enumerate}
+
+El sistema ejecuta:
+
+\begin{itemize}
+    \item Verificación de existencia de inmueble y agente
+    \item Eliminación lógica de asignación anterior (si existe)
+    \item Creación de nueva asignación activa
+\end{itemize}
+
+\subsection{Visualización de Inmuebles Asignados}
+
+Los agentes acceden a sección ``Mis Inmuebles'' que muestra:
+
+\begin{itemize}
+    \item Solo inmuebles asignados específicamente a ellos
+    \item Vista similar al catálogo general pero filtrada
+    \item Acceso completo a detalles de cada propiedad
+    \item Capacidad de registrar consultas sobre estos inmuebles
+\end{itemize}
+
+\section{Generación de Informes}
+
+\subsection{Exportación de Inmuebles}
+
+Los administradores pueden exportar el catálogo completo de inmuebles a CSV con columnas: ID, Dirección, Categoría, Localidad, Zona, Barrio, Dormitorios, Baños, Superficie, Cochera, Estado.
+
+\subsection{Exportación de Agentes}
+
+CSV con datos completos de todos los agentes: ID, Nombre, Apellido, DNI, CUIT, Correo, Teléfono, Fecha de Alta, Fecha de Baja, Estado.
+
+\subsection{Exportación de Consultas}
+
+CSV con historial completo de consultas: Nombre, Apellido, Teléfono, Email, Fecha, Descripción, ID Inmueble, ID Agente.
+
+\subsection{Características Técnicas de Exportación}
+
+\begin{itemize}
+    \item Formato CSV compatible con Excel y Google Sheets
+    \item Codificación UTF-8 para soportar caracteres especiales
+    \item Escapado automático de comillas y comas en valores
+    \item Nombre de archivo descriptivo
+    \item Generación y descarga inmediata en navegador
+    \item Sin almacenamiento temporal en servidor
+\end{itemize}
+
+\subsection{Gestión de Datos de Ubicación}
+
+El sistema incluye interfaces administrativas completas para gestionar entidades de clasificación:
+
+\textbf{Categorías de Inmuebles:} CRUD completo para tipos de propiedad (Casa, Departamento, Terreno, Local Comercial, Galpón, etc.)
+
+\textbf{Estados de Inmuebles:} Gestión de estados posibles (Disponible, Reservado, Vendido, Alquilado, En Trámite, etc.)
+
+\textbf{Localidades, Zonas y Barrios:} Administración de la estructura geográfica de organización territorial.
+
+Todas estas interfaces permiten:
+
+\begin{itemize}
+    \item Crear nuevo elemento
+    \item Listar todos los elementos
+    \item Editar elemento existente
+    \item Eliminar elemento (con validación de que no esté en uso)
+\end{itemize}
+
+\chapter{Seguridad}
+
+La seguridad constituye un pilar fundamental del Sistema de Inmuebles y Agentes. Se implementaron múltiples capas y mecanismos de protección para garantizar la confidencialidad, integridad y disponibilidad de la información empresarial.
+
+\section{Autenticación y Autorización}
+
+\subsection{Autenticación}
+
+El sistema requiere autenticación obligatoria para acceder a cualquier funcionalidad. Se implementa mediante NextAuth con las siguientes características:
+
+\begin{itemize}
+    \item \textbf{Credentials Provider:} Autenticación basada en correo electrónico y contraseña almacenados en base de datos propia
+    \item \textbf{Validación de credenciales:} Búsqueda de usuario por correo y verificación de contraseña mediante bcrypt
+    \item \textbf{Sesiones seguras:} Tokens JWT almacenados en cookies HTTP-only que previenen acceso desde JavaScript malicioso
+    \item \textbf{Timeout de sesión:} Sesiones con tiempo de vida limitado que requieren re-autenticación periódica
+    \item \textbf{Callbacks personalizados:} Enriquecimiento de sesión con datos adicionales (rol, empleadoId)
+\end{itemize}
+
+\subsection{Flujo de Autenticación}
+
+\begin{enumerate}
+    \item Usuario sin sesión es redirigido automáticamente a /login
+    \item Ingresa correo y contraseña
+    \item Sistema valida contra tabla usuario en base de datos
+    \item Si válido, genera token JWT y establece cookie de sesión
+    \item Usuario accede a sistema con sesión activa
+    \item Cada request incluye token que se valida en servidor
+\end{enumerate}
+
+\subsection{Autorización}
+
+Control de acceso basado en roles implementado en dos niveles:
+
+\subsubsection{Nivel Frontend}
+\begin{itemize}
+    \item Verificación de session.user.role en componentes React
+    \item Ocultamiento de botones y enlaces según permisos
+    \item Redirección si usuario intenta acceder a ruta no permitida
+    \item Mensajes de ``No autorizado'' para intentos de acceso indebido
+\end{itemize}
+
+\subsubsection{Nivel Backend}
+\begin{itemize}
+    \item Función requireAuth(request, roleRequired) en cada endpoint sensible
+    \item Validación de sesión válida y rol apropiado antes de ejecutar lógica
+    \item Retorno de códigos HTTP apropiados:
+    \begin{itemize}
+        \item 401 Unauthorized: No autenticado (sin sesión válida)
+        \item 403 Forbidden: Autenticado pero sin permisos suficientes
+    \end{itemize}
+    \item Logs de intentos de acceso no autorizado
+\end{itemize}
+
+\subsection{Control de Acceso}
+
+Cada endpoint API tiene configurado explícitamente qué roles pueden acceder:
+
+\begin{itemize}
+    \item \textbf{Endpoints públicos:} Ninguno (todos requieren autenticación)
+    \item \textbf{Endpoints de administrador:} Creación/edición/eliminación de inmuebles y agentes, gestión de datos de ubicación, visualización de todas las consultas
+    \item \textbf{Endpoints de agente:} Registro de consultas, visualización de inmuebles asignados, visualización de consultas propias
+    \item \textbf{Endpoints compartidos:} Visualización de catálogo de inmuebles
+\end{itemize}
+
+\section{Protección de Datos}
+
+\subsection{Almacenamiento Seguro de Contraseñas}
+
+Las contraseñas nunca se almacenan en texto plano. Se implementa:
+
+\begin{itemize}
+    \item \textbf{Algoritmo bcrypt:} Hash unidireccional con salt incorporado
+    \item \textbf{Salt aleatorio:} Cada contraseña tiene salt único generado automáticamente
+    \item \textbf{Factor de trabajo:} 10 rounds de bcrypt para balance seguridad/rendimiento
+    \item \textbf{Verificación:} Comparación mediante bcrypt.compare() que maneja salt automáticamente
+    \item \textbf{Imposibilidad de recuperación:} No existe forma de obtener la contraseña original del hash
+\end{itemize}
+
+\subsection{Generación de Contraseñas Temporales}
+
+Al crear nuevos agentes, el sistema genera contraseñas temporales robustas:
+
+\begin{itemize}
+    \item \textbf{Longitud:} 12 caracteres
+    \item \textbf{Composición obligatoria:}
+    \begin{itemize}
+        \item Al menos 1 letra mayúscula
+        \item Al menos 1 letra minúscula
+        \item Al menos 1 dígito numérico
+        \item Al menos 1 símbolo especial (!@\#\$\%\&*)
+    \end{itemize}
+    \item Generación aleatoria criptográficamente segura
+    \item Mezclado aleatorio de caracteres
+    \item Entropía suficiente para resistir ataques de fuerza bruta
+\end{itemize}
+
+Ejemplo de contraseña generada: K9m\&Tj2@xLpW
+
+La contraseña se retorna al administrador una sola vez en la respuesta de creación, con advertencia de comunicarla de forma segura al agente.
+
+\subsection{Validación de Entrada}
+
+Todos los datos ingresados por usuarios se validan exhaustivamente:
+
+\begin{itemize}
+    \item \textbf{Validación de tipos:} TypeScript valida tipos en tiempo de compilación
+    \item \textbf{Validación de formato:} Esquemas Zod verifican estructura de datos
+    \item \textbf{Validación de rango:} Números dentro de límites esperados
+    \item \textbf{Validación de unicidad:} DNI, CUIT y correos únicos en base de datos
+    \item \textbf{Sanitización:} Prisma escapa automáticamente valores para prevenir inyección SQL
+    \item \textbf{Validación en frontend Y backend:} Doble capa para prevenir bypass
+\end{itemize}
+
+\subsection{Protección contra Inyección SQL}
+
+\begin{itemize}
+    \item Uso exclusivo de Prisma ORM que genera queries parametrizadas
+    \item Nunca se concatenan strings para construir SQL
+    \item Todas las consultas son type-safe
+    \item Validación de tipos en tiempo de compilación
+\end{itemize}
+
+\subsection{Protección contra XSS (Cross-Site Scripting)}
+
+\begin{itemize}
+    \item React escapa automáticamente contenido renderizado
+    \item Validación de entrada de datos textuales
+    \item No se usa dangerouslySetInnerHTML excepto donde absolutamente necesario
+\end{itemize}
+
+\subsection{Soft Delete para Protección de Datos}
+
+\begin{itemize}
+    \item Eliminación lógica en lugar de física preserva información histórica
+    \item Campo ``eliminado'' booleano en todas las entidades principales
+    \item Queries automáticamente filtran registros eliminados
+    \item Posibilidad de recuperación de datos eliminados accidentalmente
+    \item Cumplimiento de requisitos de auditoría y trazabilidad
+\end{itemize}
+
+\section{Contraseñas y Encriptación}
+
+\subsection{Requisitos de Contraseñas}
+
+Aunque el sistema genera contraseñas temporales, se establecen las siguientes políticas:
+
+\begin{itemize}
+    \item Longitud mínima: 8 caracteres (generadas son de 12)
+    \item Complejidad: Combinación de mayúsculas, minúsculas, números y símbolos
+    \item No reutilización: Contraseñas temporales únicas para cada agente
+    \item Cambio obligatorio: Se recomienda cambiar contraseña temporal en primer login (funcionalidad futura)
+\end{itemize}
+
+\subsection{Almacenamiento de Hashes}
+
+La tabla usuario almacena en campo ``contrasena'':
+
+\begin{itemize}
+    \item Hash bcrypt de la contraseña
+    \item Formato: \texttt{\$2a\$10\$salthashcombinado} (60 caracteres)
+    \item Algoritmo: bcrypt con 10 rounds
+    \item Resistencia: Prácticamente imposible de revertir con tecnología actual
+\end{itemize}
+
+\subsection{Proceso de Verificación de Contraseña}
+
+\begin{enumerate}
+    \item Usuario ingresa contraseña en login
+    \item Sistema busca usuario por correo
+    \item Obtiene hash almacenado de base de datos
+    \item Ejecuta bcrypt.compare(contraseñaIngresada, hashAlmacenado)
+    \item bcrypt extrae salt del hash y computa nuevo hash con contraseña ingresada
+    \item Compara hashes en tiempo constante para prevenir timing attacks
+    \item Retorna true si coinciden, false si no
+\end{enumerate}
+
+\subsection{Seguridad de Sesiones}
+
+\begin{itemize}
+    \item Tokens JWT firmados criptográficamente
+    \item Secret key para firma almacenada en variables de entorno
+    \item Cookies con flags:
+    \begin{itemize}
+        \item HttpOnly: JavaScript no puede acceder
+        \item Secure: Solo transmisión via HTTPS (en producción)
+        \item SameSite: Protección contra CSRF
+    \end{itemize}
+    \item Expiración automática de tokens
+    \item Invalidación de sesión al logout
+\end{itemize}
+
+\subsection{Transmisión Segura}
+
+En ambiente de producción se recomienda:
+
+\begin{itemize}
+    \item Uso obligatorio de HTTPS/TLS para todas las comunicaciones
+    \item Certificados SSL válidos
+    \item Redirección automática de HTTP a HTTPS
+    \item Headers de seguridad (HSTS, CSP, X-Frame-Options)
+\end{itemize}
+
+\subsection{Consideraciones Adicionales}
+
+\subsubsection{Protección de Datos Personales}
+
+Aunque no se implementó encriptación de datos sensibles en base de datos (DNI, CUIT), se recomienda para cumplimiento de regulaciones:
+
+\begin{itemize}
+    \item Encriptación at-rest de datos sensibles
+    \item Encriptación de campos específicos antes de almacenar
+    \item Keys de encriptación gestionadas externamente
+\end{itemize}
+
+\subsubsection{Logs y Auditoría}
+
+El sistema implementa logging básico:
+
+\begin{itemize}
+    \item Errores de servidor loggeados en consola
+    \item Intentos de acceso no autorizado registrados
+    \item Información de errores técnicos para debugging
+    \item No se loggean contraseñas ni tokens
+\end{itemize}
+
+\subsubsection{Recomendaciones para Producción}
+
+\begin{itemize}
+    \item Implementar rate limiting en endpoints de autenticación
+    \item Agregar CAPTCHA para prevenir bots
+    \item Implementar autenticación de dos factores (2FA)
+    \item Registrar logs de auditoría en sistema externo
+    \item Implementar alertas de actividad sospechosa
+    \item Realizar pentesting periódico
+    \item Mantener dependencias actualizadas para patches de seguridad
+\end{itemize}
+
+La combinación de estos mecanismos proporciona un nivel de seguridad adecuado para un sistema empresarial, protegiendo tanto la información de la empresa como los datos personales de empleados y clientes.
+
+\chapter{Conclusiones}
+
+El desarrollo del Sistema de Inmuebles y Agentes (SIA) representa la culminación exitosa de un proyecto integral de desarrollo de software que abordó una problemática real del sector inmobiliario mediante la aplicación de tecnologías modernas y mejores prácticas de desarrollo. Este trabajo demostró la aplicabilidad directa de los conocimientos adquiridos durante la Tecnicatura en Desarrollo de Software, integrando conceptos de programación, bases de datos, desarrollo de software, desarrollo web, seguridad informática y gestión de proyectos.
+
+El proyecto alcanzó satisfactoriamente todos los objetivos planteados, implementando un modelo de datos robusto y normalizado que centraliza la información de propiedades, agentes y consultas de clientes. Se desarrollaron módulos funcionales completos con CRUD para inmuebles y agentes, un sistema de autenticación y autorización basado en roles, capacidades de asignación de inmuebles a agentes, herramientas de exportación a CSV, y medidas de seguridad robustas incluyendo encriptación de contraseñas y validación exhaustiva de datos. La interfaz de usuario intuitiva, responsiva y moderna facilita su adopción por usuarios sin conocimientos técnicos avanzados, mientras que la arquitectura modular garantiza escalabilidad y evolución futura del sistema.
+
+Desde la perspectiva técnica, el proyecto demostró competencia en múltiples áreas mediante una arquitectura de tres capas bien definida, implementación de API RESTful, uso efectivo de ORM (Prisma), aplicación de TypeScript para tipado estático, validación de datos en múltiples niveles, manejo apropiado de estado en React, gestión de archivos multimedia, paginación, búsqueda en tiempo real e integración coherente de múltiples tecnologías en el stack tecnológico elegido.
+
+El SIA aporta valor tangible a empresas inmobiliarias en múltiples dimensiones: operativamente centraliza información y automatiza registros reduciendo tiempos de búsqueda; estratégicamente proporciona capacidad de análisis mediante reportes y mejor control de gestión; competitivamente profesionaliza el servicio proyectando una imagen moderna; y económicamente reduce costos operativos optimizando recursos. Se espera que una vez desplegado genere reducción de tiempos administrativos en un 40-50\%, mejore la tasa de conversión de consultas, reduzca errores operativos, incremente la satisfacción de clientes y mejore la toma de decisiones basadas en datos concretos.
+
+El desarrollo del proyecto proporcionó experiencia práctica invaluable en análisis de requerimientos de problemas reales, diseño de soluciones tecnológicas apropiadas, toma de decisiones técnicas fundamentadas, gestión de complejidad en sistemas de información, aplicación de metodologías de desarrollo, documentación técnica profesional y resolución de problemas durante la implementación. Esta experiencia de diseñar, implementar y documentar un sistema completo desde cero constituye una preparación fundamental para el ejercicio profesional de la desarrollo de software.
+
+Si bien el sistema cumple con los requerimientos establecidos y ya constituye una solución completa y funcional, se identifican oportunidades de mejora y expansión futuras tales como módulos de contratos y documentación legal, sistema de calendario y agendamiento de visitas, chat interno, dashboard con métricas y KPIs, notificaciones automáticas, integración con portales inmobiliarios, módulo de finanzas, sistema de tareas para agentes, autenticación de dos factores, recuperación de contraseña vía email, tests automatizados, logging estructurado, rate limiting y despliegue en producción con HTTPS, respaldos automáticos y monitoreo de uptime.
+
+El Sistema de Inmuebles y Agentes representa más que un proyecto académico; es una solución funcional, práctica y valiosa para un sector económico importante que demuestra cómo el desarrollo de software, aplicado con metodología, conocimiento técnico y enfoque en necesidades reales, puede generar herramientas que transformen la operación de organizaciones y mejoren la eficiencia empresarial. El conocimiento adquirido y la experiencia práctica obtenida durante este desarrollo constituyen activos fundamentales para el crecimiento profesional de los integrantes del equipo en el campo de la desarrollo de software.
+
+\appendix
+
+\chapter{Fichas de Casos de Uso}
+
+A continuación se presentan las fichas detalladas de casos de uso del sistema, las cuales corresponden con los casos especificados en los diagramas de casos de uso presentados anteriormente en este documento. Para consultar estas fichas, por favor diríjase al documento complementario \texttt{fichas\_casos\_uso.pdf}.
+
+\end{document}

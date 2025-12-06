@@ -1,0 +1,286 @@
+@startuml CASOS_USO_AUTENTICACION
+
+skinparam usecase {
+  BackgroundColor LightBlue
+  BorderColor DarkBlue
+  FontSize 11
+}
+
+skinparam actor {
+  FontSize 12
+}
+
+skinparam defaultFontSize 10
+left to right direction
+
+title Casos de Uso - Autenticación
+
+actor "Agente" as Agent
+actor "Admin" as Admin
+
+rectangle "Sistema SIA App - Autenticación" {
+  usecase "[CU-AUTH-01]\nIniciar Sesión" as UC_Login
+  usecase "[CU-AUTH-02]\nCerrar Sesión" as UC_Logout
+  usecase "[CU-AUTH-03]\nEstablecer\nContraseña\n(Primera vez)" as UC_SetPassword
+}
+
+Agent --> UC_Login
+Agent --> UC_Logout
+Agent --> UC_SetPassword
+
+Admin --> UC_Login
+Admin --> UC_Logout
+
+note right of UC_SetPassword
+  Solo para agentes nuevos.
+  Reciben email con token
+  de 24 horas de validez.
+end note
+
+@enduml
+
+' ====================================================================================
+
+@startuml CASOS_USO_PUBLICO
+
+skinparam usecase {
+  BackgroundColor LightGreen
+  BorderColor DarkGreen
+  FontSize 11
+}
+
+skinparam actor {
+  FontSize 12
+}
+
+skinparam defaultFontSize 10
+
+title Casos de Uso - Cliente Público
+
+actor "Cliente Público" as Public
+
+rectangle "Sistema SIA App - Acceso Público" {
+  usecase "[CU-PUB-01]\nVer Catálogo de\nInmuebles" as UC_ViewCatalog
+  usecase "[CU-PUB-02]\nVer Detalle de\nInmueble" as UC_ViewPropertyDetail
+  usecase "[CU-PUB-03]\nRegistrar\nConsulta" as UC_PublicInquiry
+  usecase "[CU-PUB-04]\nBuscar y\nFiltrar" as UC_SearchFilter
+}
+
+Public --> UC_ViewCatalog
+Public --> UC_ViewPropertyDetail
+Public --> UC_PublicInquiry
+Public --> UC_SearchFilter
+
+@enduml
+
+' ====================================================================================
+
+@startuml CASOS_USO_AGENTE
+
+skinparam usecase {
+  BackgroundColor LightYellow
+  BorderColor DarkOrange
+  FontSize 10
+}
+
+skinparam actor {
+  FontSize 11
+}
+
+skinparam packageStyle rectangle
+skinparam defaultFontSize 10
+left to right direction
+
+title Casos de Uso - Agente Inmobiliario
+
+actor "Agente" as Agent
+
+rectangle "Sistema SIA App - Módulo Agente" {
+
+  package "Mis Inmuebles" {
+    usecase "[CU-AGE-01]\nVer Listado de\nInmuebles Asignados" as UC_ViewMyProperties
+    usecase "[CU-AGE-02]\nVer Detalle de\nInmueble" as UC_ViewMyPropertyDetail
+    usecase "[CU-AGE-03]\nBuscar Inmueble" as UC_SearchMyProperties
+  }
+
+  package "Mis Consultas de Clientes" {
+    usecase "[CU-AGE-04]\nVer Mis Consultas" as UC_ViewMyInquiries
+    usecase "[CU-AGE-05]\nVer Detalle de\nConsulta" as UC_ViewInquiryDetail
+    usecase "[CU-AGE-06]\nFiltrar Consultas" as UC_FilterInquiries
+  }
+}
+
+Agent --> UC_ViewMyProperties
+Agent --> UC_ViewMyPropertyDetail
+Agent --> UC_SearchMyProperties
+Agent --> UC_ViewMyInquiries
+Agent --> UC_ViewInquiryDetail
+Agent --> UC_FilterInquiries
+
+@enduml
+
+' ====================================================================================
+
+@startuml CASOS_USO_ADMIN_INMUEBLES
+
+skinparam usecase {
+  BackgroundColor LightCoral
+  BorderColor DarkRed
+  FontSize 10
+}
+
+skinparam actor {
+  FontSize 11
+}
+
+skinparam packageStyle rectangle
+skinparam defaultFontSize 10
+left to right direction
+
+title Casos de Uso - Administrador: Gestión de Inmuebles
+
+actor "Admin" as Admin
+
+rectangle "Sistema SIA App - Gestión de Inmuebles" {
+
+  package "Gestión de Inmuebles" {
+    usecase "[CU-ADM-INM-01]\nCrear Inmueble" as UC_CreateProperty
+    usecase "[CU-ADM-INM-02]\nEditar Inmueble" as UC_UpdateProperty
+    usecase "[CU-ADM-INM-03]\nEliminar Inmueble" as UC_DeleteProperty
+    usecase "[CU-ADM-INM-04]\nListar Inmuebles" as UC_ListProperties
+    usecase "[CU-ADM-INM-05]\nVer Detalle" as UC_ViewProperty
+    usecase "[CU-ADM-INM-06]\nBuscar Inmueble" as UC_SearchProperties
+    usecase "[CU-ADM-INM-07]\nExportar Inmuebles" as UC_ExportProperties
+  }
+
+  package "Gestión de Imágenes" {
+    usecase "[CU-ADM-IMG-01]\nSubir Imagen" as UC_UploadImage
+    usecase "[CU-ADM-IMG-02]\nEliminar Imagen" as UC_DeleteImage
+  }
+
+  package "Asignación de Agentes" {
+    usecase "[CU-ADM-ASG-01]\nAsignar Agente\na Inmueble" as UC_AssignAgent
+    usecase "[CU-ADM-ASG-02]\nCambiar Agente\nAsignado" as UC_ChangeAgent
+  }
+}
+
+Admin --> UC_CreateProperty
+Admin --> UC_UpdateProperty
+Admin --> UC_DeleteProperty
+Admin --> UC_ListProperties
+Admin --> UC_ViewProperty
+Admin --> UC_SearchProperties
+Admin --> UC_ExportProperties
+Admin --> UC_UploadImage
+Admin --> UC_DeleteImage
+Admin --> UC_AssignAgent
+Admin --> UC_ChangeAgent
+
+@enduml
+
+' ====================================================================================
+
+@startuml CASOS_USO_ADMIN_AGENTES
+
+skinparam usecase {
+  BackgroundColor LightCoral
+  BorderColor DarkRed
+  FontSize 10
+}
+
+skinparam actor {
+  FontSize 11
+}
+
+skinparam packageStyle rectangle
+skinparam defaultFontSize 10
+left to right direction
+
+title Casos de Uso - Administrador: Gestión de Agentes y Consultas
+
+actor "Admin" as Admin
+
+rectangle "Sistema SIA App - Gestión de Agentes y Consultas" {
+
+  package "Gestión de Agentes" {
+    usecase "[CU-ADM-AGT-01]\nCrear Agente" as UC_CreateAgent
+    usecase "[CU-ADM-AGT-02]\nEditar Agente" as UC_UpdateAgent
+    usecase "[CU-ADM-AGT-03]\nEliminar Agente" as UC_DeleteAgent
+    usecase "[CU-ADM-AGT-04]\nListar Agentes" as UC_ListAgents
+    usecase "[CU-ADM-AGT-05]\nVer Detalle\nde Agente" as UC_ViewAgent
+    usecase "[CU-ADM-AGT-06]\nBuscar Agente" as UC_SearchAgents
+    usecase "[CU-ADM-AGT-07]\nExportar Agentes" as UC_ExportAgents
+  }
+
+  package "Gestión de Consultas de Clientes" {
+    usecase "[CU-ADM-CNS-01]\nVer Todas las\nConsultas" as UC_ViewAllInquiries
+    usecase "[CU-ADM-CNS-02]\nVer Detalle de\nConsulta" as UC_ViewInquiryDetail
+    usecase "[CU-ADM-CNS-03]\nFiltrar Consultas" as UC_FilterInquiries
+    usecase "[CU-ADM-CNS-04]\nExportar Consultas" as UC_ExportInquiries
+  }
+}
+
+Admin --> UC_CreateAgent
+Admin --> UC_UpdateAgent
+Admin --> UC_DeleteAgent
+Admin --> UC_ListAgents
+Admin --> UC_ViewAgent
+Admin --> UC_SearchAgents
+Admin --> UC_ExportAgents
+Admin --> UC_ViewAllInquiries
+Admin --> UC_ViewInquiryDetail
+Admin --> UC_FilterInquiries
+Admin --> UC_ExportInquiries
+
+@enduml
+
+' ====================================================================================
+
+@startuml CASOS_USO_ADMIN_DATOS_UBICACION
+
+skinparam usecase {
+  BackgroundColor LightCoral
+  BorderColor DarkRed
+  FontSize 10
+}
+
+skinparam actor {
+  FontSize 11
+}
+
+skinparam packageStyle rectangle
+skinparam defaultFontSize 10
+left to right direction
+
+title Casos de Uso - Administrador: Datos de Ubicación y Clasificación
+
+actor "Admin" as Admin
+
+rectangle "Sistema SIA App - Datos de Ubicación y Clasificación" {
+
+  package "Clasificación de Inmuebles" {
+    usecase "[CU-ADM-RUB]\nGestionar\nCategorías" as UC_ManageCategories
+    usecase "[CU-ADM-EST]\nGestionar\nEstados" as UC_ManageStatuses
+  }
+
+  package "Datos de Ubicación" {
+    usecase "[CU-ADM-LOC]\nGestionar\nLocalidades" as UC_ManageLocations
+    usecase "[CU-ADM-ZON]\nGestionar\nZonas" as UC_ManageZones
+    usecase "[CU-ADM-BAR]\nGestionar\nBarrios" as UC_ManageNeighborhoods
+  }
+}
+
+Admin --> UC_ManageCategories
+Admin --> UC_ManageStatuses
+Admin --> UC_ManageLocations
+Admin --> UC_ManageZones
+Admin --> UC_ManageNeighborhoods
+
+note right of UC_ManageCategories
+  Gestionar: Crear, Editar,
+  Eliminar (soft delete)
+  y Listar.
+end note
+
+@enduml
+

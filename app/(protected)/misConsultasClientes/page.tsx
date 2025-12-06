@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import { getSession } from "@/actions/auth-actions";
 import ConsultaClienteItem from "@/app/components/ConsultaClienteItem";
+import SearchBar from "@/app/components/SearchBar";
+import Pagination from "@/app/components/Pagination";
 import { useRouter } from "next/navigation";
 import ConsultaCliente from "@/types/consulta_cliente";
+import { useSearchWithPagination } from "@/hooks/useSearchWithPagination";
 
 const Clientes = () => {
   const [session, setSession] = useState<any>(null);
@@ -13,6 +16,28 @@ const Clientes = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
+
+  // Hook de búsqueda con paginación
+  const {
+    paginatedData,
+    searchQuery,
+    setSearchQuery,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    setCurrentPage,
+  } = useSearchWithPagination(
+    clientes,
+    [
+      'nombre',
+      'apellido',
+      'telefono',
+      'correo',
+      'descripcion'
+    ],
+    10 // items por página
+  );
 
   const authenticateUser = async () => {
     try {
@@ -102,56 +127,110 @@ const Clientes = () => {
     );
   }
 
+  if (clientes.length === 0) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-gray-600">No hay consultas registradas</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-[calc(100vh-80px-56px)] bg-gray-100 p-4">
-      <div className="w-full bg-white p-6 shadow-lg rounded-xl">
-        <h2 className="text-2xl font-semibold text-center mb-4 text-[#083C2C]">
-          Lista de Consultas
-        </h2>
-        <div className="overflow-x-auto rounded-xl">
-          <table className="min-w-full table-auto bg-white border-collapse">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
-                  Nombre
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
-                  Teléfono
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
-                  Email
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
-                  Fecha
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
-                  Descripción
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
-                  ID Inmueble
-                </th>
-                {session &&
-                session.user &&
-                session.user.role === "administrador" ? (
+      <div className="w-full px-2">
+        {/* Título de bienvenida */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Mis Consultas
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Revisa las consultas asignadas a ti
+          </p>
+        </div>
+
+        {/* Contenedor principal */}
+        <div className="bg-white p-6 shadow-lg rounded-lg">
+          {/* Barra de búsqueda */}
+          <SearchBar
+            onSearch={setSearchQuery}
+            placeholder="Buscar consultas por nombre, teléfono, correo, descripción..."
+            className="mb-4"
+          />
+
+          {/* Mostrar información de resultados */}
+          {searchQuery && (
+            <div className="mb-4 text-sm text-gray-600">
+              Se encontraron <span className="font-semibold">{totalItems}</span> consultas
+              {searchQuery && <span> para "{searchQuery}"</span>}
+            </div>
+          )}
+
+          <div className="overflow-x-auto rounded-xl">
+            <table className="min-w-full table-auto bg-white border-collapse">
+              <thead>
+                <tr className="bg-gray-200">
                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
-                    ID Agente
+                    Nombre
                   </th>
-                ) : null}
-                <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {clientes.map((cliente) => (
-                <ConsultaClienteItem
-                  key={cliente.id}
-                  cliente={cliente}
-                  onView={handleView}
-                />
-              ))}
-            </tbody>
-          </table>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                    Teléfono
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                    Email
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                    Fecha
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                    Descripción
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                    ID Inmueble
+                  </th>
+                  {session &&
+                  session.user &&
+                  session.user.role === "administrador" ? (
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                      ID Agente
+                    </th>
+                  ) : null}
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border border-gray-300">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedData.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-8 text-center text-gray-600">
+                      {searchQuery ? "No se encontraron consultas con ese criterio de búsqueda" : "No hay consultas registradas"}
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedData.map((cliente) => (
+                    <ConsultaClienteItem
+                      key={cliente.id}
+                      cliente={cliente}
+                      onView={handleView}
+                    />
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Paginación */}
+          {totalPages > 1 && (
+            <div className="mt-6 flex justify-center">
+              <Pagination
+                page={currentPage}
+                totalPages={totalPages}
+                onChange={setCurrentPage}
+                totalItems={totalItems}
+                pageSize={itemsPerPage}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

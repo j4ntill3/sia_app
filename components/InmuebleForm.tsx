@@ -13,14 +13,14 @@ const inmuebleSchema = z.object({
   barrio_id: z.string().min(1, "El barrio es obligatorio"),
   direccion: z.string().min(1, "La dirección es obligatoria"),
   dormitorios: z.string()
-    .min(1, "El número de habitaciones es obligatorio")
-    .regex(/^\d+$/, "El número de habitaciones debe ser un número entero"),
+    .refine((val) => val.trim().length > 0, "El número de habitaciones es obligatorio")
+    .refine((val) => /^\d+$/.test(val), "El número de habitaciones debe ser un número entero"),
   banos: z.string()
-    .min(1, "El número de baños es obligatorio")
-    .regex(/^\d+$/, "El número de baños debe ser un número entero"),
+    .refine((val) => val.trim().length > 0, "El número de baños es obligatorio")
+    .refine((val) => /^\d+$/.test(val), "El número de baños debe ser un número entero"),
   superficie: z.string()
-    .min(1, "La superficie es obligatoria")
-    .regex(/^\d+(\.\d+)?$/, "La superficie debe ser un número válido (puede incluir decimales)"),
+    .refine((val) => val.trim().length > 0, "La superficie es obligatoria")
+    .refine((val) => /^\d+(\.\d+)?$/.test(val), "La superficie debe ser un número válido (puede incluir decimales)"),
   cochera: z.boolean().optional(),
   estado_id: z.string().min(1, "El estado es obligatorio"),
   imagenes: z.array(z.string()).optional(),
@@ -282,24 +282,47 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px-56px)] flex flex-col items-center bg-gray-100 p-4 md:p-8">
-      <div className="w-full max-w-5xl py-6 px-6 md:px-10 bg-white shadow-md rounded-2xl">
-        <h2 className="text-3xl font-bold text-center mt-2 mb-6 text-[#083C2C]">
+    <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-[#083C2C]">
           {mode === "view" ? "Detalle Inmueble" : mode === "edit" ? "Editar Inmueble" : "Alta Inmueble"}
         </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <div className="space-y-4">
-              {/* Columna 1 */}
+        {!readOnly && (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => router.push('/inmuebles')}
+              className="bg-gray-500 text-white py-2 px-3 rounded-md hover:bg-gray-600 transition-colors font-medium text-sm"
+            >
+              Volver
+            </button>
+            <button
+              type="submit"
+              form="inmueble-form"
+              className="bg-[#6FC6D1] text-white py-2 px-3 rounded-md hover:bg-[#5AB5C1] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-medium text-sm"
+              disabled={loading}
+            >
+              {loading ? "Guardando..." : mode === "edit" ? "Guardar" : "Crear"}
+            </button>
+          </div>
+        )}
+      </div>
+      <form id="inmueble-form" onSubmit={handleSubmit}>
+        {/* Layout de 2 columnas: Datos e Imágenes */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Columna izquierda: Datos del inmueble (2/3 del ancho) */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Rubro */}
               <div>
-                <label htmlFor="categoria_id" className="block text-sm font-sans font-medium text-[#083C2C]">Rubro</label>
+                <label htmlFor="categoria_id" className="block text-sm font-medium text-gray-700 mb-1">Rubro *</label>
                 <select
                   id="categoria_id"
                   name="categoria_id"
                   value={formData.categoria_id}
                   onChange={handleInputChange}
                   disabled={readOnly}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="">Seleccione un rubro</option>
                   {rubros.length > 0 && rubros.map((rubro) => (
@@ -308,15 +331,17 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                 </select>
                 {formErrors.categoria_id && <p className="text-red-500 text-xs mt-1">{formErrors.categoria_id}</p>}
               </div>
+
+              {/* Estado */}
               <div>
-                <label htmlFor="estado_id" className="block text-sm font-sans font-medium text-[#083C2C]">Estado</label>
+                <label htmlFor="estado_id" className="block text-sm font-medium text-gray-700 mb-1">Estado *</label>
                 <select
                   id="estado_id"
                   name="estado_id"
                   value={formData.estado_id}
                   onChange={handleInputChange}
                   disabled={readOnly}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="">Seleccione un estado</option>
                   {estados.length > 0 && estados.map((estado) => (
@@ -325,9 +350,11 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                 </select>
                 {formErrors.estado_id && <p className="text-red-500 text-xs mt-1">{formErrors.estado_id}</p>}
               </div>
+
+              {/* Agente Asignado - solo en edit/view */}
               {(mode === "edit" || mode === "view") && (
-                <div>
-                  <label htmlFor="agente" className="block text-sm font-sans font-medium text-[#083C2C]">Agente Asignado</label>
+                <div className="md:col-span-2">
+                  <label htmlFor="agente" className="block text-sm font-medium text-gray-700 mb-1">Agente Asignado</label>
                   <input
                     type="text"
                     id="agente"
@@ -336,19 +363,21 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                       ? `${initialData.agenteAsignado.nombre} ${initialData.agenteAsignado.apellido}`
                       : 'Sin asignar'}
                     disabled
-                    className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 opacity-60 cursor-not-allowed"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700 cursor-not-allowed"
                   />
                 </div>
               )}
+
+              {/* Localidad */}
               <div>
-                <label htmlFor="localidad_id" className="block text-sm font-sans font-medium text-[#083C2C]">Localidad</label>
+                <label htmlFor="localidad_id" className="block text-sm font-medium text-gray-700 mb-1">Localidad *</label>
                 <select
                   id="localidad_id"
                   name="localidad_id"
                   value={formData.localidad_id}
                   onChange={handleInputChange}
                   disabled={readOnly}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="">Seleccione una localidad</option>
                   {localidades.length > 0 && localidades.map((localidad) => (
@@ -357,15 +386,17 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                 </select>
                 {formErrors.localidad_id && <p className="text-red-500 text-xs mt-1">{formErrors.localidad_id}</p>}
               </div>
+
+              {/* Zona */}
               <div>
-                <label htmlFor="zona_id" className="block text-sm font-sans font-medium text-[#083C2C]">Zona</label>
+                <label htmlFor="zona_id" className="block text-sm font-medium text-gray-700 mb-1">Zona *</label>
                 <select
                   id="zona_id"
                   name="zona_id"
                   value={formData.zona_id || ""}
                   onChange={handleInputChange}
                   disabled={readOnly || !formData.localidad_id}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="">Seleccione una zona</option>
                   {zonas.length > 0 && zonas.map((zona) => (
@@ -374,29 +405,17 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                 </select>
                 {formErrors.zona_id && <p className="text-red-500 text-xs mt-1">{formErrors.zona_id}</p>}
               </div>
+
+              {/* Barrio */}
               <div>
-                <label htmlFor="direccion" className="block text-sm font-sans font-medium text-[#083C2C]">Dirección</label>
-                <input
-                  type="text"
-                  id="direccion"
-                  name="direccion"
-                  value={formData.direccion}
-                  onChange={handleInputChange}
-                  disabled={readOnly}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
-                  placeholder="Ingresa la dirección"
-                />
-                {formErrors.direccion && <p className="text-red-500 text-xs mt-1">{formErrors.direccion}</p>}
-              </div>
-              <div>
-                <label htmlFor="barrio_id" className="block text-sm font-sans font-medium text-[#083C2C]">Barrio</label>
+                <label htmlFor="barrio_id" className="block text-sm font-medium text-gray-700 mb-1">Barrio *</label>
                 <select
                   id="barrio_id"
                   name="barrio_id"
                   value={formData.barrio_id}
                   onChange={handleInputChange}
                   disabled={readOnly || !formData.localidad_id}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="">Seleccione un barrio</option>
                   {barrios.length > 0 && barrios.map((barrio) => (
@@ -405,11 +424,26 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                 </select>
                 {formErrors.barrio_id && <p className="text-red-500 text-xs mt-1">{formErrors.barrio_id}</p>}
               </div>
-            </div>
-            <div className="space-y-4">
-              {/* Columna 2 */}
+
+              {/* Dirección */}
               <div>
-                <label htmlFor="dormitorios" className="block text-sm font-sans font-medium text-[#083C2C]">Número de Habitaciones</label>
+                <label htmlFor="direccion" className="block text-sm font-medium text-gray-700 mb-1">Dirección *</label>
+                <input
+                  type="text"
+                  id="direccion"
+                  name="direccion"
+                  value={formData.direccion}
+                  onChange={handleInputChange}
+                  disabled={readOnly}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] disabled:opacity-60 disabled:cursor-not-allowed"
+                  placeholder="Ingresa la dirección"
+                />
+                {formErrors.direccion && <p className="text-red-500 text-xs mt-1">{formErrors.direccion}</p>}
+              </div>
+
+              {/* Habitaciones */}
+              <div>
+                <label htmlFor="dormitorios" className="block text-sm font-medium text-gray-700 mb-1">Habitaciones *</label>
                 <input
                   type="text"
                   id="dormitorios"
@@ -417,13 +451,15 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                   value={formData.dormitorios}
                   onChange={handleInputChange}
                   disabled={readOnly}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] disabled:opacity-60 disabled:cursor-not-allowed"
                   placeholder="Número de habitaciones"
                 />
                 {formErrors.dormitorios && <p className="text-red-500 text-xs mt-1">{formErrors.dormitorios}</p>}
               </div>
+
+              {/* Baños */}
               <div>
-                <label htmlFor="banos" className="block text-sm font-sans font-medium text-[#083C2C]">Número de Baños</label>
+                <label htmlFor="banos" className="block text-sm font-medium text-gray-700 mb-1">Baños *</label>
                 <input
                   type="text"
                   id="banos"
@@ -431,13 +467,15 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                   value={formData.banos}
                   onChange={handleInputChange}
                   disabled={readOnly}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] disabled:opacity-60 disabled:cursor-not-allowed"
                   placeholder="Número de baños"
                 />
                 {formErrors.banos && <p className="text-red-500 text-xs mt-1">{formErrors.banos}</p>}
               </div>
+
+              {/* Superficie */}
               <div>
-                <label htmlFor="superficie" className="block text-sm font-sans font-medium text-[#083C2C]">Superficie</label>
+                <label htmlFor="superficie" className="block text-sm font-medium text-gray-700 mb-1">Superficie (m²) *</label>
                 <input
                   type="text"
                   id="superficie"
@@ -445,13 +483,15 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                   value={formData.superficie}
                   onChange={handleInputChange}
                   disabled={readOnly}
-                  className="rounded-full mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] disabled:opacity-60 disabled:cursor-not-allowed"
                   placeholder="Superficie en m²"
                 />
                 {formErrors.superficie && <p className="text-red-500 text-xs mt-1">{formErrors.superficie}</p>}
               </div>
-              <div>
-                <label htmlFor="cochera" className="flex items-center gap-2 text-sm font-sans font-medium text-[#083C2C]">
+
+              {/* Cochera */}
+              <div className="flex items-center pt-6">
+                <label htmlFor="cochera" className="flex items-center gap-2 text-sm font-medium text-gray-700">
                   <input
                     type="checkbox"
                     id="cochera"
@@ -459,99 +499,87 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
                     checked={formData.cochera}
                     onChange={handleInputChange}
                     disabled={readOnly}
-                    className="rounded focus:ring-[#083C2C] w-4 h-4 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="rounded border-gray-300 focus:ring-2 focus:ring-[#6FC6D1] w-4 h-4 disabled:opacity-60 disabled:cursor-not-allowed"
                   />
-                  ¿Cuenta con garaje?
+                  ¿Cuenta con cochera?
                 </label>
                 {formErrors.cochera && <p className="text-red-500 text-xs mt-1">{formErrors.cochera}</p>}
               </div>
-              <div>
-                <label htmlFor="descripcion" className="block text-sm font-sans font-medium text-[#083C2C]">Descripción</label>
-                <textarea
-                  id="descripcion"
-                  name="descripcion"
-                  value={formData.descripcion || ""}
-                  onChange={(e) => setFormData(prev => ({ ...prev, descripcion: e.target.value }))}
-                  disabled={readOnly}
-                  className="rounded-lg mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] disabled:opacity-60 disabled:cursor-not-allowed"
-                  placeholder="Descripción del inmueble (opcional)"
-                  rows={3}
-                />
-                {formErrors.descripcion && <p className="text-red-500 text-xs mt-1">{formErrors.descripcion}</p>}
-              </div>
+            </div>
 
-              {/* Mostrar imágenes existentes con carrusel */}
-              {existingImages.length > 0 && (
-                <div>
-                  <label className="block text-sm font-sans font-medium text-[#083C2C] mb-3">Imágenes guardadas</label>
-                  <ImageCarousel
-                    images={existingImages}
-                    onDelete={!readOnly ? removeExistingImage : undefined}
-                    onSetPrincipal={!readOnly ? setImageAsPrincipal : undefined}
-                    readOnly={readOnly}
-                  />
-                </div>
-              )}
-
-              {!readOnly && (
-                <div>
-                  <label htmlFor="imagen" className="block text-sm font-sans font-medium text-[#083C2C]">
-                    {existingImages.length > 0 ? "Agregar más imágenes" : "Imágenes del inmueble"}
-                  </label>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    id="imagen"
-                    name="imagen"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageChange}
-                    className="mt-1 w-full p-2 bg-[#EDEDED] text-sm text-gray-800 focus:ring-[#083C2C] focus:border-[#083C2C] rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#6FC6D1] file:text-white hover:file:bg-[#5ab5c0]"
-                  />
-                  {imagePreviews.length > 0 && (
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      {imagePreviews.map((preview, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={preview}
-                            alt={`Preview ${index + 1}`}
-                            className="rounded-lg w-full h-32 object-cover border-2 border-[#EDEDED]"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 text-xs font-bold"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+            {/* Descripción */}
+            <div>
+              <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+              <textarea
+                id="descripcion"
+                name="descripcion"
+                value={formData.descripcion || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, descripcion: e.target.value }))}
+                disabled={readOnly}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] disabled:opacity-60 disabled:cursor-not-allowed"
+                placeholder="Descripción del inmueble (opcional)"
+                rows={3}
+              />
+              {formErrors.descripcion && <p className="text-red-500 text-xs mt-1">{formErrors.descripcion}</p>}
             </div>
           </div>
-          {!readOnly && (
-            <div className="mt-6 space-y-3">
-              <button
-                type="submit"
-                className="w-full bg-[#6FC6D1] text-white py-3 px-4 rounded-full text-sm font-sans hover:bg-[#5ab5c0] transition-colors"
-                disabled={loading}
-              >
-                {mode === "edit" ? "Guardar cambios" : "Crear Inmueble"}
-              </button>
-              <button
-                type="button"
-                onClick={() => router.push('/inmuebles')}
-                className="w-full bg-gray-500 text-white py-3 px-4 rounded-full text-sm font-sans hover:bg-gray-600 transition-colors"
-              >
-                Volver a Inmuebles
-              </button>
-            </div>
-          )}
-        </form>
-      </div>
+
+          {/* Columna derecha: Sección de Imágenes (1/3 del ancho) */}
+          <div className="lg:col-span-1 space-y-4">
+            {/* Imágenes existentes */}
+            {existingImages.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Imágenes guardadas</label>
+                <ImageCarousel
+                  images={existingImages}
+                  onDelete={!readOnly ? removeExistingImage : undefined}
+                  onSetPrincipal={!readOnly ? setImageAsPrincipal : undefined}
+                  readOnly={readOnly}
+                />
+              </div>
+            )}
+
+            {/* Subir imágenes */}
+            {!readOnly && (
+              <div>
+                <label htmlFor="imagen" className="block text-sm font-medium text-gray-700 mb-1">
+                  {existingImages.length > 0 ? "Agregar más imágenes" : "Imágenes del inmueble"}
+                </label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  id="imagen"
+                  name="imagen"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6FC6D1] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#6FC6D1] file:text-white hover:file:bg-[#5AB5C1]"
+                />
+                {imagePreviews.length > 0 && (
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={preview}
+                          alt={`Preview ${index + 1}`}
+                          className="rounded-md w-full h-32 object-cover border border-gray-300"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 text-xs font-bold"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </form>
     </div>
   );
 }

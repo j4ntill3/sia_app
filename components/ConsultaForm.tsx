@@ -5,9 +5,10 @@ import { useState } from "react";
 interface ConsultaFormProps {
   inmuebleId: string;
   onSuccess?: () => void;
+  hideTitle?: boolean;
 }
 
-const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) => {
+const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess, hideTitle = false }) => {
   const [formData, setFormData] = useState({
     nombre: "",
     apellido: "",
@@ -81,8 +82,11 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
         descripcion: "",
       });
 
+      // Si hay callback onSuccess, ejecutarlo después de 1.5 segundos
       if (onSuccess) {
-        onSuccess();
+        setTimeout(() => {
+          onSuccess();
+        }, 1500);
       }
     } catch (err: any) {
       setError(err.message || "Error al enviar la consulta");
@@ -111,10 +115,12 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
   }
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6">
-      <h3 className="text-2xl font-semibold text-[#083C2C] mb-4">
-        Consultar sobre esta propiedad
-      </h3>
+    <div className={hideTitle ? "" : "bg-white shadow-md rounded-lg p-6"}>
+      {!hideTitle && (
+        <h3 className="text-2xl font-semibold text-[#083C2C] mb-4">
+          Consultar sobre esta propiedad
+        </h3>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -187,7 +193,7 @@ const ConsultaForm: React.FC<ConsultaFormProps> = ({ inmuebleId, onSuccess }) =>
 
         <div>
           <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700 mb-1">
-            Mensaje (opcional)
+            Mensaje
           </label>
           <textarea
             id="descripcion"
