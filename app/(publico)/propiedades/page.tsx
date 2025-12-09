@@ -3,33 +3,48 @@
 import { useEffect, useState } from "react";
 import InmuebleCard from "@/app/components/InmuebleCard";
 import type { Inmueble } from "@/types/inmueble";
-import InmuebleSearch from "@/app/components/InmuebleSearch";
+import SearchBar from "@/app/components/SearchBar";
 import Pagination from "@/app/components/Pagination";
 import { Building2 } from "lucide-react";
+import { useSearchWithPagination } from "@/hooks/useSearchWithPagination";
 
 const PropiedadesPublicas = () => {
   const [inmuebles, setInmuebles] = useState<Inmueble[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  // Función para obtener los inmuebles públicos
-  const fetchInmuebles = async (pageToFetch = 1) => {
+  // Hook de búsqueda con paginación
+  const {
+    paginatedData,
+    searchQuery,
+    setSearchQuery,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    setCurrentPage,
+  } = useSearchWithPagination(
+    inmuebles,
+    [
+      'direccion',
+      'barrio.nombre',
+      'zona.nombre',
+      'localidad.nombre',
+      'categoria.categoria'
+    ],
+    9 // items por página
+  );
+
+  // Función para obtener todos los inmuebles públicos
+  const fetchInmuebles = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `/api/inmuebles?page=${pageToFetch}&pageSize=9`
-      );
+      const response = await fetch('/api/inmuebles?all=true');
       if (!response.ok) {
         throw new Error("Error al obtener las propiedades.");
       }
       const inmueblesData = await response.json();
       setInmuebles(inmueblesData.data || []);
-      setTotalPages(inmueblesData.totalPages || 1);
-      setTotalItems(inmueblesData.total || 0);
     } catch (err) {
       setError("Error al cargar las propiedades. Por favor, intente nuevamente.");
     } finally {
@@ -38,20 +53,8 @@ const PropiedadesPublicas = () => {
   };
 
   useEffect(() => {
-    fetchInmuebles(page);
-  }, [page]);
-
-  // Filtrar inmuebles según el texto de búsqueda
-  const filteredInmuebles = inmuebles.filter((inmueble) => {
-    const q = searchQuery.toLowerCase();
-    return (
-      inmueble.direccion?.toLowerCase().includes(q) ||
-      inmueble.barrio?.nombre?.toLowerCase().includes(q) ||
-      inmueble.zona?.nombre?.toLowerCase().includes(q) ||
-      inmueble.localidad?.nombre?.toLowerCase().includes(q) ||
-      inmueble.categoria?.categoria?.toLowerCase().includes(q)
-    );
-  });
+    fetchInmuebles();
+  }, []);
 
   return (
     <div className="min-h-[calc(100vh-80px-56px)] bg-gray-50">
@@ -72,8 +75,27 @@ const PropiedadesPublicas = () => {
 
       {/* Search and Content */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="mb-6">
-          <InmuebleSearch onSearch={setSearchQuery} />
+        {/* Barra de búsqueda */}
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="w-full sm:w-auto flex-1">
+              <SearchBar
+                value={searchQuery}
+                onSearch={setSearchQuery}
+                placeholder="Buscar propiedades por dirección, barrio, zona, localidad, categoría..."
+                totalCount={inmuebles.length}
+                filteredCount={totalItems}
+              />
+            </div>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors whitespace-nowrap"
+              >
+                Limpiar búsqueda
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Loading State */}
@@ -96,20 +118,22 @@ const PropiedadesPublicas = () => {
         {/* Properties Grid */}
         {!isLoading && !error && (
           <>
-            {filteredInmuebles.length === 0 ? (
+            {paginatedData.length === 0 ? (
               <div className="bg-white rounded-lg shadow-sm p-12 text-center">
                 <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-600 text-lg">
-                  No se encontraron propiedades que coincidan con tu búsqueda.
+                  {searchQuery
+                    ? "No se encontraron propiedades que coincidan con tu búsqueda."
+                    : "No hay propiedades disponibles en este momento."}
                 </p>
                 <p className="text-gray-500 text-sm mt-2">
-                  Intenta con otros términos de búsqueda.
+                  {searchQuery && "Intenta con otros términos de búsqueda."}
                 </p>
               </div>
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  {filteredInmuebles.map((inmueble) => (
+                  {paginatedData.map((inmueble) => (
                     <InmuebleCard
                       key={inmueble.id}
                       inmueble={inmueble}
@@ -119,15 +143,17 @@ const PropiedadesPublicas = () => {
                 </div>
 
                 {/* Pagination */}
-                <div className="flex justify-center">
-                  <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    onChange={setPage}
-                    totalItems={totalItems}
-                    pageSize={9}
-                  />
-                </div>
+                {totalPages > 1 && (
+                  <div className="flex justify-center">
+                    <Pagination
+                      page={currentPage}
+                      totalPages={totalPages}
+                      onChange={setCurrentPage}
+                      totalItems={totalItems}
+                      pageSize={itemsPerPage}
+                    />
+                  </div>
+                )}
               </>
             )}
           </>

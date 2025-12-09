@@ -1,13 +1,27 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Building2, Search, Home, MapPin, Phone, Mail } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#083C2C] to-[#05271d] text-white py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center">
+      <section className="relative h-[600px] md:h-[700px] text-white overflow-hidden">
+        {/* Imagen de fondo */}
+        <Image
+          src="/img/broker-inmobiliario-1.jpg"
+          alt="Broker Inmobiliario"
+          fill
+          className="object-cover"
+          priority
+        />
+
+        {/* Overlay oscuro para legibilidad */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#083C2C]/80 to-[#05271d]/70"></div>
+
+        {/* Contenido */}
+        <div className="relative z-10 h-full flex items-center justify-center px-4">
+          <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Encuentra tu Hogar Ideal
             </h1>

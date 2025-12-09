@@ -1,8 +1,9 @@
 "use client";
 
 import { useSession } from "@/context/SessionProvider";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Menu,
   ChevronLeft,
@@ -26,6 +27,7 @@ const Navbar = () => {
   const [isAgentesMenuOpen, setIsAgentesMenuOpen] = useState(false);
   const [isAdministradoresMenuOpen, setIsAdministradoresMenuOpen] = useState(false);
   const [isConsultasMenuOpen, setIsConsultasMenuOpen] = useState(false);
+  const [userImage, setUserImage] = useState<string | null>(null);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -58,6 +60,28 @@ const Navbar = () => {
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/login" });
   };
+
+  // Cargar imagen del usuario
+  useEffect(() => {
+    const fetchUserImage = async () => {
+      if (!session?.user?.empleadoId) return;
+
+      try {
+        const response = await fetch(`/api/agentes/${session.user.empleadoId}`);
+        if (response.ok) {
+          const data = await response.json();
+          const personaImagen = data.data?.persona?.imagenes?.[0]?.imagen;
+          if (personaImagen) {
+            setUserImage(personaImagen);
+          }
+        }
+      } catch (error) {
+        console.error("Error al cargar imagen de usuario:", error);
+      }
+    };
+
+    fetchUserImage();
+  }, [session]);
 
   return (
     <>
@@ -106,8 +130,18 @@ const Navbar = () => {
           <div className="h-20 flex items-center px-4 bg-gradient-to-r from-[#083C2C] to-[#0a4a37] border-b border-[#6FC6D1]/20">
             {/* Información del usuario */}
             <div className="flex items-center flex-1 min-w-0">
-              <div className="w-10 h-10 bg-[#6FC6D1] rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                <User size={18} className="text-white" />
+              <div className="w-10 h-10 bg-[#6FC6D1] rounded-full flex items-center justify-center mr-3 flex-shrink-0 overflow-hidden">
+                {userImage ? (
+                  <Image
+                    src={userImage}
+                    alt="Foto de perfil"
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User size={18} className="text-white" />
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center">

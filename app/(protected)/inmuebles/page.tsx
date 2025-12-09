@@ -239,7 +239,7 @@ const Inmuebles = () => {
                         </svg>
                         <div>
                           <p className="font-medium text-gray-900">Exportar todos</p>
-                          <p className="text-sm text-gray-500">Todos los registros ({totalItems})</p>
+                          <p className="text-sm text-gray-500">Todos los registros ({inmuebles.length})</p>
                         </div>
                       </button>
                       <button
@@ -252,11 +252,13 @@ const Inmuebles = () => {
                         </svg>
                         <div>
                           <p className="font-medium text-gray-900">
-                            {searchQuery ? 'Exportar resultados de búsqueda' : 'Exportar resultados actuales'}
+                            {searchQuery ? 'Exportar resultados de búsqueda' : 'Exportar página actual'}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {totalItems} {totalItems === 1 ? 'registro' : 'registros'}
-                            {searchQuery && ` (filtrado por "${searchQuery}")`}
+                            {searchQuery
+                              ? `${totalItems} ${totalItems === 1 ? 'registro' : 'registros'} (filtrado por "${searchQuery}")`
+                              : `Página ${currentPage} (${paginatedData.length} ${paginatedData.length === 1 ? 'registro' : 'registros'})`
+                            }
                           </p>
                         </div>
                       </button>

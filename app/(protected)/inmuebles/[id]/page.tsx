@@ -252,7 +252,8 @@ const InmuebleEdit = () => {
                     setSaving(false);
                     return;
                   }
-                  setInmueble(resData.data);
+                  // Recargar inmueble completo con todos los datos de relaciones
+                  await recargarInmueble();
                   alert("Inmueble actualizado con éxito.");
                   setSaving(false);
                 } catch (error) {
