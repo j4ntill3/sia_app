@@ -60,6 +60,12 @@ export async function GET(req: NextRequest) {
               select: {
                 direccion: true,
                 descripcion: true,
+                categoria: {
+                  select: {
+                    id: true,
+                    categoria: true,
+                  },
+                },
               },
             },
           },
@@ -73,7 +79,8 @@ export async function GET(req: NextRequest) {
         apellido_cliente: c.apellido,
         fecha: c.fecha,
         inmueble: {
-          titulo: c.inmueble.direccion, // Usar dirección como título
+          titulo: c.inmueble.direccion,
+          categoria: c.inmueble.categoria,
         },
       }));
 
@@ -160,6 +167,12 @@ export async function GET(req: NextRequest) {
               select: {
                 direccion: true,
                 descripcion: true,
+                categoria: {
+                  select: {
+                    id: true,
+                    categoria: true,
+                  },
+                },
               },
             },
           },
@@ -173,7 +186,8 @@ export async function GET(req: NextRequest) {
         apellido_cliente: c.apellido,
         fecha: c.fecha,
         inmueble: {
-          titulo: c.inmueble.direccion, // Usar dirección como título
+          titulo: c.inmueble.direccion,
+          categoria: c.inmueble.categoria,
         },
       }));
 

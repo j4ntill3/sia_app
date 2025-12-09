@@ -5,6 +5,7 @@ import { ConsultaCliente } from "@/types/consulta_cliente";
 import { getSession } from "@/actions/auth-actions";
 import { useEffect, useState } from "react";
 import { Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ConsultaClienteItemProps {
   cliente: ConsultaCliente;
@@ -13,6 +14,7 @@ interface ConsultaClienteItemProps {
 
 const ConsultaClienteItem: React.FC<ConsultaClienteItemProps> = ({ cliente, onView }) => {
   const [session, setSession] = useState<any>(null);
+  const router = useRouter();
 
   // Función para autenticar al usuario
   const authenticateUser = async () => {
@@ -45,6 +47,11 @@ const ConsultaClienteItem: React.FC<ConsultaClienteItemProps> = ({ cliente, onVi
     init();
   }, []);
 
+  const handleAgenteClick = (e: React.MouseEvent, agenteId: string) => {
+    e.stopPropagation();
+    router.push(`/agentes/${agenteId}`);
+  };
+
   return (
     <tr className="border-b hover:bg-gray-50">
       <td className="px-4 font-sans py-2 text-gray-900">
@@ -65,11 +72,23 @@ const ConsultaClienteItem: React.FC<ConsultaClienteItemProps> = ({ cliente, onVi
       <td className="px-4 font-sans py-2 text-gray-900">
         {cliente.inmueble_id}
       </td>
-      {session && session.user && session.user.role === "administrador" ? (
-        <td className="px-4 font-sans py-2 text-gray-900">
-          {cliente.agente_id}
-        </td>
-      ) : null}
+      <td className="px-4 font-sans py-2 text-gray-900">
+        {cliente.agente_id ? (
+          <span className="text-blue-700 font-medium">
+            Agente (ID:{" "}
+            <button
+              onClick={(e) => handleAgenteClick(e, cliente.agente_id!)}
+              className="underline hover:text-blue-900 transition-colors cursor-pointer"
+              title="Ver detalle del agente"
+            >
+              {cliente.agente_id.substring(0, 8)}...
+            </button>
+            )
+          </span>
+        ) : (
+          <span className="text-gray-600">Usuario Público</span>
+        )}
+      </td>
       <td className="px-4 py-2">
         <button
           onClick={() => onView(cliente.id)}

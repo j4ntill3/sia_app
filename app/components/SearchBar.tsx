@@ -38,8 +38,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div className={`w-full ${className}`}>
-      <div className="flex items-center gap-2 max-w-2xl mx-auto">
-        <div className="relative flex-1">
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1 min-w-[600px]">
           <input
             type="text"
             value={inputValue}

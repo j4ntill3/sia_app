@@ -45,8 +45,8 @@ interface ConsultaDetalle {
     nombre: string;
     apellido: string;
     telefono: string;
-    email: string;
-  };
+    correo: string;
+  } | null;
 }
 
 const ConsultaDetallePage = () => {
@@ -158,7 +158,7 @@ const ConsultaDetallePage = () => {
           </h1>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className={`grid gap-6 ${consulta.agente ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}>
           {/* Información del Cliente */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-semibold text-[#083C2C] mb-4 flex items-center gap-2">
@@ -211,39 +211,41 @@ const ConsultaDetallePage = () => {
             )}
           </div>
 
-          {/* Información del Agente */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-[#083C2C] mb-4 flex items-center gap-2">
-              <User className="w-6 h-6 text-[#6FC6D1]" />
-              Agente Asignado
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Nombre Completo</p>
-                <p className="font-medium text-[#083C2C] text-lg">
-                  {consulta.agente.nombre} {consulta.agente.apellido}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-5 h-5 text-[#6FC6D1]" />
+          {/* Información del Agente - Solo si existe */}
+          {consulta.agente && (
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-[#083C2C] mb-4 flex items-center gap-2">
+                <User className="w-6 h-6 text-[#6FC6D1]" />
+                Agente Asignado
+              </h2>
+              <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-500">Teléfono</p>
-                  <p className="font-medium text-[#083C2C]">
-                    {consulta.agente.telefono}
+                  <p className="text-sm text-gray-500 mb-1">Nombre Completo</p>
+                  <p className="font-medium text-[#083C2C] text-lg">
+                    {consulta.agente.nombre} {consulta.agente.apellido}
                   </p>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-5 h-5 text-[#6FC6D1]" />
-                <div>
-                  <p className="text-sm text-gray-500">Correo Electrónico</p>
-                  <p className="font-medium text-[#083C2C]">
-                    {consulta.agente.email}
-                  </p>
+                <div className="flex items-center gap-2">
+                  <Phone className="w-5 h-5 text-[#6FC6D1]" />
+                  <div>
+                    <p className="text-sm text-gray-500">Teléfono</p>
+                    <p className="font-medium text-[#083C2C]">
+                      {consulta.agente.telefono}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mail className="w-5 h-5 text-[#6FC6D1]" />
+                  <div>
+                    <p className="text-sm text-gray-500">Correo Electrónico</p>
+                    <p className="font-medium text-[#083C2C]">
+                      {consulta.agente.correo}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Información del Inmueble */}

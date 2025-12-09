@@ -5,6 +5,7 @@ import { CategoriaInmueble } from "@/types/inmueble";
 import { EstadoInmueble } from "@/types/inmueble";
 import { InmuebleCreate } from "@/types/inmueble";
 import ImageCarousel from "@/components/ImageCarousel";
+import { Trash2 } from "lucide-react";
 
 const inmuebleSchema = z.object({
   categoria_id: z.string().min(1, "El rubro es obligatorio"),
@@ -32,9 +33,11 @@ interface InmuebleFormProps {
   onSubmit: (data: InmuebleCreate) => void;
   loading?: boolean;
   readOnly?: boolean;
+  onDelete?: () => void;
+  deleting?: boolean;
 }
 
-export default function InmuebleForm({ mode, initialData, onSubmit, loading, readOnly = false }: InmuebleFormProps) {
+export default function InmuebleForm({ mode, initialData, onSubmit, loading, readOnly = false, onDelete, deleting = false }: InmuebleFormProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<InmuebleCreate>(
@@ -296,6 +299,17 @@ export default function InmuebleForm({ mode, initialData, onSubmit, loading, rea
             >
               Volver
             </button>
+            {mode === "edit" && onDelete && (
+              <button
+                type="button"
+                onClick={onDelete}
+                disabled={deleting}
+                className="bg-red-600 text-white py-2 px-3 rounded-md hover:bg-red-700 transition-colors disabled:bg-red-400 disabled:cursor-not-allowed font-medium text-sm flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                {deleting ? "Eliminando..." : "Eliminar"}
+              </button>
+            )}
             <button
               type="submit"
               form="inmueble-form"

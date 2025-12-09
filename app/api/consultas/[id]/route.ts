@@ -57,12 +57,12 @@ export async function GET(
     // Mapear los datos para una respuesta más limpia
     const response = {
       id: consulta.id,
-      fecha: consulta.date,
-      nombre: consulta.firstName,
-      apellido: consulta.lastName,
-      telefono: consulta.phone,
-      correo: consulta.email,
-      descripcion: consulta.description,
+      fecha: consulta.fecha,
+      nombre: consulta.nombre,
+      apellido: consulta.apellido,
+      telefono: consulta.telefono,
+      correo: consulta.correo,
+      descripcion: consulta.descripcion,
       inmueble: {
         id: consulta.inmueble.id,
         direccion: consulta.inmueble.direccion,
@@ -76,7 +76,7 @@ export async function GET(
         superficie: consulta.inmueble.superficie,
         cochera: consulta.inmueble.cochera,
       },
-      agente: {
+      agente: consulta.empleado ? {
         id: consulta.empleado.id,
         nombre:
           consulta.empleado.personas_empleado[0]?.persona.nombre || "N/A",
@@ -84,9 +84,9 @@ export async function GET(
           consulta.empleado.personas_empleado[0]?.persona.apellido || "N/A",
         telefono:
           consulta.empleado.personas_empleado[0]?.persona.telefono || "N/A",
-        email:
-          consulta.empleado.personas_empleado[0]?.persona.email || "N/A",
-      },
+        correo:
+          consulta.empleado.personas_empleado[0]?.persona.correo || "N/A",
+      } : null,
     };
 
     console.log("[GET /api/consultas/[id]] Returning success response");

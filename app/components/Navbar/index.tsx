@@ -24,6 +24,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isInmueblesMenuOpen, setIsInmueblesMenuOpen] = useState(false);
   const [isAgentesMenuOpen, setIsAgentesMenuOpen] = useState(false);
+  const [isAdministradoresMenuOpen, setIsAdministradoresMenuOpen] = useState(false);
   const [isConsultasMenuOpen, setIsConsultasMenuOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -34,6 +35,7 @@ const Navbar = () => {
     setIsOpen(false);
     setIsInmueblesMenuOpen(false);
     setIsAgentesMenuOpen(false);
+    setIsAdministradoresMenuOpen(false);
     setIsConsultasMenuOpen(false);
   };
 
@@ -43,6 +45,10 @@ const Navbar = () => {
 
   const toggleAgentesMenu = () => {
     setIsAgentesMenuOpen(!isAgentesMenuOpen);
+  };
+
+  const toggleAdministradoresMenu = () => {
+    setIsAdministradoresMenuOpen(!isAdministradoresMenuOpen);
   };
 
   const toggleConsultasMenu = () => {
@@ -263,7 +269,7 @@ const Navbar = () => {
 
                         {/* Separador para Datos Maestros */}
                         <div className="border-t border-gray-200 pt-2 mt-3">
-                          <p className="text-xs font-semibold text-gray-500 px-4 pb-2">DATOS UBICACIÓN</p>
+                          <p className="text-xs font-semibold text-gray-500 px-4 pb-2">DATOS</p>
 
                           <Link href="/admin/rubros" onClick={closeSidebar}>
                             <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
@@ -330,6 +336,43 @@ const Navbar = () => {
                         <Link href="/altaAgente" onClick={closeSidebar}>
                           <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
                             <span className="text-sm font-medium">Alta Agente</span>
+                          </button>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Sección Administradores para Admin */}
+                  <div>
+                    <button
+                      onClick={toggleAdministradoresMenu}
+                      className="mb-2 w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border-2 border-[#6FC6D1] hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                    >
+                      <div className="flex items-center">
+                        <Users
+                          size={20}
+                          className="mr-3 group-hover:scale-110 transition-transform duration-200"
+                        />
+                        <span className="font-medium">Administradores</span>
+                      </div>
+                      {isAdministradoresMenuOpen ? (
+                        <ChevronUp size={18} className="group-hover:scale-110 transition-transform duration-200" />
+                      ) : (
+                        <ChevronDown size={18} className="group-hover:scale-110 transition-transform duration-200" />
+                      )}
+                    </button>
+
+                    {isAdministradoresMenuOpen && (
+                      <div className="mt-2 space-y-2 pl-6">
+                        <Link href="/administradores" onClick={closeSidebar}>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Ver Todos</span>
+                          </button>
+                        </Link>
+
+                        <Link href="/altaAdministrador" onClick={closeSidebar}>
+                          <button className="mb-2 w-full flex items-center px-4 py-2 rounded-xl transition-all duration-200 text-left group bg-white text-[#6FC6D1] border border-[#6FC6D1]/50 hover:bg-[#6FC6D1] hover:text-white shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <span className="text-sm font-medium">Alta Administrador</span>
                           </button>
                         </Link>
                       </div>

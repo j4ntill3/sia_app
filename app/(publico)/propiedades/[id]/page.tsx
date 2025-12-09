@@ -110,8 +110,12 @@ const PropiedadDetalle = () => {
 
   // Preparar imágenes para el carrusel
   const imagenes = inmueble.imagenes?.length > 0
-    ? inmueble.imagenes.map(img => img.imagen || "/img/no-image.webp")
-    : ["/img/no-image.webp"];
+    ? inmueble.imagenes.filter(img => img.imagen).map(img => ({
+        id: img.id,
+        imagen: img.imagen!,
+        es_principal: img.es_principal
+      }))
+    : [{ id: "default", imagen: "/img/no-image.webp", es_principal: true }];
 
   return (
     <div className="min-h-screen bg-gray-50 pb-12">

@@ -61,10 +61,22 @@ const InmuebleCard: React.FC<InmuebleCardProps> = ({ inmueble, isPublic = false 
       <p className="text-[#083C2C] text-sm mb-2">
         <strong>Garaje:</strong> {inmueble.cochera ? "Sí" : "No"}
       </p>
-      <p className="text-[#083C2C] text-sm mb-4">
+      <p className="text-[#083C2C] text-sm mb-2">
         <strong>Agente:</strong> {inmueble.agenteAsignado
           ? `${inmueble.agenteAsignado.nombre} ${inmueble.agenteAsignado.apellido}`
           : 'Sin asignar'}
+      </p>
+      <p className="text-[#083C2C] text-sm mb-4">
+        <strong>Estado:</strong> <span className={`font-semibold ${
+          inmueble.estado?.estado === 'Disponible' ? 'text-green-600' :
+          inmueble.estado?.estado === 'Vendido' ? 'text-red-600' :
+          inmueble.estado?.estado === 'No Disponible' ? 'text-red-600' :
+          inmueble.estado?.estado === 'Alquilado' ? 'text-blue-600' :
+          inmueble.estado?.estado === 'Reservado' ? 'text-yellow-600' :
+          'text-gray-600'
+        }`}>
+          {inmueble.estado?.estado || 'N/A'}
+        </span>
       </p>
       <button
         onClick={handleViewMore}

@@ -15,6 +15,7 @@ const InmuebleEdit = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [session, setSession] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAssignedAgent, setIsAssignedAgent] = useState(false);
@@ -70,6 +71,34 @@ const InmuebleEdit = () => {
       }
     } catch (err) {
       console.error("Error al recargar inmueble:", err);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm("¿Estás seguro de que deseas eliminar este inmueble? Esta acción no se puede deshacer.")) {
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      const response = await fetch(`/api/inmuebles/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || "Error al eliminar el inmueble.");
+        setDeleting(false);
+        return;
+      }
+
+      alert("Inmueble eliminado exitosamente.");
+      router.push("/inmuebles");
+    } catch (error) {
+      console.error("Error al eliminar inmueble:", error);
+      alert("Hubo un error al eliminar el inmueble.");
+      setDeleting(false);
     }
   };
 
@@ -231,6 +260,8 @@ const InmuebleEdit = () => {
                   setSaving(false);
                 }
               } : () => {}}
+              onDelete={isAdmin ? handleDelete : undefined}
+              deleting={deleting}
             />
           </div>
 
@@ -245,8 +276,8 @@ const InmuebleEdit = () => {
               />
             )}
 
-            {/* Formulario de consulta */}
-            {(isAdmin || isAssignedAgent) && (
+            {/* Formulario de consulta - SOLO PARA AGENTES */}
+            {session?.user?.role === "agente" && isAssignedAgent && (
               <ConsultaForm inmuebleId={id} />
             )}
 

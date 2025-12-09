@@ -60,16 +60,14 @@ title Casos de Uso - Cliente Público
 actor "Cliente Público" as Public
 
 rectangle "Sistema SIA App - Acceso Público" {
-  usecase "[CU-PUB-01]\nVer Catálogo de\nInmuebles" as UC_ViewCatalog
+  usecase "[CU-PUB-01]\nVer Catálogo de\nInmuebles\n(con búsqueda)" as UC_ViewCatalog
   usecase "[CU-PUB-02]\nVer Detalle de\nInmueble" as UC_ViewPropertyDetail
   usecase "[CU-PUB-03]\nRegistrar\nConsulta" as UC_PublicInquiry
-  usecase "[CU-PUB-04]\nBuscar y\nFiltrar" as UC_SearchFilter
 }
 
 Public --> UC_ViewCatalog
 Public --> UC_ViewPropertyDetail
 Public --> UC_PublicInquiry
-Public --> UC_SearchFilter
 
 @enduml
 
@@ -98,24 +96,20 @@ actor "Agente" as Agent
 rectangle "Sistema SIA App - Módulo Agente" {
 
   package "Mis Inmuebles" {
-    usecase "[CU-AGE-01]\nVer Listado de\nInmuebles Asignados" as UC_ViewMyProperties
+    usecase "[CU-AGE-01]\nVer Listado de\nInmuebles Asignados\n(con búsqueda)" as UC_ViewMyProperties
     usecase "[CU-AGE-02]\nVer Detalle de\nInmueble" as UC_ViewMyPropertyDetail
-    usecase "[CU-AGE-03]\nBuscar Inmueble" as UC_SearchMyProperties
   }
 
   package "Mis Consultas de Clientes" {
-    usecase "[CU-AGE-04]\nVer Mis Consultas" as UC_ViewMyInquiries
-    usecase "[CU-AGE-05]\nVer Detalle de\nConsulta" as UC_ViewInquiryDetail
-    usecase "[CU-AGE-06]\nFiltrar Consultas" as UC_FilterInquiries
+    usecase "[CU-AGE-03]\nVer Mis Consultas\n(con búsqueda)" as UC_ViewMyInquiries
+    usecase "[CU-AGE-04]\nVer Detalle de\nConsulta" as UC_ViewInquiryDetail
   }
 }
 
 Agent --> UC_ViewMyProperties
 Agent --> UC_ViewMyPropertyDetail
-Agent --> UC_SearchMyProperties
 Agent --> UC_ViewMyInquiries
 Agent --> UC_ViewInquiryDetail
-Agent --> UC_FilterInquiries
 
 @enduml
 
@@ -144,23 +138,16 @@ actor "Admin" as Admin
 rectangle "Sistema SIA App - Gestión de Inmuebles" {
 
   package "Gestión de Inmuebles" {
-    usecase "[CU-ADM-INM-01]\nCrear Inmueble" as UC_CreateProperty
-    usecase "[CU-ADM-INM-02]\nEditar Inmueble" as UC_UpdateProperty
+    usecase "[CU-ADM-INM-01]\nCrear Inmueble\n(incluye imágenes)" as UC_CreateProperty
+    usecase "[CU-ADM-INM-02]\nEditar Inmueble\n(incluye imágenes)" as UC_UpdateProperty
     usecase "[CU-ADM-INM-03]\nEliminar Inmueble" as UC_DeleteProperty
-    usecase "[CU-ADM-INM-04]\nListar Inmuebles" as UC_ListProperties
+    usecase "[CU-ADM-INM-04]\nListar Inmuebles\n(con búsqueda)" as UC_ListProperties
     usecase "[CU-ADM-INM-05]\nVer Detalle" as UC_ViewProperty
-    usecase "[CU-ADM-INM-06]\nBuscar Inmueble" as UC_SearchProperties
-    usecase "[CU-ADM-INM-07]\nExportar Inmuebles" as UC_ExportProperties
-  }
-
-  package "Gestión de Imágenes" {
-    usecase "[CU-ADM-IMG-01]\nSubir Imagen" as UC_UploadImage
-    usecase "[CU-ADM-IMG-02]\nEliminar Imagen" as UC_DeleteImage
+    usecase "[CU-ADM-INM-06]\nExportar Inmuebles" as UC_ExportProperties
   }
 
   package "Asignación de Agentes" {
-    usecase "[CU-ADM-ASG-01]\nAsignar Agente\na Inmueble" as UC_AssignAgent
-    usecase "[CU-ADM-ASG-02]\nCambiar Agente\nAsignado" as UC_ChangeAgent
+    usecase "[CU-ADM-ASG-01]\nAsignar/Cambiar\nAgente a Inmueble" as UC_AssignAgent
   }
 }
 
@@ -169,12 +156,18 @@ Admin --> UC_UpdateProperty
 Admin --> UC_DeleteProperty
 Admin --> UC_ListProperties
 Admin --> UC_ViewProperty
-Admin --> UC_SearchProperties
 Admin --> UC_ExportProperties
-Admin --> UC_UploadImage
-Admin --> UC_DeleteImage
 Admin --> UC_AssignAgent
-Admin --> UC_ChangeAgent
+
+note right of UC_CreateProperty
+  Incluye subida de
+  múltiples imágenes
+end note
+
+note right of UC_UpdateProperty
+  Incluye gestión de
+  imágenes (subir/eliminar)
+end note
 
 @enduml
 
@@ -196,27 +189,20 @@ skinparam packageStyle rectangle
 skinparam defaultFontSize 10
 left to right direction
 
-title Casos de Uso - Administrador: Gestión de Agentes y Consultas
+title Casos de Uso - Administrador: Gestión de Agentes
 
 actor "Admin" as Admin
 
-rectangle "Sistema SIA App - Gestión de Agentes y Consultas" {
+rectangle "Sistema SIA App - Gestión de Agentes" {
 
   package "Gestión de Agentes" {
-    usecase "[CU-ADM-AGT-01]\nCrear Agente" as UC_CreateAgent
-    usecase "[CU-ADM-AGT-02]\nEditar Agente" as UC_UpdateAgent
+    usecase "[CU-ADM-AGT-01]\nCrear Agente\n(con imagen)" as UC_CreateAgent
+    usecase "[CU-ADM-AGT-02]\nEditar Agente\n(con imagen)" as UC_UpdateAgent
     usecase "[CU-ADM-AGT-03]\nEliminar Agente" as UC_DeleteAgent
-    usecase "[CU-ADM-AGT-04]\nListar Agentes" as UC_ListAgents
+    usecase "[CU-ADM-AGT-04]\nListar Agentes\n(con búsqueda)" as UC_ListAgents
     usecase "[CU-ADM-AGT-05]\nVer Detalle\nde Agente" as UC_ViewAgent
-    usecase "[CU-ADM-AGT-06]\nBuscar Agente" as UC_SearchAgents
-    usecase "[CU-ADM-AGT-07]\nExportar Agentes" as UC_ExportAgents
-  }
-
-  package "Gestión de Consultas de Clientes" {
-    usecase "[CU-ADM-CNS-01]\nVer Todas las\nConsultas" as UC_ViewAllInquiries
-    usecase "[CU-ADM-CNS-02]\nVer Detalle de\nConsulta" as UC_ViewInquiryDetail
-    usecase "[CU-ADM-CNS-03]\nFiltrar Consultas" as UC_FilterInquiries
-    usecase "[CU-ADM-CNS-04]\nExportar Consultas" as UC_ExportInquiries
+    usecase "[CU-ADM-AGT-06]\nExportar Agentes" as UC_ExportAgents
+    usecase "[CU-ADM-AGT-07]\nReenviar Email\nde Contraseña" as UC_ResendEmail
   }
 }
 
@@ -225,11 +211,103 @@ Admin --> UC_UpdateAgent
 Admin --> UC_DeleteAgent
 Admin --> UC_ListAgents
 Admin --> UC_ViewAgent
-Admin --> UC_SearchAgents
 Admin --> UC_ExportAgents
+Admin --> UC_ResendEmail
+
+note right of UC_CreateAgent
+  Envía automáticamente
+  email con token de
+  24 horas para establecer
+  contraseña.
+end note
+
+@enduml
+
+' ====================================================================================
+
+@startuml CASOS_USO_ADMIN_ADMINISTRADORES
+
+skinparam usecase {
+  BackgroundColor LightCoral
+  BorderColor DarkRed
+  FontSize 10
+}
+
+skinparam actor {
+  FontSize 11
+}
+
+skinparam packageStyle rectangle
+skinparam defaultFontSize 10
+left to right direction
+
+title Casos de Uso - Administrador: Gestión de Administradores
+
+actor "Admin" as Admin
+
+rectangle "Sistema SIA App - Gestión de Administradores" {
+
+  package "Gestión de Administradores" {
+    usecase "[CU-ADM-ADM-01]\nCrear Administrador\n(con imagen)" as UC_CreateAdmin
+    usecase "[CU-ADM-ADM-02]\nEditar Administrador\n(con imagen)" as UC_UpdateAdmin
+    usecase "[CU-ADM-ADM-03]\nEliminar Administrador" as UC_DeleteAdmin
+    usecase "[CU-ADM-ADM-04]\nListar Administradores\n(con búsqueda)" as UC_ListAdmins
+    usecase "[CU-ADM-ADM-05]\nVer Detalle\nde Administrador" as UC_ViewAdmin
+    usecase "[CU-ADM-ADM-06]\nExportar Administradores" as UC_ExportAdmins
+    usecase "[CU-ADM-ADM-07]\nReenviar Email\nde Contraseña" as UC_ResendEmailAdmin
+  }
+}
+
+Admin --> UC_CreateAdmin
+Admin --> UC_UpdateAdmin
+Admin --> UC_DeleteAdmin
+Admin --> UC_ListAdmins
+Admin --> UC_ViewAdmin
+Admin --> UC_ExportAdmins
+Admin --> UC_ResendEmailAdmin
+
+note right of UC_CreateAdmin
+  Envía automáticamente
+  email con token de
+  24 horas para establecer
+  contraseña.
+end note
+
+@enduml
+
+' ====================================================================================
+
+@startuml CASOS_USO_ADMIN_CONSULTAS
+
+skinparam usecase {
+  BackgroundColor LightCoral
+  BorderColor DarkRed
+  FontSize 10
+}
+
+skinparam actor {
+  FontSize 11
+}
+
+skinparam packageStyle rectangle
+skinparam defaultFontSize 10
+left to right direction
+
+title Casos de Uso - Administrador: Gestión de Consultas de Clientes
+
+actor "Admin" as Admin
+
+rectangle "Sistema SIA App - Gestión de Consultas" {
+
+  package "Gestión de Consultas de Clientes" {
+    usecase "[CU-ADM-CNS-01]\nVer Todas las\nConsultas\n(con búsqueda)" as UC_ViewAllInquiries
+    usecase "[CU-ADM-CNS-02]\nVer Detalle de\nConsulta" as UC_ViewInquiryDetail
+    usecase "[CU-ADM-CNS-03]\nExportar Consultas" as UC_ExportInquiries
+  }
+}
+
 Admin --> UC_ViewAllInquiries
 Admin --> UC_ViewInquiryDetail
-Admin --> UC_FilterInquiries
 Admin --> UC_ExportInquiries
 
 @enduml

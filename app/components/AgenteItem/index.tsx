@@ -19,9 +19,10 @@ interface AgenteItemProps {
       imagenes?: any[];
     };
   };
+  basePath?: string;
 }
 
-const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
+const AgenteItem: React.FC<AgenteItemProps> = ({ agente, basePath = "/agentes" }) => {
   const { empleado, persona } = agente;
   const router = useRouter();
 
@@ -65,7 +66,7 @@ const AgenteItem: React.FC<AgenteItemProps> = ({ agente }) => {
       </td>
       <td className="px-4 py-2 text-center">
         <button
-          onClick={() => router.push(`/agentes/${empleado.id}`)}
+          onClick={() => router.push(`${basePath}/${empleado.id}`)}
           className="px-3 py-1 text-sm text-white bg-[#6FC6D1] rounded-md hover:bg-[#5AB5C1] transition-colors"
         >
           Ver

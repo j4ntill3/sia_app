@@ -5,38 +5,40 @@ import type { Inmueble, ImagenInmueble } from "@/types/inmueble";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    const all = searchParams.get("all") === "true";
     const page = parseInt(searchParams.get("page") || "1", 10);
     const pageSize = parseInt(searchParams.get("pageSize") || "5", 10);
     const skip = (page - 1) * pageSize;
 
-    const [total, inmuebles] = await Promise.all([
-      prisma.inmueble.count({ where: { eliminado: false } }),
-      prisma.inmueble.findMany({
+    const includeConfig = {
+      imagenes: { orderBy: { id: "desc" as const } },
+      categoria: true,
+      estado: true,
+      localidad: true,
+      zona: true,
+      barrio: true,
+      agentes: {
         where: { eliminado: false },
         include: {
-          imagenes: { orderBy: { id: "desc" } },
-          categoria: true,
-          estado: true,
-          localidad: true,
-          zona: true,
-          barrio: true,
-          agentes: {
-            where: { eliminado: false },
+          empleado: {
             include: {
-              empleado: {
+              personas_empleado: {
                 include: {
-                  personas_empleado: {
-                    include: {
-                      persona: true,
-                    },
-                  },
+                  persona: true,
                 },
               },
             },
           },
         },
-        skip,
-        take: pageSize,
+      },
+    };
+
+    const [total, inmuebles] = await Promise.all([
+      prisma.inmueble.count({ where: { eliminado: false } }),
+      prisma.inmueble.findMany({
+        where: { eliminado: false },
+        include: includeConfig,
+        ...(all ? {} : { skip, take: pageSize }),
         orderBy: { id: "asc" },
       }),
     ]);

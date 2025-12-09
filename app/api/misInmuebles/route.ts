@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
 
     // Leer parámetros de paginación
     const { searchParams } = new URL(request.url);
+    const all = searchParams.get("all") === "true";
     const page = parseInt(searchParams.get("page") || "1", 10);
     const pageSize = parseInt(searchParams.get("pageSize") || "5", 10);
     const skip = (page - 1) * pageSize;
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
     });
     const totalPages = totalCount === 0 ? 0 : Math.ceil(totalCount / pageSize);
 
-    // Obtener inmuebles paginados
+    // Obtener inmuebles (con o sin paginación según el parámetro 'all')
     const inmueblesDb = await prisma.inmueble.findMany({
       where: {
         eliminado: false,
@@ -65,8 +66,8 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      skip,
-      take: pageSize,
+      skip: all ? undefined : skip,
+      take: all ? undefined : pageSize,
       orderBy: { direccion: "asc" },
     });
 
@@ -124,6 +125,11 @@ export async function GET(request: NextRequest) {
         } : undefined,
       };
     });
+
+    // Si se solicitan todos los registros, devolver solo los datos
+    if (all) {
+      return jsonSuccess(inmuebles);
+    }
 
     return jsonSuccess({ data: inmuebles, totalPages, totalCount });
   } catch (error) {

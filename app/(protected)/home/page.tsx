@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getSession } from "@/actions/auth-actions";
 
 interface Metricas {
@@ -20,6 +21,7 @@ interface Metricas {
 }
 
 const HomePage = () => {
+  const router = useRouter();
   const [session, setSession] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -200,7 +202,7 @@ const HomePage = () => {
                         {metricas.consultasRecientes.map((consulta) => (
                           <div
                             key={consulta.id}
-                            className="border-l-4 border-blue-500 pl-4 py-2"
+                            className="border-l-4 border-blue-500 pl-4 py-2 flex items-center justify-between"
                           >
                             <div>
                               <p className="font-medium text-gray-800">
@@ -208,9 +210,15 @@ const HomePage = () => {
                                 {consulta.apellido_cliente}
                               </p>
                               <p className="text-sm text-gray-600">
-                                {consulta.inmueble?.titulo}
+                                {consulta.inmueble?.categoria?.categoria || 'Sin categoría'}
                               </p>
                             </div>
+                            <button
+                              onClick={() => router.push(`/consulta/${consulta.id}`)}
+                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm whitespace-nowrap"
+                            >
+                              Ver
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -254,7 +262,7 @@ const HomePage = () => {
                         {metricas.misConsultasRecientes.map((consulta) => (
                           <div
                             key={consulta.id}
-                            className="border-l-4 border-blue-500 pl-4 py-2"
+                            className="border-l-4 border-blue-500 pl-4 py-2 flex items-center justify-between"
                           >
                             <div>
                               <p className="font-medium text-gray-800">
@@ -262,9 +270,15 @@ const HomePage = () => {
                                 {consulta.apellido_cliente}
                               </p>
                               <p className="text-sm text-gray-600">
-                                {consulta.inmueble?.titulo}
+                                {consulta.inmueble?.categoria?.categoria || 'Sin categoría'}
                               </p>
                             </div>
+                            <button
+                              onClick={() => router.push(`/consulta/${consulta.id}`)}
+                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm whitespace-nowrap"
+                            >
+                              Ver
+                            </button>
                           </div>
                         ))}
                       </div>
