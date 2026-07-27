@@ -53,7 +53,6 @@
       "Bash(npm install:*)",
       "Bash(timeout /t 3 /nobreak)",
       "Bash(npx eslint:*)",
-      "Bash(cmd /c \"type C:\\Users\\JoseAntille\\Documents\\sia_app\\app\\(protected)\\agentes\\page.tsx | find /n /v \"\"\"\" | findstr \"125: 126: 127: 128: 129: 130: 131: 132: 133: 134: 135: 136: 137: 138: 139: 140:\"\")",
       "Bash(del \"C:\\Users\\JoseAntille\\Documents\\sia_app\\middleware.ts\")",
       "Bash(cmd /c \"del C:\\Users\\JoseAntille\\Documents\\sia_app\\middleware.ts\")",
       "Bash(cmd /c \"del C:\\Users\\JoseAntille\\Documents\\sia_app\\cypress.config.ts\")",

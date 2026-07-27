@@ -36,6 +36,7 @@
     "zod": "^4.0.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/nodemailer": "^7.0.3",
     "ts-node": "^10.9.2"

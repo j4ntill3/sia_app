@@ -50,3 +50,11 @@ nul
 
 # API keys and sensitive files
 *_key*.txt
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
